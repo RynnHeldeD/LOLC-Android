@@ -28,7 +28,7 @@ public class Utils {
     //Please insert the url by imageView.setTag(yourUrl)
     //To call this async function:
     //new LoadImageFromUrl().execute(yourImageViewWithUrlInsideTheTag);
-    static class LoadImageFromUrl extends AsyncTask<Object, Void, Bitmap> {
+    public static class LoadImageFromUrl extends AsyncTask<Object, Void, Bitmap> {
 
         private ImageView imv;
         private String path;
@@ -64,11 +64,11 @@ public class Utils {
         }
     }
 
-    static class RequestTask extends AsyncTask<String, String, String>{
+    public static class RequestTask extends AsyncTask<String, String, String>{
 
         final CallbackMatcher callback;
 
-        RequestTask(CallbackMatcher callback) {
+        public RequestTask(CallbackMatcher callback) {
             this.callback = callback;
         }
 

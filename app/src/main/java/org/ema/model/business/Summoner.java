@@ -1,5 +1,7 @@
 package org.ema.model.business;
 
+import java.util.Arrays;
+
 /**
  * Created by romain on 01/05/2015.
  */
@@ -11,8 +13,17 @@ public class Summoner {
     private League league;
     private int teamId;
     private int premade;
+    private int level;
     private float winPercentage;
     private float loosePercentage;
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
 
     public int getId() {
         return id;
@@ -89,9 +100,10 @@ public class Summoner {
     public Summoner() {
     }
 
-    public Summoner(int id, String name, Spell[] spells, Champion champion, League league, int teamId, int premade, float winPercentage, float loosePercentage) {
+    public Summoner(int id, String name,int level, Spell[] spells, Champion champion, League league, int teamId, int premade, float winPercentage, float loosePercentage) {
         this.id = id;
         this.name = name;
+        this.level = level;
         this.spells = spells;
         this.champion = champion;
         this.league = league;
@@ -99,5 +111,21 @@ public class Summoner {
         this.premade = premade;
         this.winPercentage = winPercentage;
         this.loosePercentage = loosePercentage;
+    }
+
+    @Override
+    public String toString() {
+        return "Summoner{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", spells=" + Arrays.toString(spells) +
+                ", champion=" + champion +
+                ", league=" + league +
+                ", teamId=" + teamId +
+                ", premade=" + premade +
+                ", level=" + level +
+                ", winPercentage=" + winPercentage +
+                ", loosePercentage=" + loosePercentage +
+                '}';
     }
 }

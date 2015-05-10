@@ -1,5 +1,6 @@
 package org.ema.model.DAO;
 import android.util.JsonReader;
+import android.util.Log;
 
 import org.ema.model.business.Summoner;
 import org.ema.utils.CallbackMatcher;
@@ -13,11 +14,15 @@ import org.ema.utils.Constant;
 public class SummonerDAO {
     public static Summoner getSummoner(String name){
         //Get request
-        String jsonResult = Utils.getDocument(Constant.API_SUMMONER_INFO_URI + name);
+        String jsonResult = Utils.getDocument(Constant.API_SUMMONER_INFO_URI + name.replaceAll(" ","%20"));
 
         try {
+            //Player not exist
+            if(jsonResult == null) {
+                return null;
+            }
             JSONObject json = new JSONObject(jsonResult);
-            json = (JSONObject)json.get(name);
+            json = (JSONObject)json.get(name.replaceAll(" ","").toLowerCase());
 
             //Set summuner fields
             Summoner summoner = new Summoner();

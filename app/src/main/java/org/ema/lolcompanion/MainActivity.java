@@ -27,9 +27,12 @@ public class MainActivity extends ActionBarActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        user = SummonerDAO.getSummoner("Yokaro");
+        user = SummonerDAO.getSummoner("2k for master");
 
-        loadData();
+        if(user != null) {
+            Log.v("DAO", user.toString());
+            loadData();
+        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);

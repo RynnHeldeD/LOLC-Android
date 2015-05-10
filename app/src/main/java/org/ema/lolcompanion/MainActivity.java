@@ -27,7 +27,7 @@ public class MainActivity extends ActionBarActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        user = SummonerDAO.getSummoner("2k for master");
+        user = SummonerDAO.getSummoner("Kxng");
 
         if(user != null) {
             Log.v("DAO", user.toString());
@@ -64,7 +64,16 @@ public class MainActivity extends ActionBarActivity {
 
     public void loadData(){
         int id = user.getId();
-        boolean isInGame = false;
+        boolean isInGame = SummonerDAO.isInGame(id);
+        Log.v("DAO", "Is in game: " + isInGame);
+
+        if(isInGame) {
+            summonerList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
+            if(summonerList != null) {
+                Log.v("DAO", "SummonerList: " + summonerList.toString());
+            }
+        }
+
 
 
     }

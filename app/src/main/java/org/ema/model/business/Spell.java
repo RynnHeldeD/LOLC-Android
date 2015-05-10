@@ -6,9 +6,17 @@ import android.graphics.Bitmap;
  * Created by romain on 01/05/2015.
  */
 public class Spell {
+    private int id;
     private Bitmap icon;
     private float cooldown;
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public Bitmap getIcon() {
         return icon;
@@ -29,7 +37,8 @@ public class Spell {
     public Spell() {
     }
 
-    public Spell(Bitmap icon, float cooldown) {
+    public Spell(int id, Bitmap icon, float cooldown) {
+        this.id = id;
         this.icon = icon;
         this.cooldown = cooldown;
     }

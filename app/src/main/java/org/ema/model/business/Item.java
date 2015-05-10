@@ -32,4 +32,12 @@ public class Item {
         this.name = name;
         this.icon = icon;
     }
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "name='" + name + '\'' +
+                ", icon=" + icon +
+                '}';
+    }
 }

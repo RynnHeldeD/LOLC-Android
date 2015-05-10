@@ -2,6 +2,8 @@ package org.ema.model.business;
 
 import android.graphics.Bitmap;
 
+import java.util.Arrays;
+
 /**
  * Created by romain on 01/05/2015.
  */
@@ -91,5 +93,19 @@ public class Champion {
         this.statistic = statistic;
         this.isMain = isMain;
         this.build = build;
+    }
+
+    @Override
+    public String toString() {
+        return "Champion{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", spell=" + spell +
+                ", icon=" + icon +
+                ", tips='" + tips + '\'' +
+                ", statistic=" + statistic +
+                ", isMain=" + isMain +
+                ", build=" + Arrays.toString(build) +
+                '}';
     }
 }

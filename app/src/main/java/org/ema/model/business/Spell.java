@@ -42,4 +42,13 @@ public class Spell {
         this.icon = icon;
         this.cooldown = cooldown;
     }
+
+    @Override
+    public String toString() {
+        return "Spell{" +
+                "id=" + id +
+                ", icon=" + icon +
+                ", cooldown=" + cooldown +
+                '}';
+    }
 }

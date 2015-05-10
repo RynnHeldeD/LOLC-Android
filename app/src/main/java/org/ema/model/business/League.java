@@ -42,4 +42,13 @@ public class League {
         this.icon = icon;
         LeaguePoints = leaguePoints;
     }
+
+    @Override
+    public String toString() {
+        return "League{" +
+                "division='" + division + '\'' +
+                ", icon=" + icon +
+                ", LeaguePoints=" + LeaguePoints +
+                '}';
+    }
 }

@@ -1,5 +1,7 @@
 package org.ema.model.business;
 
+import java.util.Arrays;
+
 /**
  * Created by romain on 01/05/2015.
  */
@@ -99,5 +101,20 @@ public class Statistic {
         this.damageTakenPercentage = damageTakenPercentage;
         this.performance = performance;
         this.creepChartInfo = creepChartInfo;
+    }
+
+    @Override
+    public String toString() {
+        return "Statistic{" +
+                "kill=" + kill +
+                ", death=" + death +
+                ", assist=" + assist +
+                ", win=" + win +
+                ", loose=" + loose +
+                ", damageDealtPercentage=" + damageDealtPercentage +
+                ", damageTakenPercentage=" + damageTakenPercentage +
+                ", performance=" + performance +
+                ", creepChartInfo=" + Arrays.toString(creepChartInfo) +
+                '}';
     }
 }

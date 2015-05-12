@@ -27,7 +27,8 @@ public class MainActivity extends ActionBarActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        user = SummonerDAO.getSummoner("6pool");
+
+        user = SummonerDAO.getSummoner("HolyPhoénix");
 
         if(user != null) {
             Log.v("DAO", user.toString());

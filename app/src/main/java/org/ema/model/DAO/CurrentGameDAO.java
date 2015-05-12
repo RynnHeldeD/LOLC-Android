@@ -50,8 +50,8 @@ public class CurrentGameDAO {
 
                 //Set summoner spells
                 Spell[] spells = new Spell[2];
-                spells[0] = new Spell((int) jsonParticipant.get("spell1Id"),null,0);
-                spells[1] = new Spell((int) jsonParticipant.get("spell2Id"),null,0);
+                spells[0] = new Spell((int) jsonParticipant.get("spell1Id"),"",null,null);
+                spells[1] = new Spell((int) jsonParticipant.get("spell2Id"),"",null,null);
                 summoner.setSpells(spells);
                 //TODO: Launch async task to set more info about summoner spells
 
@@ -63,6 +63,26 @@ public class CurrentGameDAO {
                 }
 
                 summonerList.add(summoner);
+            }
+
+            JSONObject jsonSummonerSpells = new JSONObject(Utils.getDocument(Constant.API_SUMMONER_SPELLS));
+            JSONObject jsonChampions = new JSONObject(Utils.getDocument(Constant.API_CHAMPION_URI));
+
+            for(Summoner current : summonerList)
+            {
+                //Set spell1
+                JSONObject jsonSpell1 = (JSONObject)((JSONObject)jsonSummonerSpells.get("data")).get(((Integer)current.getSpells()[0].getId()).toString());
+                current.getSpells()[0].setIconName(((JSONObject) jsonSpell1.get("image")).get("full").toString());
+                float spellCouldown[] = new float[1];
+                spellCouldown[0] = Float.valueOf(jsonSpell1.get("cooldown").toString().replaceAll("\\[", "").replaceAll("\\]",""));
+                current.getSpells()[0].setCooldown(spellCouldown);
+
+                //Set spell2
+                JSONObject jsonSpell2 = (JSONObject)((JSONObject)jsonSummonerSpells.get("data")).get(((Integer)current.getSpells()[1].getId()).toString());
+                current.getSpells()[1].setIconName(((JSONObject) jsonSpell2.get("image")).get("full").toString());
+                float spellCouldown2[] = new float[1];
+                spellCouldown2[0] = Float.valueOf(jsonSpell2.get("cooldown").toString().replaceAll("\\[", "").replaceAll("\\]",""));
+                current.getSpells()[1].setCooldown(spellCouldown2);
             }
 
             return summonerList;

@@ -7,8 +7,17 @@ import android.graphics.Bitmap;
  */
 public class Spell {
     private int id;
+    private String iconName;
     private Bitmap icon;
-    private float cooldown;
+    private float[] cooldowns;
+
+    public String getIconName() {
+        return iconName;
+    }
+
+    public void setIconName(String iconName) {
+        this.iconName = iconName;
+    }
 
     public int getId() {
         return id;
@@ -26,29 +35,31 @@ public class Spell {
         this.icon = icon;
     }
 
-    public float getCooldown() {
-        return cooldown;
+    public float[] getCooldown() {
+        return cooldowns;
     }
 
-    public void setCooldown(float cooldown) {
-        this.cooldown = cooldown;
+    public void setCooldown(float[] cooldown) {
+        this.cooldowns = cooldown;
     }
 
     public Spell() {
     }
 
-    public Spell(int id, Bitmap icon, float cooldown) {
+    public Spell(int id, String iconName, Bitmap icon, float[] cooldown) {
         this.id = id;
+        this.iconName = iconName;
         this.icon = icon;
-        this.cooldown = cooldown;
+        this.cooldowns = cooldown;
     }
 
     @Override
     public String toString() {
         return "Spell{" +
                 "id=" + id +
+                "iconName=" + iconName +
                 ", icon=" + icon +
-                ", cooldown=" + cooldown +
+                ", cooldown=" + cooldowns +
                 '}';
     }
 }

@@ -8,7 +8,7 @@ import android.graphics.Bitmap;
 public class League {
     private String division;
     private Bitmap icon;
-    private int LeaguePoints;
+    private int leaguePoints;
 
     public String getDivision() {
         return division;
@@ -27,11 +27,11 @@ public class League {
     }
 
     public int getLeaguePoints() {
-        return LeaguePoints;
+        return leaguePoints;
     }
 
     public void setLeaguePoints(int leaguePoints) {
-        LeaguePoints = leaguePoints;
+        leaguePoints = leaguePoints;
     }
 
     public League() {
@@ -40,7 +40,7 @@ public class League {
     public League(String division, Bitmap icon, int leaguePoints) {
         this.division = division;
         this.icon = icon;
-        LeaguePoints = leaguePoints;
+        this.leaguePoints = leaguePoints;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class League {
         return "League{" +
                 "division='" + division + '\'' +
                 ", icon=" + icon +
-                ", LeaguePoints=" + LeaguePoints +
+                ", LeaguePoints=" + leaguePoints +
                 '}';
     }
 }

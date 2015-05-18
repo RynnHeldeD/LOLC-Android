@@ -13,9 +13,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.Object;import java.lang.Override;import java.lang.String;import java.lang.Void;import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -104,5 +107,30 @@ public class Utils {
             super.onPostExecute(result);
             //Do anything with response..
         }
+    }
+
+    public static String getDocument(String urlToRead) {
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpResponse response;
+        String responseString = null;
+        try {
+            response = httpclient.execute(new HttpGet(urlToRead));
+            StatusLine statusLine = response.getStatusLine();
+            if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                response.getEntity().writeTo(out);
+                responseString = out.toString();
+                out.close();
+            } else{
+                //Closes the connection.
+                response.getEntity().getContent().close();
+                throw new IOException(statusLine.getReasonPhrase());
+            }
+        } catch (ClientProtocolException e) {
+            //TODO Handle problems..
+        } catch (IOException e) {
+            //TODO Handle problems..
+        }
+        return responseString;
     }
 }

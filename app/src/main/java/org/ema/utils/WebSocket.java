@@ -30,10 +30,10 @@ public class WebSocket {
         mWebSocketClient = new WebSocketClient(uri) {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
-                Log.i("Websocket", "Opened");
+                Log.v("Websocket", "Opened");
                 //mWebSocketClient.send("Hello from " + Build.MANUFACTURER + " " + Build.MODEL);
                 mWebSocketClient.send("{\"action\":\"pickedChampion\",\"gameId\":\"1\",\"teamId\":\"100\",\"championIconId\":\"323\",\"passphrase\":\"\"}");
-                Log.i("Debug","Message send to websocket : {\"action\":\"pickedChampion\",\"gameId\":\"1\",\"teamId\":\"100\",\"championIconId\":\"323\",\"passphrase\":\"\"} ");
+                Log.v("Websocket","Message send to websocket : {\"action\":\"pickedChampion\",\"gameId\":\"1\",\"teamId\":\"100\",\"championIconId\":\"323\",\"passphrase\":\"\"} ");
             }
 
             @Override
@@ -44,13 +44,13 @@ public class WebSocket {
 
             @Override
             public void onClose(int i, String s, boolean b) {
-                Log.i("Websocket", "Closed :" + s);
+                Log.v("Websocket", "Closed :" + s);
                 System.exit(0);
             }
 
             @Override
             public void onError(Exception e) {
-                Log.i("Websocket", "Error :" + e.getMessage());
+                Log.v("Websocket", "Error :" + e.getMessage());
             }
 
         };

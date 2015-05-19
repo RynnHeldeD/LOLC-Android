@@ -25,7 +25,7 @@ public class WsEventHandling {
     }
 
     public void handlingMessage(String message) {
-        Log.i("Message from websocket:", message);
+        Log.v("Websocket:","message from websocket: " + message);
 
         try{
 
@@ -37,11 +37,11 @@ public class WsEventHandling {
             } else {
 
                 String action = obj.getString("action");
-                Log.i("Action requise:", action);
+                Log.v("Websocket","Action requise: " +  action);
 
                 switch (action){
                     case "firstMessage":
-                        updateChannelPlayers(obj.getJSONArray("allies"));
+                     //   updateChannelPlayers(obj.getJSONArray("allies"));
                         break;
                     case "timer":
                         break;
@@ -56,7 +56,7 @@ public class WsEventHandling {
                 }
             }
         } catch (JSONException e) {
-            Log.i("Error:","During message parsing: " +e.getMessage());
+            Log.v("Websocket","Error during message parsing: " +e.getMessage());
         }
     }
 
@@ -67,14 +67,15 @@ public class WsEventHandling {
         TimerTask tasknew = new TimerGetTimeStamp();
         Timer timer = new Timer();
 
-        Log.i("Debug","Timer Starting");
+        Log.v("Websocket","Timer Starting");
         // scheduling the task at interval
         //300000ms = 5 minutes
         timer.schedule(tasknew, 300000);
-        Log.i("Debug","Timer Ending");
+        Log.v("Websocket","Timer Ending");
     }
 
     public void updateChannelPlayers(JSONArray playersInChannel) {
+
         //on recréer la liste des joueurs du channel
         playersInChannel_g = new ArrayList<String>();
 
@@ -84,7 +85,7 @@ public class WsEventHandling {
                 playersInChannel_g.add(i, playersInChannel.getString(i));
             }
         } catch (JSONException e) {
-            Log.i("Error:","During message parsing in updateChannelPlayers: " +e.getMessage());
+            Log.v("Websocket","Error during message parsing in updateChannelPlayers: " +e.getMessage());
         }
 
         //Récupération des images des joueurs
@@ -103,18 +104,18 @@ public class WsEventHandling {
 
     public void getErrorFromJson(JSONObject obj) {
         try {
-            Log.i("Error:","Server return error during action -" + obj.getString("action") + "- message : " + obj.getString("message"));
+            Log.v("Websocket","Error : server return error during action -" + obj.getString("action") + "- message : " + obj.getString("message"));
         } catch (JSONException e) {
-            Log.i("Error:","During message parsing error message: " +e.getMessage());
+            Log.v("Websocket:","Error : During message parsing error message: " +e.getMessage());
         }
     }
 
     private void sendMessage(String msg) {
         ws_g.send(msg);
-        Log.i("Message sent to ws:",msg);
+        Log.v("Websocket","Message send to websocket: " + msg);
     }
 
-    public void firstMessage(Integer gameId, Integer teamId, String championIconName, String channel) {
+    public void pickedChampion(Integer gameId, Integer teamId, String championIconName, String channel) {
         sendMessage("{\"action\":\"pickedChampion\",\"gameId\":\""+ gameId +"\",\"teamId\":\""+ teamId +"\",\"championIconId\":\""+ championIconName +"\",\"passphrase\":\""+ channel +"\"}");
     }
 

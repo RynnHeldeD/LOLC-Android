@@ -12,6 +12,7 @@ import org.ema.utils.CallbackMatcher;
 import org.ema.utils.Utils;
 import org.ema.utils.Constant;
 import org.ema.model.DAO.*;
+import org.ema.utils.WebSocket;
 
 import java.util.ArrayList;
 
@@ -28,12 +29,18 @@ public class MainActivity extends ActionBarActivity {
         StrictMode.setThreadPolicy(policy);
 
 
-        user = SummonerDAO.getSummoner("HolyPhoénix");
+        user = SummonerDAO.getSummoner("matblob");
 
         if(user != null) {
             Log.v("DAO", user.toString());
             loadData();
         }
+
+        WebSocket webSocket = new WebSocket();
+        webSocket.connectWebSocket();
+        WsEventHandling wsEventHandling = new WsEventHandling(webSocket.mWebSocketClient);
+
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);

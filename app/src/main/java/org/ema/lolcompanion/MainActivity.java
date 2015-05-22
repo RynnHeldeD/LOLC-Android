@@ -1,6 +1,7 @@
 package org.ema.lolcompanion;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
@@ -8,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import org.ema.model.business.Summoner;
@@ -23,6 +26,7 @@ public class MainActivity extends Activity {
 
     public Summoner user;
     public ArrayList<Summoner> summonerList;
+    public final static String SUMMONER_NAME = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +65,14 @@ public class MainActivity extends Activity {
         TextView summoner_name = (TextView) findViewById(R.id.summoner_name);
         summoner_name.setTypeface(font);*/
 
+    }
+
+    public void lauchSummonerSearch(View view) {
+        Intent intent = new Intent(this, PendingRoomActivity.class);
+        EditText summoner_name = (EditText) findViewById(R.id.summoner_name);
+        String message = summoner_name.getText().toString();
+        intent.putExtra(SUMMONER_NAME, message);
+        startActivity(intent);
     }
 
     /*

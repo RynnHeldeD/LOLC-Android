@@ -33,10 +33,10 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_gravity="center_horizontal"
-            android:paddingTop="12dp"
+            android:paddingTop="24dp"
             android:text="@string/login"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#FFF"
+            android:textColor="@color/light_font"
             android:textSize="20dp" />
 
 
@@ -56,9 +56,13 @@
             android:layout_height="fill_parent"
             android:text="@string/welcome"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#FFF"
             android:textAlignment="center"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:textColor="@color/light_font"
+            android:shadowColor="#000000"
+            android:shadowDx="3"
+            android:shadowDy="-3"
+            android:shadowRadius="1.5" />
 
 
     </LinearLayout>
@@ -74,7 +78,7 @@
         android:paddingTop="@dimen/activity_horizontal_margin"
         android:paddingLeft="@dimen/activity_vertical_margin"
         android:paddingRight="@dimen/activity_vertical_margin"
-        android:background="#AA000000"
+        android:background="@color/bg_black_transparent"
         android:orientation="vertical"
         tools:context=".MainActivity">
 
@@ -104,7 +108,7 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/cooldown_tip"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#FFF" />
+                android:textColor="@color/light_font" />
 
         </LinearLayout>
 
@@ -134,7 +138,7 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/analysis_tip"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#FFF" />
+                android:textColor="@color/light_font" />
         </LinearLayout>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -163,7 +167,7 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/synchro_tip"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#FFF" />
+                android:textColor="@color/light_font" />
 
         </LinearLayout>
 
@@ -193,7 +197,7 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/security_tip"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#FFF" />
+                android:textColor="@color/light_font" />
         </LinearLayout>
 
 
@@ -232,7 +236,8 @@
             android:text="@string/login_submit"
             android:id="@+id/login_submit"
             android:minWidth="120dp"
-            android:background="#FFFFFF" />
+            android:background="#FFFFFF"
+            android:onClick="lauchSummonerSearch"/>
     </LinearLayout>
 
 

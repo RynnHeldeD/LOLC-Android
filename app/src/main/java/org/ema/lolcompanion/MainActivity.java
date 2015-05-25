@@ -1,5 +1,5 @@
 package org.ema.lolcompanion;
-
+import android.os.*;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -20,6 +20,11 @@ public class MainActivity extends ActionBarActivity {
 
     public Summoner user;
     public ArrayList<Summoner> summonerList;
+    public Thread waitingThread;
+    //public Handler handlerWaitingThread;
+    public int count = 0;
+    public boolean shouldContinue = false;
+    public boolean isFound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,13 +32,26 @@ public class MainActivity extends ActionBarActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        user = SummonerDAO.getSummoner("HolyPhoénix");
+        user = SummonerDAO.getSummoner("Poujie");
 
-        if(user != null) {
+        waitingThread = new Thread(new Runnable() {
+            public void run() {
+                while(shouldContinue) {
+                    Log.v("Thread", "New thread running");
+                    //Waiting 30 seconds before make a new request to the server
+                    SystemClock.sleep(30000);
+                    loadData();
+                }
+                }
+        });
+        if (user != null) {
             Log.v("DAO", user.toString());
-            loadData();
-        }
+            if(!loadData())
+            {
+                waitingThread.start();
+            }
 
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -62,19 +80,29 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void loadData(){
+    public boolean loadData() {
+        count ++;
+        if(count == 10)
+        {
+            Log.v("Error", "Interrupted");
+            waitingThread.interrupt();
+        }
         int id = user.getId();
         boolean isInGame = SummonerDAO.isInGame(id);
         Log.v("DAO", "Is in game: " + isInGame);
 
-        if(isInGame) {
+
+        if (isInGame) {
             summonerList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
-            if(summonerList != null) {
+            if (summonerList != null) {
                 Log.v("DAO", "SummonerList: " + summonerList.toString());
             }
+            shouldContinue = false;
+            return true;
+        } else {
+            Log.v("Error", "User not in game");
+            shouldContinue = true;
         }
-
-
-
+        return false;
     }
 }

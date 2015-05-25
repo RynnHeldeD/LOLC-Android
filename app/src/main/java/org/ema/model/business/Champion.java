@@ -11,11 +11,29 @@ public class Champion {
     private int id;
     private String name;
     private Spell spell;
+    private String iconName;
     private Bitmap icon;
-    private String tips;
+    private String allyTips;
+    private String enemyTips;
     private Statistic statistic;
     private boolean isMain;
     private Item[] build;
+
+    public String getEnemyTips() {
+        return enemyTips;
+    }
+
+    public void setEnemyTips(String enemyTips) {
+        this.enemyTips = enemyTips;
+    }
+
+    public String getIconName() {
+        return iconName;
+    }
+
+    public void setIconName(String iconName) {
+        this.iconName = iconName;
+    }
 
     public int getId() {
         return id;
@@ -49,12 +67,12 @@ public class Champion {
         this.icon = icon;
     }
 
-    public String getTips() {
-        return tips;
+    public String getAllyTips() {
+        return allyTips;
     }
 
-    public void setTips(String tips) {
-        this.tips = tips;
+    public void setAllyTips(String tips) {
+        this.allyTips = tips;
     }
 
     public Statistic getStatistic() {
@@ -84,12 +102,14 @@ public class Champion {
     public Champion() {
     }
 
-    public Champion(int id, String name, Spell spell, Bitmap icon, String tips, Statistic statistic, boolean isMain, Item[] build) {
+    public Champion(int id, String name, Spell spell, String iconName, Bitmap icon, String allyTips, String enemyTips, Statistic statistic, boolean isMain, Item[] build) {
         this.id = id;
         this.name = name;
         this.spell = spell;
+        this.iconName = iconName;
         this.icon = icon;
-        this.tips = tips;
+        this.allyTips = allyTips;
+        this.enemyTips = enemyTips;
         this.statistic = statistic;
         this.isMain = isMain;
         this.build = build;
@@ -101,8 +121,10 @@ public class Champion {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", spell=" + spell +
+                ", iconName='" + iconName + '\'' +
                 ", icon=" + icon +
-                ", tips='" + tips + '\'' +
+                ", allyTips='" + allyTips + '\'' +
+                ", enemyTips='" + enemyTips + '\'' +
                 ", statistic=" + statistic +
                 ", isMain=" + isMain +
                 ", build=" + Arrays.toString(build) +

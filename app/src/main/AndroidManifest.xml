@@ -22,6 +22,10 @@
             android:name=".PendingRoomActivity"
             android:label="@string/title_activity_pending_room" >
         </activity>
+        <activity
+            android:name=".TimerActivity"
+            android:label="@string/title_activity_timer" >
+        </activity>
     </application>
 
 </manifest>

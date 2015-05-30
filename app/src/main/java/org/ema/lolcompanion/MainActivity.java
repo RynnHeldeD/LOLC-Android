@@ -68,7 +68,8 @@ public class MainActivity extends Activity {
     }
 
     public void lauchSummonerSearch(View view) {
-        Intent intent = new Intent(this, PendingRoomActivity.class);
+        //Intent intent = new Intent(this, PendingRoomActivity.class);
+        Intent intent = new Intent(this, TimerActivity.class);
         EditText summoner_name = (EditText) findViewById(R.id.summoner_name);
         String message = summoner_name.getText().toString();
         intent.putExtra(SUMMONER_NAME, message);

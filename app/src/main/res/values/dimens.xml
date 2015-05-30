@@ -9,4 +9,9 @@
     <dimen name="activity_horizontal_high_margin">18dp</dimen>
     <dimen name="activity_vertical_high_margin">18dp</dimen>
 
+    <dimen name="activity_horizontal_vhigh_margin">32dp</dimen>
+    <dimen name="activity_vertical_vhigh_margin">32dp</dimen>
+
+    <dimen name="timers_ulti_margin">48dp</dimen>
+
 </resources>

@@ -7,4 +7,10 @@
     <!-- backgrounds -->
     <color name="bg_black_transparent">#AA000000</color>
 
+    <!-- cadres -->
+    <color name="channel_summary_frames">#FFFFFF</color>
+    <color name="champions_frame_gold">#ffc952</color>
+    <color name="champions_frame">#FFFFFF</color>
+
+
 </resources>

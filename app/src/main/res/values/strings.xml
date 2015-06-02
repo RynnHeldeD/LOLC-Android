@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">LOLCompanion</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="welcome">Welcome in League Of Legends Companion</string>
+    <string name="login">Login</string>
     <string name="action_settings">Settings</string>
+    <string name="cooldown_tip">Share ennemies cooldowns and improve your strategy</string>
+    <string name="analysis_tip">Current season analysis for allies and ennemies </string>
+    <string name="synchro_tip">App synchronised, launch once, play several</string>
+    <string name="security_tip">Sharing channel protected by team password</string>
+    <string name="summoner_name">Summoner name</string>
+    <string name="login_submit">Go</string>
 </resources>

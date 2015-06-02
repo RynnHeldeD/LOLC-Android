@@ -1,11 +1,15 @@
 package org.ema.lolcompanion;
+
 import android.os.*;
+import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import org.ema.model.business.Summoner;
 import org.ema.utils.CallbackMatcher;
@@ -16,7 +20,7 @@ import org.ema.model.DAO.*;
 import java.util.ArrayList;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
 
     public Summoner user;
     public ArrayList<Summoner> summonerList;
@@ -32,7 +36,7 @@ public class MainActivity extends ActionBarActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        user = SummonerDAO.getSummoner("UK Marksman");
+        user = SummonerDAO.getSummoner("spke30");
 
         waitingThread = new Thread(new Runnable() {
             public void run() {
@@ -55,9 +59,30 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        //loading the league of legend equiv fonts
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/lol.ttf");
+        //settings the textViews with the font
+        TextView login = (TextView) findViewById(R.id.login);
+        login.setTypeface(font);
+        TextView welcome = (TextView) findViewById(R.id.welcome);
+        welcome.setTypeface(font);
+        /*TextView cooldown_tip = (TextView) findViewById(R.id.cooldown_tip);
+        cooldown_tip.setTypeface(font);
+        TextView analysis_tip = (TextView) findViewById(R.id.analysis_tip);
+        analysis_tip.setTypeface(font);
+        TextView synchro_tip = (TextView) findViewById(R.id.synchro_tip);
+        synchro_tip.setTypeface(font);
+        TextView security_tip = (TextView) findViewById(R.id.security_tip);
+        security_tip.setTypeface(font);
+        TextView login_submit = (TextView) findViewById(R.id.login_submit);
+        login_submit.setTypeface(font);
+        TextView summoner_name = (TextView) findViewById(R.id.summoner_name);
+        summoner_name.setTypeface(font);*/
+
     }
 
-
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -78,7 +103,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     public boolean loadData() {
         count ++;
@@ -87,6 +112,7 @@ public class MainActivity extends ActionBarActivity {
             Log.v("Error", "Interrupted");
             waitingThread.interrupt();
         }
+
         int id = user.getId();
         boolean isInGame = SummonerDAO.isInGame(id);
         Log.v("DAO", "Is in game: " + isInGame);

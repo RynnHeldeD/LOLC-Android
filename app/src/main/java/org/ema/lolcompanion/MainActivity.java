@@ -1,8 +1,7 @@
 package org.ema.lolcompanion;
 
 import android.app.Activity;
-import android.os.*;
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -60,7 +59,7 @@ public class MainActivity extends Activity {
         MainActivity.settingsManager = new SettingsManager();
         PreferenceManager.getDefaultSharedPreferences(this);
 
-        user = SummonerDAO.getSummoner("spke30");
+        user = SummonerDAO.getSummoner("UK Marksman");
 
         waitingThread = new Thread(new Runnable() {
             public void run() {

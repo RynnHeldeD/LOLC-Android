@@ -102,6 +102,8 @@ public class CurrentGameDAO {
                 current.getChampion().setSpell(ultimate);
             }
 
+            getSummonersRank(summonerList);
+
             return summonerList;
 
         }
@@ -110,27 +112,35 @@ public class CurrentGameDAO {
             return null;
         }
     }
-    public static League getSummonerRank(Summoner user){
+    public static void getSummonersRank(ArrayList<Summoner> summoners){
+
+        String concatIds = "";
+        for(Summoner current : summoners){
+            concatIds += current.getId() + ",";
+        }
+        concatIds = concatIds.substring(0,concatIds.length()-1);
+
         //Get request
         try {
-            JSONObject jsonResult = new JSONObject(Utils.getDocument(Constant.API_LEAGUE_URI + user.getId() + "/entry"));
+            String request = Constant.API_LEAGUE_URI + concatIds + "/entry";
+            JSONObject jsonResult = new JSONObject(Utils.getDocument(Constant.API_LEAGUE_URI + concatIds + "/entry"));
 
-            JSONArray leagueSummonerJSON = jsonResult.getJSONArray(String.valueOf(user.getId()));
-            String tier = leagueSummonerJSON.getJSONObject(0).getString("tier") ;
-            JSONArray entitiesLeagueJSON = leagueSummonerJSON.getJSONObject(0).getJSONArray("entries");
-            int leaguePoints = entitiesLeagueJSON.getJSONObject(0).getInt("leaguePoints");
-            tier += " " + entitiesLeagueJSON.getJSONObject(0).getString("division");
-            user.setWinPercentage(entitiesLeagueJSON.getJSONObject(0).getInt("wins"));
-            user.setLoosePercentage(entitiesLeagueJSON.getJSONObject(0).getInt("losses"));
+            for(Summoner user : summoners) {
+                JSONArray leagueSummonerJSON = jsonResult.getJSONArray(String.valueOf(user.getId()));
+                String tier = leagueSummonerJSON.getJSONObject(0).getString("tier") ;
+                JSONArray entitiesLeagueJSON = leagueSummonerJSON.getJSONObject(0).getJSONArray("entries");
+                int leaguePoints = entitiesLeagueJSON.getJSONObject(0).getInt("leaguePoints");
+                tier += " " + entitiesLeagueJSON.getJSONObject(0).getString("division");
+                user.setWins(entitiesLeagueJSON.getJSONObject(0).getInt("wins"));
+                user.setLooses(entitiesLeagueJSON.getJSONObject(0).getInt("losses"));
 
-            League summonerLeague = new League(tier, null, leaguePoints);
-            //user.setLeague(summonerLeague);
-            Log.v("League Summoner", "test");
-            return null;
+                League summonerLeague = new League(tier, null, leaguePoints);
+                user.setLeague(summonerLeague);
+            }
+            //*/
         }
         catch (Exception e){
             e.printStackTrace();
-            return null;
         }
     }
 }

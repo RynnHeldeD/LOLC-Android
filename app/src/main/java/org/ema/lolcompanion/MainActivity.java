@@ -44,7 +44,7 @@ public class MainActivity extends Activity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        user = SummonerDAO.getSummoner("UK Marksman");
+        user = SummonerDAO.getSummoner("R0PPEL");
 
         waitingThread = new Thread(new Runnable() {
             public void run() {
@@ -140,7 +140,6 @@ public class MainActivity extends Activity {
             if (summonerList != null) {
                 Log.v("DAO", "SummonerList: " + summonerList.toString());
             }
-            CurrentGameDAO.getSummonerRank(user);
             shouldContinue = false;
             return true;
         } else {

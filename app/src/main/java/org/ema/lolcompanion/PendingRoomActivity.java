@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 
@@ -18,6 +19,7 @@ public class PendingRoomActivity extends Activity {
         // Get the summoner_name from the intent
         Intent intent = getIntent();
         setContentView(R.layout.activity_pending_room);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/lol.ttf");
 

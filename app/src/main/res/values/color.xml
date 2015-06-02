@@ -1,0 +1,10 @@
+<resources>
+
+    <!-- fonts -->
+    <color name="light_font">#FBFBFB</color>
+    <color name="grey_font">#ff9e9e9e</color>
+
+    <!-- backgrounds -->
+    <color name="bg_black_transparent">#AA000000</color>
+
+</resources>

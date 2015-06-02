@@ -72,31 +72,26 @@ public class Utils {
 
     public static class SetIconFromUrl extends AsyncTask<Object, Void, Bitmap> {
         private String path = "";
-        private Object obj = null;
 
         @Override
         protected Bitmap doInBackground(Object... params) {
             String objectClass = params[0].getClass().getSimpleName().toString();
-            obj = params[0];
-            Log.v("[DEBUG]", "obj: " + obj.toString());
-            Log.v("[DEBUG]", "param: " + params[0].toString());
-
 
             switch(objectClass){
                 case "Summoner":
-                    path = Constant.DDRAGON_SUMMONER_ICON_URI + ((Summoner)obj).getName();
+                    path = Constant.DDRAGON_SUMMONER_ICON_URI + ((Summoner)params[0]).getName();
                     break;
                 case "Spell":
-                    path = Constant.DDRAGON_SUMMONER_SPELL_ICON_URI + ((Spell)obj).getIconName();
+                    path = Constant.DDRAGON_SUMMONER_SPELL_ICON_URI + ((Spell)params[0]).getIconName();
                     break;
                 case "Champion":
-                    path = Constant.DDRAGON_CHAMPION_ICON_URI + ((Champion)obj).getIconName();
+                    path = Constant.DDRAGON_CHAMPION_ICON_URI + ((Champion)params[0]).getIconName();
                     break;
                 case "Item":
-                    path = Constant.DDRAGON_ITEMS_ICON_URI + ((Item)obj).getName();
+                    path = Constant.DDRAGON_ITEMS_ICON_URI + ((Item)params[0]).getName();
                     break;
                 case "League":
-                    path = Constant.DDRAGON_SCOREBOARD_ICON_URI + ((League)obj).getDivision();
+                    path = Constant.DDRAGON_SCOREBOARD_ICON_URI + ((League)params[0]).getDivision();
                     break;
                 default:
                     break;
@@ -104,12 +99,31 @@ public class Utils {
 
             try {
                 URL url = new URL(path);
-                Log.v("DEBUG", path);
+                Log.v("[DEBUG]", path);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setDoInput(true);
                 connection.connect();
                 InputStream input = connection.getInputStream();
                 Bitmap bitmap = BitmapFactory.decodeStream(input);
+
+                switch(objectClass){
+                    case "Spell":
+                        ((Spell) params[0]).setIcon(bitmap);
+                        break;
+                    case "Champion":
+                        ((Champion) params[0]).setIcon(bitmap);
+                        break;
+                    case "Item":
+                        ((Item) params[0]).setIcon(bitmap);
+                        break;
+                    case "League":
+                        ((League) params[0]).setIcon(bitmap);
+                        break;
+                    case "Summoner":
+                    default:
+                        break;
+                }
+
                 return bitmap;
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -118,14 +132,6 @@ public class Utils {
                 e.printStackTrace();
                 return null;
             }
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            ((Champion)obj).setIcon(result);
-            Log.v("[DEBUG]", ((Champion)obj).getName() + " OK");
-            Log.v("[DEBUG]", "obj:tostring: " + ((Champion)obj).toString());
-            Log.v("[DEBUG]", "obj:geticon: " + ((Champion)obj).getIcon().toString());
         }
     }
 

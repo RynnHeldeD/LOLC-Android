@@ -51,7 +51,7 @@ public class CurrentGameDAO {
                 spells[1] = new Spell((int) jsonParticipant.get("spell2Id"),"",null,null);
                 summoner.setSpells(spells);
 
-                //The summuner is the user of the application
+                //The summoner is the user of the application
                 if(user.getId() == (int) (jsonParticipant.get("summonerId"))){
                     user.setSpells(summoner.getSpells());
                     user.setTeamId(summoner.getTeamId());
@@ -72,6 +72,7 @@ public class CurrentGameDAO {
                 float spellCouldown[] = new float[1];
                 spellCouldown[0] = Float.valueOf(jsonSpell1.get("cooldown").toString().replaceAll("\\[", "").replaceAll("\\]",""));
                 current.getSpells()[0].setCooldown(spellCouldown);
+                new Utils.SetIconFromUrl().execute(current.getSpells()[0]);
 
                 //Set spell2
                 JSONObject jsonSpell2 = (JSONObject)((JSONObject)jsonSummonerSpells.get("data")).get(((Integer)current.getSpells()[1].getId()).toString());
@@ -79,6 +80,7 @@ public class CurrentGameDAO {
                 float spellCouldown2[] = new float[1];
                 spellCouldown2[0] = Float.valueOf(jsonSpell2.get("cooldown").toString().replaceAll("\\[", "").replaceAll("\\]",""));
                 current.getSpells()[1].setCooldown(spellCouldown2);
+                new Utils.SetIconFromUrl().execute(current.getSpells()[1]);
 
                 //set champion
                 JSONObject championJson = (JSONObject)((JSONObject)jsonChampions.get("data")).get(((Integer)current.getChampion().getId()).toString());
@@ -98,6 +100,7 @@ public class CurrentGameDAO {
                 }
                 ultimate.setCooldown(cooldowns);
                 current.getChampion().setSpell(ultimate);
+                new Utils.SetIconFromUrl().execute(ultimate);
             }
 
             return summonerList;

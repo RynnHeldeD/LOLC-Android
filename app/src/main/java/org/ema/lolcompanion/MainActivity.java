@@ -51,11 +51,11 @@ public class MainActivity extends Activity {
         MainActivity.settingsManager = new SettingsManager();
         PreferenceManager.getDefaultSharedPreferences(this);
 
-        user = SummonerDAO.getSummoner("ElNanituS");
+        user = SummonerDAO.getSummoner("Cedinho6");
         summonerList = CurrentGameDAO.getSummonerListInGameFromCurrentUser(user);
         int i = -9999;
         while(i < 9999){
-            SystemClock.sleep(5000);
+            SystemClock.sleep(1000);
             i++;
         }
         waitingThread = new Thread(new Runnable() {

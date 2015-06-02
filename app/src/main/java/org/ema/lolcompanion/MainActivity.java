@@ -1,11 +1,15 @@
 package org.ema.lolcompanion;
 
+import android.app.Activity;
 import android.os.*;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.*;
 import android.os.StrictMode;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +21,7 @@ import android.widget.TextView;
 
 import org.ema.model.business.Summoner;
 import org.ema.utils.CallbackMatcher;
+import org.ema.utils.SettingsManager;
 import org.ema.utils.Utils;
 import org.ema.utils.Constant;
 import org.ema.model.DAO.*;
@@ -25,13 +30,19 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends Activity {
-
+    // Summoner
     public Summoner user;
+    public final static String SUMMONER_NAME = "";
     public ArrayList<Summoner> summonerList;
 
-    public final static String SUMMONER_NAME = "";
+    // Preferences
+    public static SettingsManager settingsManager = null;
+
+    // Threads
     public Thread waitingThread;
     //public Handler handlerWaitingThread;
+
+    // Other variables
     public int count = 0;
     public boolean shouldContinue = false;
     public boolean isFound = false;
@@ -43,7 +54,12 @@ public class MainActivity extends Activity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        user = SummonerDAO.getSummoner("Tschjo");
+
+        // Initialize PreferencesManager
+        MainActivity.settingsManager = new SettingsManager();
+        PreferenceManager.getDefaultSharedPreferences(this);
+
+        user = SummonerDAO.getSummoner("spke30");
 
         waitingThread = new Thread(new Runnable() {
             public void run() {
@@ -66,6 +82,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Setting summoner name if saved in preferences
+        EditText summoner_name = (EditText) findViewById(R.id.summoner_name);
+        summoner_name.setText(MainActivity.settingsManager.get(this, "summonerName"));
 
         //loading the league of legend equiv fonts
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/lol.ttf");
@@ -94,6 +113,7 @@ public class MainActivity extends Activity {
         EditText summoner_name = (EditText) findViewById(R.id.summoner_name);
         String message = summoner_name.getText().toString();
         intent.putExtra(SUMMONER_NAME, message);
+        MainActivity.settingsManager.set(this, "summonerName", message);
         startActivity(intent);
     }
 

@@ -13,11 +13,8 @@ import org.ema.utils.Constant;
 
 import java.util.ArrayList;
 
-/**
- * Created by romain on 10/05/2015.
- */
 public class CurrentGameDAO {
-    public static ArrayList<Summoner> getSummunerListInGameFromCurrentUser(Summoner user) {
+    public static ArrayList<Summoner> getSummonerListInGameFromCurrentUser(Summoner user) {
         //Get request
         String jsonResult = Utils.getDocument(Constant.API_CURRENT_GAME_URI + user.getId());
 
@@ -89,6 +86,7 @@ public class CurrentGameDAO {
                 current.getChampion().setAllyTips(championJson.get("allytips").toString().replaceAll("\\[", "").replaceAll("\\]", ""));
                 current.getChampion().setEnemyTips(championJson.get("enemytips").toString().replaceAll("\\[", "").replaceAll("\\]", ""));
                 current.getChampion().setIconName(((JSONObject) championJson.get("image")).get("full").toString());
+                new Utils.SetIconFromUrl().execute(current.getChampion());
 
                 JSONObject jsonUltimateSpell = (JSONObject)((JSONArray) championJson.get("spells")).get(3);
                 Spell ultimate = new Spell();
@@ -110,6 +108,7 @@ public class CurrentGameDAO {
             return null;
         }
     }
+
     public static League getSummonerRank(Summoner user){
         //Get request
         try {

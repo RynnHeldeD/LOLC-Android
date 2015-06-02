@@ -3,6 +3,7 @@ package org.ema.utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.ImageView;
 
 import org.apache.http.HttpResponse;
@@ -12,6 +13,11 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.ema.model.business.Champion;
+import org.ema.model.business.Item;
+import org.ema.model.business.League;
+import org.ema.model.business.Spell;
+import org.ema.model.business.Summoner;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -19,23 +25,20 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.Object;import java.lang.Override;import java.lang.String;import java.lang.Void;import java.net.HttpURLConnection;
+import java.lang.Object;import java.lang.Override;import java.lang.String;import java.lang.Void;
+import java.lang.reflect.Constructor;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-/**
- * Created by romain on 03/04/2015.
- */
 public class Utils {
 
     //Please insert the url by imageView.setTag(yourUrl)
     //To call this async function:
     //new LoadImageFromUrl().execute(yourImageViewWithUrlInsideTheTag);
     public static class LoadImageFromUrl extends AsyncTask<Object, Void, Bitmap> {
-
         private ImageView imv;
         private String path;
-
 
         @Override
         protected Bitmap doInBackground(Object... params) {
@@ -64,6 +67,65 @@ public class Utils {
             if (result != null && imv != null) {
                 imv.setImageBitmap(result);
             }
+        }
+    }
+
+    public static class SetIconFromUrl extends AsyncTask<Object, Void, Bitmap> {
+        private String path = "";
+        private Object obj = null;
+
+        @Override
+        protected Bitmap doInBackground(Object... params) {
+            String objectClass = params[0].getClass().getSimpleName().toString();
+            obj = params[0];
+            Log.v("[DEBUG]", "obj: " + obj.toString());
+            Log.v("[DEBUG]", "param: " + params[0].toString());
+
+
+            switch(objectClass){
+                case "Summoner":
+                    path = Constant.DDRAGON_SUMMONER_ICON_URI + ((Summoner)obj).getName();
+                    break;
+                case "Spell":
+                    path = Constant.DDRAGON_SUMMONER_SPELL_ICON_URI + ((Spell)obj).getIconName();
+                    break;
+                case "Champion":
+                    path = Constant.DDRAGON_CHAMPION_ICON_URI + ((Champion)obj).getIconName();
+                    break;
+                case "Item":
+                    path = Constant.DDRAGON_ITEMS_ICON_URI + ((Item)obj).getName();
+                    break;
+                case "League":
+                    path = Constant.DDRAGON_SCOREBOARD_ICON_URI + ((League)obj).getDivision();
+                    break;
+                default:
+                    break;
+            }
+
+            try {
+                URL url = new URL(path);
+                Log.v("DEBUG", path);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                Bitmap bitmap = BitmapFactory.decodeStream(input);
+                return bitmap;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            ((Champion)obj).setIcon(result);
+            Log.v("[DEBUG]", ((Champion)obj).getName() + " OK");
+            Log.v("[DEBUG]", "obj:tostring: " + ((Champion)obj).toString());
+            Log.v("[DEBUG]", "obj:geticon: " + ((Champion)obj).getIcon().toString());
         }
     }
 

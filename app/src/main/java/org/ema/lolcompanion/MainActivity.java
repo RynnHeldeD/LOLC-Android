@@ -2,32 +2,24 @@ package org.ema.lolcompanion;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 
 import android.os.*;
 import android.os.StrictMode;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import org.ema.model.business.Summoner;
-import org.ema.utils.CallbackMatcher;
 import org.ema.utils.SettingsManager;
-import org.ema.utils.Utils;
-import org.ema.utils.Constant;
 import org.ema.model.DAO.*;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 
 public class MainActivity extends Activity {
@@ -59,8 +51,13 @@ public class MainActivity extends Activity {
         MainActivity.settingsManager = new SettingsManager();
         PreferenceManager.getDefaultSharedPreferences(this);
 
-        user = SummonerDAO.getSummoner("UK Marksman");
-
+        user = SummonerDAO.getSummoner("ElNanituS");
+        summonerList = CurrentGameDAO.getSummonerListInGameFromCurrentUser(user);
+        int i = -9999;
+        while(i < 9999){
+            SystemClock.sleep(5000);
+            i++;
+        }
         waitingThread = new Thread(new Runnable() {
             public void run() {
                 while(shouldContinue) {
@@ -69,7 +66,7 @@ public class MainActivity extends Activity {
                     SystemClock.sleep(30000);
                     loadData();
                 }
-                }
+            }
         });
         if (user != null) {
             Log.v("DAO", user.toString());
@@ -155,7 +152,7 @@ public class MainActivity extends Activity {
 
 
         if (isInGame) {
-            summonerList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
+            summonerList = CurrentGameDAO.getSummonerListInGameFromCurrentUser(user);
             if (summonerList != null) {
                 Log.v("DAO", "SummonerList: " + summonerList.toString());
             }

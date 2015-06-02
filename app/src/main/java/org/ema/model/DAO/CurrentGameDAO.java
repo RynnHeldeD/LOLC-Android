@@ -186,7 +186,8 @@ public class CurrentGameDAO {
         } catch (Exception e) {
             e.printStackTrace();
             Log.v("Erreur stats", e.getMessage());
-            return null;
+            Statistic statsUser = new Statistic((float)0, (float)0, (float)0, 0, 0, (float) 0, (float) 0, (float) 0, null);
+            return statsUser;
         }
     }
 

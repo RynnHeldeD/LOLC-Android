@@ -2,13 +2,17 @@ package org.ema.lolcompanion;
 
 import android.os.*;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.*;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import org.ema.model.business.Summoner;
@@ -24,11 +28,14 @@ public class MainActivity extends Activity {
 
     public Summoner user;
     public ArrayList<Summoner> summonerList;
+
+    public final static String SUMMONER_NAME = "";
     public Thread waitingThread;
     //public Handler handlerWaitingThread;
     public int count = 0;
     public boolean shouldContinue = false;
     public boolean isFound = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +43,7 @@ public class MainActivity extends Activity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        user = SummonerDAO.getSummoner("spke30");
+        user = SummonerDAO.getSummoner("Tschjo");
 
         waitingThread = new Thread(new Runnable() {
             public void run() {
@@ -82,6 +89,14 @@ public class MainActivity extends Activity {
 
     }
 
+    public void lauchSummonerSearch(View view) {
+        Intent intent = new Intent(this, PendingRoomActivity.class);
+        EditText summoner_name = (EditText) findViewById(R.id.summoner_name);
+        String message = summoner_name.getText().toString();
+        intent.putExtra(SUMMONER_NAME, message);
+        startActivity(intent);
+    }
+
     /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -117,13 +132,11 @@ public class MainActivity extends Activity {
         boolean isInGame = SummonerDAO.isInGame(id);
         Log.v("DAO", "Is in game: " + isInGame);
 
-
         if (isInGame) {
             summonerList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
             if (summonerList != null) {
                 Log.v("DAO", "SummonerList: " + summonerList.toString());
             }
-            CurrentGameDAO.getSummonerRank(user);
             shouldContinue = false;
             return true;
         } else {

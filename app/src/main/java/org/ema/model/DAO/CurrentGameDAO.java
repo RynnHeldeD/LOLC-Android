@@ -4,6 +4,7 @@ import android.util.Log;
 import org.ema.model.business.Champion;
 import org.ema.model.business.League;
 import org.ema.model.business.Spell;
+import org.ema.model.business.Statistic;
 import org.ema.model.business.Summoner;
 import org.ema.utils.CallbackMatcher;
 import org.ema.utils.Utils;
@@ -104,6 +105,10 @@ public class CurrentGameDAO {
 
             getSummonersRank(summonerList);
 
+            for(Summoner current : summonerList) {
+                calculUserPerformance(current);
+            }
+
             return summonerList;
 
         }
@@ -142,5 +147,36 @@ public class CurrentGameDAO {
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    //Allow to calcul the user performance.
+    //Based on 4 elements.
+    public static void calculUserPerformance(Summoner summoner){
+        float winRateWithChampion = (float)summoner.getChampion().getStatistic().getWin()/((float)summoner.getChampion().getStatistic().getWin()+(float)summoner.getChampion().getStatistic().getLoose());
+        float nbGamesWithChampion = Math.min(summoner.getChampion().getStatistic().getWin()+summoner.getChampion().getStatistic().getLoose()/50,1);
+        float rank;
+
+        switch (summoner.getLeague().getDivision().split(" ")[0].toString()) {
+            case "BRONZE": rank = new Float(0.1);
+                break;
+            case "SILVER": rank = new Float(0.2);
+                break;
+            case "GOLD": rank = new Float(0.4);
+                break;
+            case "PLATINUM": rank = new Float(0.7);
+                break;
+            case "DIAMOND": rank = new Float(0.8);
+                break;
+            case "MASTER": rank = new Float(0.9);
+                break;
+            case "CHALLENGER": rank = new Float(1);
+                break;
+            default: rank = new Float(0);
+                break;
+        }
+
+        //Coefficient values / 10
+        //Set a ratio between 0 and 1
+        summoner.getChampion().getStatistic().setPerformance((winRateWithChampion*(float)2.5+nbGamesWithChampion*(float)2.5+5*rank)/10);
     }
 }

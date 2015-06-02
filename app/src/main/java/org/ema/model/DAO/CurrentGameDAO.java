@@ -106,6 +106,7 @@ public class CurrentGameDAO {
             getSummonersRank(summonerList);
 
             for(Summoner current : summonerList) {
+                current.getChampion().setStatistic(getSummonerHistoryStatistic(current));
                 calculUserPerformance(current);
             }
 
@@ -160,7 +161,7 @@ public class CurrentGameDAO {
             jsonResult = new JSONObject(Utils.getDocument(Constant.API_MATCH_HISTORY_URI +
                     user.getId() +
                     "?championIds=" +
-                    103 +
+                    user.getChampion().getId() +
                     "&rankedQueus=RANKED_SOLO_5x5&beginIndex=" + 0 + "&endIndex=" + 10));
             JSONArray jsonMatches = jsonResult.getJSONArray("matches");
             JSONArray jsonParticipants;

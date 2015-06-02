@@ -4,6 +4,7 @@ import android.util.Log;
 import org.ema.model.business.Champion;
 import org.ema.model.business.League;
 import org.ema.model.business.Spell;
+import org.ema.model.business.Statistic;
 import org.ema.model.business.Summoner;
 import org.ema.utils.CallbackMatcher;
 import org.ema.utils.Utils;
@@ -132,5 +133,50 @@ public class CurrentGameDAO {
             e.printStackTrace();
             return null;
         }
+    }
+    public static Statistic getSummonerHistoryStatistic(Summoner user){
+        float kill = 0;
+        float death = 0;
+        float assist = 0;
+        int win = 0;
+        int loose = 0;
+        JSONObject jsonResult;
+        try {
+            jsonResult = new JSONObject(Utils.getDocument(Constant.API_MATCH_HISTORY_URI +
+                    user.getId() +
+                    "?championIds=" +
+                    103 +
+                    "&rankedQueus=RANKED_SOLO_5x5&beginIndex=" + 0 + "&endIndex=" + 10));
+            JSONArray jsonMatches = jsonResult.getJSONArray("matches");
+            JSONArray jsonParticipants;
+            for(int i=0;i<jsonMatches.length();i++)
+            {
+                jsonParticipants = jsonMatches.getJSONObject(i).getJSONArray("participants");
+                kill += jsonParticipants.getJSONObject(0).getJSONObject("stats").getInt("kills");
+                death += jsonParticipants.getJSONObject(0).getJSONObject("stats").getInt("deaths");
+                assist += jsonParticipants.getJSONObject(0).getJSONObject("stats").getInt("assists");
+
+                if(jsonParticipants.getJSONObject(0).getJSONObject("stats").getBoolean("winner"))
+                {
+                    win ++;
+                }
+                else
+                {
+                    loose ++;
+                }
+            }
+            int numberOfGames = win + loose;
+            kill /= numberOfGames;
+            death /= numberOfGames;
+            assist /= numberOfGames;
+            Statistic statsUser = new Statistic(kill, death,assist,win,loose,(float)0,(float)0,(float)0,null);
+            return statsUser;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            Log.v("Erreur stats", e.getMessage());
+            return null;
+        }
+
     }
 }

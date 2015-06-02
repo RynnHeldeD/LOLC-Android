@@ -44,7 +44,7 @@ public class MainActivity extends Activity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        user = SummonerDAO.getSummoner("UK Marksman");
+        user = SummonerDAO.getSummoner("Macof");
 
         waitingThread = new Thread(new Runnable() {
             public void run() {
@@ -134,6 +134,7 @@ public class MainActivity extends Activity {
         boolean isInGame = SummonerDAO.isInGame(id);
         Log.v("DAO", "Is in game: " + isInGame);
 
+        CurrentGameDAO.getSummonerHistoryStatistic(user);
 
         if (isInGame) {
             summonerList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);

@@ -103,6 +103,12 @@ public class CurrentGameDAO {
                 current.getChampion().setSpell(ultimate);
             }
 
+            getSummonersRank(summonerList);
+
+            for(Summoner current : summonerList) {
+                calculUserPerformance(current);
+            }
+
             return summonerList;
 
         }
@@ -111,30 +117,39 @@ public class CurrentGameDAO {
             return null;
         }
     }
-    public static League getSummonerRank(Summoner user){
+    public static void getSummonersRank(ArrayList<Summoner> summoners){
+
+        String concatIds = "";
+        for(Summoner current : summoners){
+            concatIds += current.getId() + ",";
+        }
+        concatIds = concatIds.substring(0,concatIds.length()-1);
+
         //Get request
         try {
-            JSONObject jsonResult = new JSONObject(Utils.getDocument(Constant.API_LEAGUE_URI + user.getId() + "/entry"));
+            String request = Constant.API_LEAGUE_URI + concatIds + "/entry";
+            JSONObject jsonResult = new JSONObject(Utils.getDocument(Constant.API_LEAGUE_URI + concatIds + "/entry"));
 
-            JSONArray leagueSummonerJSON = jsonResult.getJSONArray(String.valueOf(user.getId()));
-            String tier = leagueSummonerJSON.getJSONObject(0).getString("tier") ;
-            JSONArray entitiesLeagueJSON = leagueSummonerJSON.getJSONObject(0).getJSONArray("entries");
-            int leaguePoints = entitiesLeagueJSON.getJSONObject(0).getInt("leaguePoints");
-            tier += " " + entitiesLeagueJSON.getJSONObject(0).getString("division");
-            user.setWinPercentage(entitiesLeagueJSON.getJSONObject(0).getInt("wins"));
-            user.setLoosePercentage(entitiesLeagueJSON.getJSONObject(0).getInt("losses"));
+            for(Summoner user : summoners) {
+                JSONArray leagueSummonerJSON = jsonResult.getJSONArray(String.valueOf(user.getId()));
+                String tier = leagueSummonerJSON.getJSONObject(0).getString("tier") ;
+                JSONArray entitiesLeagueJSON = leagueSummonerJSON.getJSONObject(0).getJSONArray("entries");
+                int leaguePoints = entitiesLeagueJSON.getJSONObject(0).getInt("leaguePoints");
+                tier += " " + entitiesLeagueJSON.getJSONObject(0).getString("division");
+                user.setWins(entitiesLeagueJSON.getJSONObject(0).getInt("wins"));
+                user.setLooses(entitiesLeagueJSON.getJSONObject(0).getInt("losses"));
 
-            League summonerLeague = new League(tier, null, leaguePoints);
-            //user.setLeague(summonerLeague);
-            Log.v("League Summoner", "test");
-            return null;
+                League summonerLeague = new League(tier, null, leaguePoints);
+                user.setLeague(summonerLeague);
+            }
+            //*/
         }
         catch (Exception e){
             e.printStackTrace();
-            return null;
         }
     }
-    public static Statistic getSummonerHistoryStatistic(Summoner user){
+
+    public static Statistic getSummonerHistoryStatistic(Summoner user) {
         float kill = 0;
         float death = 0;
         float assist = 0;
@@ -149,34 +164,59 @@ public class CurrentGameDAO {
                     "&rankedQueus=RANKED_SOLO_5x5&beginIndex=" + 0 + "&endIndex=" + 10));
             JSONArray jsonMatches = jsonResult.getJSONArray("matches");
             JSONArray jsonParticipants;
-            for(int i=0;i<jsonMatches.length();i++)
-            {
+            for (int i = 0; i < jsonMatches.length(); i++) {
                 jsonParticipants = jsonMatches.getJSONObject(i).getJSONArray("participants");
                 kill += jsonParticipants.getJSONObject(0).getJSONObject("stats").getInt("kills");
                 death += jsonParticipants.getJSONObject(0).getJSONObject("stats").getInt("deaths");
                 assist += jsonParticipants.getJSONObject(0).getJSONObject("stats").getInt("assists");
 
-                if(jsonParticipants.getJSONObject(0).getJSONObject("stats").getBoolean("winner"))
-                {
-                    win ++;
-                }
-                else
-                {
-                    loose ++;
+                if (jsonParticipants.getJSONObject(0).getJSONObject("stats").getBoolean("winner")) {
+                    win++;
+                } else {
+                    loose++;
                 }
             }
             int numberOfGames = win + loose;
             kill /= numberOfGames;
             death /= numberOfGames;
             assist /= numberOfGames;
-            Statistic statsUser = new Statistic(kill, death,assist,win,loose,(float)0,(float)0,(float)0,null);
+            Statistic statsUser = new Statistic(kill, death, assist, win, loose, (float) 0, (float) 0, (float) 0, null);
             return statsUser;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             Log.v("Erreur stats", e.getMessage());
             return null;
         }
+    }
 
+    //Allow to calcul the user performance.
+    //Based on 4 elements.
+    public static void calculUserPerformance(Summoner summoner){
+        float winRateWithChampion = (float)summoner.getChampion().getStatistic().getWin()/((float)summoner.getChampion().getStatistic().getWin()+(float)summoner.getChampion().getStatistic().getLoose());
+        float nbGamesWithChampion = Math.min(summoner.getChampion().getStatistic().getWin()+summoner.getChampion().getStatistic().getLoose()/50,1);
+        float rank;
+
+        switch (summoner.getLeague().getDivision().split(" ")[0].toString()) {
+            case "BRONZE": rank = new Float(0.1);
+                break;
+            case "SILVER": rank = new Float(0.2);
+                break;
+            case "GOLD": rank = new Float(0.4);
+                break;
+            case "PLATINUM": rank = new Float(0.7);
+                break;
+            case "DIAMOND": rank = new Float(0.8);
+                break;
+            case "MASTER": rank = new Float(0.9);
+                break;
+            case "CHALLENGER": rank = new Float(1);
+                break;
+            default: rank = new Float(0);
+                break;
+        }
+
+        //Coefficient values / 10
+        //Set a ratio between 0 and 1
+        summoner.getChampion().getStatistic().setPerformance((winRateWithChampion*(float)2.5+nbGamesWithChampion*(float)2.5+5*rank)/10);
     }
 }

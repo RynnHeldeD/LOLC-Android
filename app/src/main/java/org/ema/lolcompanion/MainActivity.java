@@ -46,6 +46,7 @@ public class MainActivity extends Activity {
 
         user = SummonerDAO.getSummoner("Macof");
 
+
         waitingThread = new Thread(new Runnable() {
             public void run() {
                 while(shouldContinue) {
@@ -141,7 +142,6 @@ public class MainActivity extends Activity {
             if (summonerList != null) {
                 Log.v("DAO", "SummonerList: " + summonerList.toString());
             }
-            CurrentGameDAO.getSummonerRank(user);
             shouldContinue = false;
             return true;
         } else {

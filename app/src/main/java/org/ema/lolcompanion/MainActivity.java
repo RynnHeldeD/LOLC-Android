@@ -54,7 +54,7 @@ public class MainActivity extends Activity {
         //Enable async code on main
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
+        
         // Initialize PreferencesManager
         MainActivity.settingsManager = new SettingsManager();
         PreferenceManager.getDefaultSharedPreferences(this);
@@ -153,13 +153,11 @@ public class MainActivity extends Activity {
         boolean isInGame = SummonerDAO.isInGame(id);
         Log.v("DAO", "Is in game: " + isInGame);
 
-
         if (isInGame) {
             summonerList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
             if (summonerList != null) {
                 Log.v("DAO", "SummonerList: " + summonerList.toString());
             }
-            CurrentGameDAO.getSummonerRank(user);
             shouldContinue = false;
             return true;
         } else {

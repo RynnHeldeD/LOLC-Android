@@ -21,4 +21,13 @@
     <string name="title_activity_timer">TimerActivity</string>
     <string name="timers">Timers</string>
 
+    <!-- Allies screen -->
+    <string name="title_activity_allies">AlliesActivity</string>
+    <string name="allies">Allies</string>
+    <string name="hello_world">Hello world!</string>
+
+    <!-- Ennemies screen -->
+    <string name="title_activity_ennemies">EnnemiesActivity</string>
+    <string name="ennemies">Opponents</string>
+
 </resources>

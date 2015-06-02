@@ -130,7 +130,7 @@
             android:src="@drawable/title_tab" />
 
         <TextView
-            android:id="@+id/pending"
+            android:id="@+id/timers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"

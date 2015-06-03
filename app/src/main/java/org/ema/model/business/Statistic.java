@@ -123,20 +123,15 @@ public class Statistic implements Parcelable {
 
     // Parcelling part
     public Statistic(Parcel in){
-        this.id = in.readInt();
-        this.iconName = in.readString();
-        this.icon = (Bitmap) in.readValue(Bitmap.class.getClassLoader());
-        this.cooldowns = in.createFloatArray();
-
-        this.kill = kill;
-        this.death = death;
-        this.assist = assist;
-        this.win = win;
-        this.loose = loose;
-        this.damageDealtPercentage = damageDealtPercentage;
-        this.damageTakenPercentage = damageTakenPercentage;
-        this.performance = performance;
-        this.creepChartInfo = creepChartInfo;
+        this.kill = in.readFloat();
+        this.death = in.readFloat();
+        this.assist = in.readFloat();
+        this.win = in.readInt();
+        this.loose = in.readInt();
+        this.damageDealtPercentage = in.readFloat();
+        this.damageTakenPercentage = in.readFloat();
+        this.performance = in.readFloat();
+        this.creepChartInfo = in.createIntArray();
     }
 
     public int describeContents(){
@@ -145,10 +140,15 @@ public class Statistic implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.id);
-        dest.writeString(this.iconName);
-        dest.writeValue(this.icon);
-        dest.writeFloatArray(this.cooldowns);
+        dest.writeFloat(this.kill);
+        dest.writeFloat(this.death);
+        dest.writeFloat(this.assist);
+        dest.writeInt(this.win);
+        dest.writeInt(this.loose);
+        dest.writeFloat(this.damageDealtPercentage);
+        dest.writeFloat(this.damageTakenPercentage);
+        dest.writeFloat(this.performance);
+        dest.writeIntArray(this.creepChartInfo);
     }
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public Statistic createFromParcel(Parcel in) {

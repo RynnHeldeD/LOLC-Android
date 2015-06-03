@@ -9,7 +9,7 @@ import java.util.Arrays;
 /**
  * Created by romain on 01/05/2015.
  */
-public class Summoner extends Parcelable {
+public class Summoner implements Parcelable {
     private int id;
     private String name;
     private Spell[] spells;
@@ -139,7 +139,7 @@ public class Summoner extends Parcelable {
         this.id = in.readInt();
         this.name = in.readString();
         this.level = in.readInt();
-        this.spells = (Spell[]) in.createTypedArray(Spell.CREATOR);;
+        this.spells = (Spell[]) in.createTypedArray(Spell.CREATOR);
         this.champion = (Champion) in.readParcelable(Champion.class.getClassLoader());
         this.league = (League) in.readParcelable(League.class.getClassLoader());
         this.teamId = in.readInt();

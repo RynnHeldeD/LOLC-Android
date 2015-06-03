@@ -154,14 +154,14 @@ public class Champion implements ISettableIcon, Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.id);
         dest.writeString(this.name);
-        dest.writeParcelable(this.spell,flags);
+        dest.writeParcelable(this.spell, flags);
         dest.writeString(this.iconName);
         dest.writeValue(this.icon);
         dest.writeString(this.allyTips);
         dest.writeString(this.enemyTips);
-        dest.writeParcelable(this.statistic,flags);
-        dest.writeByte((byte) this.isMain ? 1 : 0);
-        dest.writeParcelableArray(this.build,flags);
+        dest.writeParcelable(this.statistic, flags);
+        dest.writeByte((byte) (this.isMain ? 1 : 0));
+        dest.writeParcelableArray(this.build, flags);
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {

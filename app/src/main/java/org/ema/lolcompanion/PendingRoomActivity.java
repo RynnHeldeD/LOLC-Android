@@ -78,7 +78,7 @@ public class PendingRoomActivity extends Activity {
 
     public void launchTimerActivity() {
         Intent intent = new Intent(this, TimerActivity.class);
-        intent.putExtra("summonerList", summonerList);
+        //TODO : envoyer la summonerList a la TimerActivity
 
         //TODO : mettre le channel enregistre dans la case channel
         // MainActivity.settingsManager.set(this, "summonerName", message);

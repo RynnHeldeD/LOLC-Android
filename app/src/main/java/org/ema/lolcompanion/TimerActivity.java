@@ -33,8 +33,8 @@ public class TimerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
 
-        Intent intent = getIntent();
-        ArrayList<Summoner> summonerList = intent.getExtras().getParcelableArrayList("summonerList");
+        //TODO recuperer la liste des summoner
+        //ArrayList<Summoner> summonerList =
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }

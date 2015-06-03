@@ -29,12 +29,12 @@ import org.ema.utils.Constant;
 import org.ema.model.DAO.*;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 public class MainActivity extends Activity {
-
     public final static String SUMMONER_NAME = "";
 
     // Preferences
@@ -46,7 +46,7 @@ public class MainActivity extends Activity {
         //Enable async code on main
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        
+
         // Initialize PreferencesManager
         MainActivity.settingsManager = new SettingsManager();
         PreferenceManager.getDefaultSharedPreferences(this);

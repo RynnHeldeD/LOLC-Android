@@ -1,10 +1,7 @@
 package org.ema.utils;
 
-/**
- * Created by romain on 01/05/2015.
- */
 public class Constant {
-    public static String DDRAGON_SUMMUNER_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/profileicon/";
+    public static String DDRAGON_SUMMONER_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/profileicon/";
     public static String DDRAGON_CHAMPION_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/champion/";
     public static String DDRAGON_CHAMPION_SPELL_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/spell/";
     public static String DDRAGON_SUMMONER_SPELL_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/spell/";

@@ -14,9 +14,6 @@ import org.ema.utils.Constant;
 
 import java.util.ArrayList;
 
-/**
- * Created by romain on 10/05/2015.
- */
 public class CurrentGameDAO {
     public static ArrayList<Summoner> getSummunerListInGameFromCurrentUser(Summoner user) {
         //Get request
@@ -55,7 +52,7 @@ public class CurrentGameDAO {
                 spells[1] = new Spell((int) jsonParticipant.get("spell2Id"),"",null,null);
                 summoner.setSpells(spells);
 
-                //The summuner is the user of the application
+                //The summoner is the user of the application
                 if(user.getId() == (int) (jsonParticipant.get("summonerId"))){
                     user.setSpells(summoner.getSpells());
                     user.setTeamId(summoner.getTeamId());
@@ -76,6 +73,7 @@ public class CurrentGameDAO {
                 float spellCouldown[] = new float[1];
                 spellCouldown[0] = Float.valueOf(jsonSpell1.get("cooldown").toString().replaceAll("\\[", "").replaceAll("\\]",""));
                 current.getSpells()[0].setCooldown(spellCouldown);
+                new Utils.SetObjectIcon().execute(current.getSpells()[0]);
 
                 //Set spell2
                 JSONObject jsonSpell2 = (JSONObject)((JSONObject)jsonSummonerSpells.get("data")).get(((Integer)current.getSpells()[1].getId()).toString());
@@ -83,6 +81,7 @@ public class CurrentGameDAO {
                 float spellCouldown2[] = new float[1];
                 spellCouldown2[0] = Float.valueOf(jsonSpell2.get("cooldown").toString().replaceAll("\\[", "").replaceAll("\\]",""));
                 current.getSpells()[1].setCooldown(spellCouldown2);
+                new Utils.SetObjectIcon().execute(current.getSpells()[1]);
 
                 //set champion
                 JSONObject championJson = (JSONObject)((JSONObject)jsonChampions.get("data")).get(((Integer)current.getChampion().getId()).toString());
@@ -90,6 +89,7 @@ public class CurrentGameDAO {
                 current.getChampion().setAllyTips(championJson.get("allytips").toString().replaceAll("\\[", "").replaceAll("\\]", ""));
                 current.getChampion().setEnemyTips(championJson.get("enemytips").toString().replaceAll("\\[", "").replaceAll("\\]", ""));
                 current.getChampion().setIconName(((JSONObject) championJson.get("image")).get("full").toString());
+                new Utils.SetObjectIcon().execute(current.getChampion());
 
                 JSONObject jsonUltimateSpell = (JSONObject)((JSONArray) championJson.get("spells")).get(3);
                 Spell ultimate = new Spell();
@@ -101,9 +101,9 @@ public class CurrentGameDAO {
                 }
                 ultimate.setCooldown(cooldowns);
                 current.getChampion().setSpell(ultimate);
-            }
-
-            getSummonersRank(summonerList);
+                new Utils.SetObjectIcon().execute(ultimate);            
+	}
+	getSummonersRank(summonerList);
 
             for(Summoner current : summonerList) {
                 current.getChampion().setStatistic(getSummonerHistoryStatistic(current));
@@ -118,15 +118,17 @@ public class CurrentGameDAO {
             return null;
         }
     }
-    public static void getSummonersRank(ArrayList<Summoner> summoners){
 
-        String concatIds = "";
+    public static League getSummonerRank(Summoner user){
+	
+	String concatIds = "";
         for(Summoner current : summoners){
             concatIds += current.getId() + ",";
         }
         concatIds = concatIds.substring(0,concatIds.length()-1);
+        
+	//Get request
 
-        //Get request
         try {
             String request = Constant.API_LEAGUE_URI + concatIds + "/entry";
             JSONObject jsonResult = new JSONObject(Utils.getDocument(Constant.API_LEAGUE_URI + concatIds + "/entry"));

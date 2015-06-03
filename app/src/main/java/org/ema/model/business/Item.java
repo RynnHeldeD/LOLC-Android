@@ -2,9 +2,6 @@ package org.ema.model.business;
 
 import android.graphics.Bitmap;
 
-/**
- * Created by romain on 01/05/2015.
- */
 public class Item {
     private String name;
     private Bitmap icon;

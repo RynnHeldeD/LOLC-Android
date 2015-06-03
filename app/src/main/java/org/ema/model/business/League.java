@@ -1,8 +1,10 @@
 package org.ema.model.business;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class League {
+public class League implements  Parcelable {
     private String division;
     private Bitmap icon;
     private int leaguePoints;
@@ -48,4 +50,32 @@ public class League {
                 ", LeaguePoints=" + leaguePoints +
                 '}';
     }
+
+    // Parcelling part
+    public League(Parcel in){
+        this.division = in.readString();
+        this.icon = (Bitmap) in.readValue(Bitmap.class.getClassLoader());
+        this.leaguePoints = in.readInt();
+    }
+
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.division);
+        dest.writeValue(this.icon);
+        dest.writeInt(this.leaguePoints);
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public League createFromParcel(Parcel in) {
+            return new League(in);
+        }
+
+        public League[] newArray(int size) {
+            return new League[size];
+        }
+    };
 }

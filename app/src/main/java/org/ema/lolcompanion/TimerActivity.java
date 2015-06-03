@@ -1,6 +1,7 @@
 package org.ema.lolcompanion;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Shader;
@@ -17,9 +18,11 @@ import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 
+import org.ema.model.business.Summoner;
 import org.ema.utils.Timer;
 import org.ema.utils.TimerButton;
 
+import java.util.ArrayList;
 import java.util.TimerTask;
 
 
@@ -29,6 +32,10 @@ public class TimerActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
+
+        Intent intent = getIntent();
+        ArrayList<Summoner> summonerList = intent.getExtras().getParcelableArrayList("summonerList");
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 

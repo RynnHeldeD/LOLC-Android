@@ -78,6 +78,8 @@ public class PendingRoomActivity extends Activity {
 
     public void launchTimerActivity() {
         Intent intent = new Intent(this, TimerActivity.class);
+        intent.putExtra("summonerList", summonerList);
+
         //TODO : mettre le channel enregistre dans la case channel
         // MainActivity.settingsManager.set(this, "summonerName", message);
         startActivity(intent);
@@ -108,6 +110,8 @@ public class PendingRoomActivity extends Activity {
             summonerList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
             if (summonerList != null) {
                 Log.v("DAO", "SummonerList: " + summonerList.toString());
+            } else {
+                Log.v("DAO", "FATAL : SummonerList is NULL. Summoner :" + summonerNameFromPreviousView);
             }
             shouldContinue = false;
             return true;
@@ -118,4 +122,11 @@ public class PendingRoomActivity extends Activity {
         return false;
     }
 
+    public ArrayList<Summoner> getSummonerList() {
+        return summonerList;
+    }
+
+    public void setSummonerList(ArrayList<Summoner> summonerList) {
+        this.summonerList = summonerList;
+    }
 }

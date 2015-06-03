@@ -1,11 +1,14 @@
 package org.ema.model.business;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Arrays;
 
 /**
  * Created by romain on 01/05/2015.
  */
-public class Statistic {
+public class Statistic implements Parcelable {
     private float kill;
     private float death;
     private float assist;
@@ -117,4 +120,43 @@ public class Statistic {
                 ", creepChartInfo=" + Arrays.toString(creepChartInfo) +
                 '}';
     }
+
+    // Parcelling part
+    public Statistic(Parcel in){
+        this.id = in.readInt();
+        this.iconName = in.readString();
+        this.icon = (Bitmap) in.readValue(Bitmap.class.getClassLoader());
+        this.cooldowns = in.createFloatArray();
+
+        this.kill = kill;
+        this.death = death;
+        this.assist = assist;
+        this.win = win;
+        this.loose = loose;
+        this.damageDealtPercentage = damageDealtPercentage;
+        this.damageTakenPercentage = damageTakenPercentage;
+        this.performance = performance;
+        this.creepChartInfo = creepChartInfo;
+    }
+
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.iconName);
+        dest.writeValue(this.icon);
+        dest.writeFloatArray(this.cooldowns);
+    }
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Statistic createFromParcel(Parcel in) {
+            return new Statistic(in);
+        }
+
+        public Statistic[] newArray(int size) {
+            return new Statistic[size];
+        }
+    };
 }

@@ -1,11 +1,15 @@
 package org.ema.model.business;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
  * Created by romain on 01/05/2015.
  */
-public class Summoner {
+public class Summoner extends Parcelable {
     private int id;
     private String name;
     private Spell[] spells;
@@ -128,4 +132,47 @@ public class Summoner {
                 ", looses=" + looses +
                 '}';
     }
+
+    // Parcelling part
+    public Summoner(Parcel in){
+
+        this.id = in.readInt();
+        this.name = in.readString();
+        this.level = in.readInt();
+        this.spells = (Spell[]) in.createTypedArray(Spell.CREATOR);;
+        this.champion = (Champion) in.readParcelable(Champion.class.getClassLoader());
+        this.league = (League) in.readParcelable(League.class.getClassLoader());
+        this.teamId = in.readInt();
+        this.premade = in.readInt();
+        this.wins = in.readFloat();
+        this.looses = in.readFloat();
+    }
+
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.name);
+        dest.writeInt(this.level);
+        dest.writeParcelableArray(this.spells, flags);
+        dest.writeParcelable(this.champion, flags);
+        dest.writeParcelable(this.league, flags);
+        dest.writeInt(this.teamId);
+        dest.writeInt(this.premade);
+        dest.writeFloat(this.wins);
+        dest.writeFloat(this.looses);
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Summoner createFromParcel(Parcel in) {
+            return new Summoner(in);
+        }
+
+        public Summoner[] newArray(int size) {
+            return new Summoner[size];
+        }
+    };
 }

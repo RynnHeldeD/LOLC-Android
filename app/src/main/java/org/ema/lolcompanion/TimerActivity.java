@@ -28,15 +28,19 @@ import org.ema.utils.TimerButton;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TimerTask;
 
 
 public class TimerActivity extends Activity {
 
+    public HashMap<String,Long> timerMap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        timerMap = new HashMap<String,Long>();
         setContentView(R.layout.activity_timer);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -64,6 +68,9 @@ public class TimerActivity extends Activity {
 
         // Changement des bitmap
         this.setTimerButtonsImage(teamSummonersList);
+
+        //Chargement des timers
+        this.buildTimerTable(teamSummonersList);
     }
 
     //This functions adds dynamically a player icon in the channel summary so user can know who is connected
@@ -107,7 +114,7 @@ public class TimerActivity extends Activity {
         if(tbtn.getTimer() != null && !tbtn.getTimer().isTicking()){
             //To-DO : send the signal to websocket with timestamps and button id
             //TO-do : retrieve the good time in the LOL champion array
-            long timeToCount = 120000; // a modifier par le bon temps
+            long timeToCount = timerMap.get(IDButton);
             tbtn.setTimer(new Timer(timeToCount,1000,tbtn.getTimer().getTimerTextView()));
             tbtn.getTimer().start();
             tbtn.getTimer().setVisible(true);
@@ -169,6 +176,30 @@ public class TimerActivity extends Activity {
             tb = (TimerButton) findViewById(IDRessource);
             tb.setImageBitmap(summonersList.get(i).getSpells()[1].getIcon());
             i++;
+        }
+    }
+
+    private void buildTimerTable(ArrayList<Summoner> teamSummonersList){
+        List<String> timerButtons = Arrays.asList("b11","b12", "b13", "b21","b22","b23","b31","b32","b33","b41","b42","b43","b51","b52","b53");
+
+        timerMap.put("b01",(long)300);
+        timerMap.put("b02",(long)500);
+
+        int spellIndex = 0;
+        int summonerIndex = 1;
+
+        for (String s : timerButtons){
+
+            float cdSummonerSpell = teamSummonersList.get(summonerIndex).getSpells()[spellIndex].getCooldown()[0];
+
+            timerMap.put(s,(long)cdSummonerSpell);
+
+            if(spellIndex == 2) {
+                summonerIndex++;
+                spellIndex = 0;
+            } else {
+                spellIndex++;
+            }
         }
     }
 }

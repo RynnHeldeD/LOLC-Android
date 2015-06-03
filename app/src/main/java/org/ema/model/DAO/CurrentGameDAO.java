@@ -201,6 +201,7 @@ public class CurrentGameDAO {
             getCreepChartInfo(user);
 
         } catch (Exception e) {
+
             e.printStackTrace();
             Log.v("Erreur stats", e.getMessage());
         }
@@ -209,6 +210,11 @@ public class CurrentGameDAO {
     //Allow to calcul the user performance.
     //Based on 4 elements.
     public static void calculUserPerformance(Summoner summoner){
+        //Player is unranked
+        if(summoner.getChampion().getStatistic() == null) {
+            return;
+        }
+
         float winRateWithChampion = (float)summoner.getChampion().getStatistic().getWin()/((float)summoner.getChampion().getStatistic().getWin()+(float)summoner.getChampion().getStatistic().getLoose());
         float nbGamesWithChampion = Math.min(summoner.getChampion().getStatistic().getWin()+summoner.getChampion().getStatistic().getLoose()/50,1);
         float rank;
@@ -364,11 +370,13 @@ public class CurrentGameDAO {
 
             for(Summoner current : summoners)
             {
-                for(int i = 0; i < current.getMostChampionsPlayed().length; i++) {
-                    //set champion
-                    JSONObject championJson = (JSONObject)((JSONObject)jsonChampions.get("data")).get(((Integer)current.getMostChampionsPlayed()[i].getId()).toString());
-                    current.getMostChampionsPlayed()[i].setName(championJson.get("name").toString());
-                    current.getMostChampionsPlayed()[i].setIconName(((JSONObject) championJson.get("image")).get("full").toString());
+                if(current.getMostChampionsPlayed() != null) {
+                    for(int i = 0; i < current.getMostChampionsPlayed().length; i++) {
+                        //set champion
+                        JSONObject championJson = (JSONObject) ((JSONObject)jsonChampions.get("data")).get(((Integer)current.getMostChampionsPlayed()[i].getId()).toString());
+                        current.getMostChampionsPlayed()[i].setName(championJson.get("name").toString());
+                        current.getMostChampionsPlayed()[i].setIconName(((JSONObject) championJson.get("image")).get("full").toString());
+                    }
                 }
             }
         }

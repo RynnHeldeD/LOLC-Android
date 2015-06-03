@@ -45,7 +45,6 @@ public class CurrentGameDAO {
                 summoner.setName(jsonParticipant.get("summonerName").toString());
                 summoner.setId((int) (jsonParticipant.get("summonerId")));
                 summoner.setTeamId((int) jsonParticipant.get("teamId"));
-                //TODO: Launch async task to set more info about summoner
 
                 //Set summoner championId
                 Champion champion = new Champion();
@@ -113,6 +112,9 @@ public class CurrentGameDAO {
                 getStatiscicsAndMostChampionsPlayed(current);
                 calculUserPerformance(current);
             }
+
+            //Load images of mostPlayedChampions
+            loadMostPlayedChampionsImages(summonerList);
 
             return summonerList;
 
@@ -268,6 +270,26 @@ public class CurrentGameDAO {
         } catch (Exception e) {
             e.printStackTrace();
             return;
+        }
+    }
+
+    //Load async images
+    public static void loadMostPlayedChampionsImages(ArrayList<Summoner> summoners) {
+        try {
+            JSONObject jsonChampions = new JSONObject(Utils.getDocument(Constant.API_CHAMPION_URI));
+
+            for(Summoner current : summoners)
+            {
+                for(int i = 0; i < current.getMostChampionsPlayed().length; i++) {
+                    //set champion
+                    JSONObject championJson = (JSONObject)((JSONObject)jsonChampions.get("data")).get(((Integer)current.getMostChampionsPlayed()[i].getId()).toString());
+                    current.getMostChampionsPlayed()[i].setName(championJson.get("name").toString());
+                    current.getMostChampionsPlayed()[i].setIconName(((JSONObject) championJson.get("image")).get("full").toString());
+                }
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
         }
     }
 }

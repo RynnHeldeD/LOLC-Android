@@ -21,6 +21,7 @@ import com.makeramen.roundedimageview.RoundedImageView;
 import org.ema.model.DAO.CurrentGameDAO;
 import org.ema.model.DAO.SummonerDAO;
 import org.ema.model.business.Summoner;
+import org.ema.utils.GlobalDataManager;
 import org.ema.utils.SortSummonerId;
 import org.ema.utils.Timer;
 import org.ema.utils.TimerButton;
@@ -44,18 +45,15 @@ public class TimerActivity extends Activity {
         setContentView(R.layout.activity_timer);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-	//TODO recuperer la liste des summoner
-        //ArrayList<Summoner> summonerList =
+        ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        // @TODO A recuperer depuis les variables "globales"
-        // Summoner user = SummonerDAO.getSummoner("Keore");
-        // ArrayList<Summoner> summonersList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
-        // END TODO
+        Summoner user = (Summoner)GlobalDataManager.get("user");
+        ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
 
         // Recuperation et tri des summoners de l'equipe du joueur
         ArrayList<Summoner> teamSummonersList = new ArrayList<Summoner>();

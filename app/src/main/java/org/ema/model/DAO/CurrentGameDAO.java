@@ -27,7 +27,7 @@ public class CurrentGameDAO {
 
             JSONObject json = new JSONObject(jsonResult);
             JSONArray jsonArray = (JSONArray)json.get("participants");
-            ArrayList<Summoner> summonerList = new ArrayList<Summoner>();
+            ArrayList<Summoner> summonersList = new ArrayList<Summoner>();
 
             //For each participant
             for(int i = 0; i < jsonArray.length(); i++){
@@ -59,13 +59,13 @@ public class CurrentGameDAO {
                     user.setChampion(summoner.getChampion());
                 }
 
-                summonerList.add(summoner);
+                summonersList.add(summoner);
             }
 
             JSONObject jsonSummonerSpells = new JSONObject(Utils.getDocument(Constant.API_SUMMONER_SPELLS));
             JSONObject jsonChampions = new JSONObject(Utils.getDocument(Constant.API_CHAMPION_URI));
 
-            for(Summoner current : summonerList)
+            for(Summoner current : summonersList)
             {
                 //Set spell1
                 JSONObject jsonSpell1 = (JSONObject)((JSONObject)jsonSummonerSpells.get("data")).get(((Integer)current.getSpells()[0].getId()).toString());
@@ -104,14 +104,14 @@ public class CurrentGameDAO {
                 new Utils.SetObjectIcon().execute(ultimate);
 	        }
 
-            getSummonersRank(summonerList);
+            getSummonersRank(summonersList);
 
-            for(Summoner current : summonerList) {
+            for(Summoner current : summonersList) {
                 current.getChampion().setStatistic(getSummonerHistoryStatistic(current));
                 calculUserPerformance(current);
             }
 
-            return summonerList;
+            return summonersList;
 
         }
         catch(Exception e){

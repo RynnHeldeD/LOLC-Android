@@ -7,12 +7,15 @@ import org.ema.model.business.Spell;
 import org.ema.model.business.Statistic;
 import org.ema.model.business.Summoner;
 import org.ema.utils.CallbackMatcher;
+import org.ema.utils.SortChampionsArrayList;
 import org.ema.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.ema.utils.Constant;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Created by romain on 10/05/2015.
@@ -107,6 +110,7 @@ public class CurrentGameDAO {
 
             for(Summoner current : summonerList) {
                 current.getChampion().setStatistic(getSummonerHistoryStatistic(current));
+                getStatiscicsAndMostChampionsPlayed(current);
                 calculUserPerformance(current);
             }
 
@@ -219,5 +223,51 @@ public class CurrentGameDAO {
         //Coefficient values / 10
         //Set a ratio between 0 and 1
         summoner.getChampion().getStatistic().setPerformance((winRateWithChampion*(float)2.5+nbGamesWithChampion*(float)2.5+5*rank)/10);
+    }
+
+    //Get most champions played list and Stats
+    public static void getStatiscicsAndMostChampionsPlayed(Summoner summoner) {
+        String jsonResult = Utils.getDocument(Constant.API_STATS_URI + summoner.getId() + "/ranked?season=SEASON2015");
+
+        try {
+            //Not on game
+            if (jsonResult == null) {
+                return;
+            }
+
+            JSONObject json = new JSONObject(jsonResult);
+            JSONArray jsonArray = (JSONArray) json.get("champions");
+            ArrayList<Champion> allChampionsPlayed = new ArrayList<>();
+
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonChampion = ((JSONObject) jsonArray.get(i));
+
+                if(jsonChampion.getInt("id") != 0) {
+                    Champion champion = new Champion();
+                    champion.setId(jsonChampion.getInt("id"));
+
+                    Statistic stats = new Statistic();
+                    JSONObject jsonStats = (JSONObject)jsonChampion.get("stats");
+                    stats.setWin(jsonStats.getInt("totalSessionsWon"));
+                    stats.setLoose(jsonStats.getInt("totalSessionsLost"));
+
+                    champion.setStatistic(stats);
+                    allChampionsPlayed.add(champion);
+                }
+            }
+
+            Collections.sort(allChampionsPlayed, new SortChampionsArrayList());
+
+            Champion[] mostChampionsPlayed = new Champion[Math.min(3,allChampionsPlayed.size())];
+            for(int j = 0; j < mostChampionsPlayed.length; j++) {
+                mostChampionsPlayed[j] = allChampionsPlayed.get(j);
+            }
+
+            summoner.setMostChampionsPlayed(mostChampionsPlayed);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
     }
 }

@@ -14,7 +14,7 @@ public class Statistic {
     private float damageDealtPercentage;
     private float damageTakenPercentage;
     private float performance;
-    private int[] creepChartInfo;
+    private double[][] creepChartInfo;
 
     public float getKill() {
         return kill;
@@ -80,18 +80,18 @@ public class Statistic {
         this.performance = performance;
     }
 
-    public int[] getCreepChartInfo() {
+    public double[][] getCreepChartInfo() {
         return creepChartInfo;
     }
 
-    public void setCreepChartInfo(int[] creepChartInfo) {
+    public void setCreepChartInfo(double[][] creepChartInfo) {
         this.creepChartInfo = creepChartInfo;
     }
 
     public Statistic() {
     }
 
-    public Statistic(float kill, float death, float assist, int win, int loose, float damageDealtPercentage, float damageTakenPercentage, float performance, int[] creepChartInfo) {
+    public Statistic(float kill, float death, float assist, int win, int loose, float damageDealtPercentage, float damageTakenPercentage, float performance, double[][] creepChartInfo) {
         this.kill = kill;
         this.death = death;
         this.assist = assist;

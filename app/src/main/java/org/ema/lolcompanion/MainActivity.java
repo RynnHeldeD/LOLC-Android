@@ -60,7 +60,7 @@ public class MainActivity extends Activity {
         MainActivity.settingsManager = new SettingsManager();
         PreferenceManager.getDefaultSharedPreferences(this);
 
-        user = SummonerDAO.getSummoner("UK Marksman");
+        user = SummonerDAO.getSummoner("Desantos");
 
         waitingThread = new Thread(new Runnable() {
             public void run() {

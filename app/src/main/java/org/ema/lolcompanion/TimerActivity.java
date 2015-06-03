@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -112,7 +113,8 @@ public class TimerActivity extends Activity {
         if(tbtn.getTimer() != null && !tbtn.getTimer().isTicking()){
             //To-DO : send the signal to websocket with timestamps and button id
             //TO-do : retrieve the good time in the LOL champion array
-            long timeToCount = timerMap.get(IDButton);
+            String toDelete = IDButton.substring(IDButton.lastIndexOf("/")+1);
+            long timeToCount = timerMap.get(IDButton.substring(IDButton.lastIndexOf("/")+1)) * 1000;
             tbtn.setTimer(new Timer(timeToCount,1000,tbtn.getTimer().getTimerTextView()));
             tbtn.getTimer().start();
             tbtn.getTimer().setVisible(true);
@@ -178,26 +180,35 @@ public class TimerActivity extends Activity {
     }
 
     private void buildTimerTable(ArrayList<Summoner> teamSummonersList){
-        List<String> timerButtons = Arrays.asList("b11","b12", "b13", "b21","b22","b23","b31","b32","b33","b41","b42","b43","b51","b52","b53");
+        List<String> summonerSpellButtons = Arrays.asList("b13", "b14", "b23","b24","b33","b34","b43","b44","b53","b54");
+        List<String> ultimateButtons = Arrays.asList("b12", "b22","b32","b42","b52");
 
         timerMap.put("b01",(long)300);
         timerMap.put("b02",(long)500);
 
         int spellIndex = 0;
-        int summonerIndex = 1;
+        int summonerIndex = 0;
 
-        for (String s : timerButtons){
-
+        for (String s : summonerSpellButtons){
             float cdSummonerSpell = teamSummonersList.get(summonerIndex).getSpells()[spellIndex].getCooldown()[0];
-
             timerMap.put(s,(long)cdSummonerSpell);
 
-            if(spellIndex == 2) {
+            if(spellIndex == 1) {
                 summonerIndex++;
                 spellIndex = 0;
             } else {
                 spellIndex++;
             }
         }
+
+        summonerIndex = 0;
+        for (String s : ultimateButtons){
+            float cdSummonerSpell = teamSummonersList.get(summonerIndex).getChampion().getSpell().getCooldown()[0];
+            timerMap.put(s,(long)cdSummonerSpell);
+            summonerIndex++;
+        }
+
+
+        Log.v("DAO", "Timer des tableau chargement termine");
     }
 }

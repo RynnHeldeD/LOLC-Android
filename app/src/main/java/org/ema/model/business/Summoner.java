@@ -16,6 +16,8 @@ public class Summoner {
     private int level;
     private float wins;
     private float looses;
+    //size between 1 and 3
+    private Champion[] mostChampionsPlayed;
 
     public int getLevel() {
         return level;
@@ -89,6 +91,14 @@ public class Summoner {
         this.wins = wins;
     }
 
+    public Champion[] getMostChampionsPlayed() {
+        return mostChampionsPlayed;
+    }
+
+    public void setMostChampionsPlayed(Champion[] mostChampionsPlayed) {
+        this.mostChampionsPlayed = mostChampionsPlayed;
+    }
+
     public float getLooses() {
         return looses;
     }
@@ -97,10 +107,12 @@ public class Summoner {
         this.looses = looses;
     }
 
+
+
     public Summoner() {
     }
 
-    public Summoner(int id, String name,int level, Spell[] spells, Champion champion, League league, int teamId, int premade, float wins, float looses) {
+    public Summoner(int id, String name,int level, Spell[] spells, Champion champion, League league, int teamId, int premade, float wins, float looses,Champion[] mostChampionsPlayed) {
         this.id = id;
         this.name = name;
         this.level = level;
@@ -111,6 +123,7 @@ public class Summoner {
         this.premade = premade;
         this.wins = wins;
         this.looses = looses;
+        this.mostChampionsPlayed = mostChampionsPlayed;
     }
 
     @Override

@@ -52,12 +52,7 @@ public class MainActivity extends Activity {
         PreferenceManager.getDefaultSharedPreferences(this);
 
         user = SummonerDAO.getSummoner("Darwirin");
-        summonerList = CurrentGameDAO.getSummonerListInGameFromCurrentUser(user);
-        int i = -9999;
-        while(i < 9999){
-            SystemClock.sleep(1000);
-            i++;
-        }
+
         waitingThread = new Thread(new Runnable() {
             public void run() {
                 while(shouldContinue) {

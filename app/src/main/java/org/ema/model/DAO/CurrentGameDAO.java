@@ -108,7 +108,7 @@ public class CurrentGameDAO {
             getSummonersRank(summonerList);
 
             for(Summoner current : summonerList) {
-                current.getChampion().setStatistic(getSummonerHistoryStatistic(current));
+                //current.getChampion().setStatistic(getSummonerHistoryStatistic(current));
                 getStatiscicsAndMostChampionsPlayed(current);
                 calculUserPerformance(current);
             }
@@ -156,7 +156,7 @@ public class CurrentGameDAO {
         }
     }
 
-    public static Statistic getSummonerHistoryStatistic(Summoner user) {
+    public static void getSummonerHistoryStatistic(Summoner user, JSONArray jsonArray) {
         float kill = 0;
         float death = 0;
         float assist = 0;
@@ -164,80 +164,39 @@ public class CurrentGameDAO {
         int loose = 0;
         JSONObject jsonResult;
         try {
-            jsonResult = new JSONObject(Utils.getDocument(Constant.API_MATCH_HISTORY_URI +
-                    user.getId() +
-                    "?championIds=" +
-                    user.getChampion().getId() +
-                    "&rankedQueus=RANKED_SOLO_5x5&beginIndex=" + 0 + "&endIndex=" + 10));
-            JSONArray jsonMatches = jsonResult.getJSONArray("matches");
-            JSONArray jsonParticipants;
-            double zeroToTen, tenToTwenty, twentyToThirty, thirtyToEnd ;
-            zeroToTen = tenToTwenty =  twentyToThirty = thirtyToEnd = 0;
-            int numberOfValueZeroToTen, numberOfValueTenToTwenty, numberOfValueTwentyToThirsty, numberOfValueThirtyToEnd;
-            numberOfValueZeroToTen =  numberOfValueTenToTwenty = numberOfValueTwentyToThirsty = numberOfValueThirtyToEnd = 0;
 
-            for (int i = 0; i < jsonMatches.length(); i++) {
-                jsonParticipants = jsonMatches.getJSONObject(i).getJSONArray("participants");
-                kill += jsonParticipants.getJSONObject(0).getJSONObject("stats").getInt("kills");
-                death += jsonParticipants.getJSONObject(0).getJSONObject("stats").getInt("deaths");
-                assist += jsonParticipants.getJSONObject(0).getJSONObject("stats").getInt("assists");
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonChampion = ((JSONObject) jsonArray.get(i));
 
-                if (jsonParticipants.getJSONObject(0).getJSONObject("stats").getBoolean("winner")) {
-                    win++;
-                } else {
-                    loose++;
-                }
-                if(!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("zeroToTen")) {
-                    zeroToTen += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("zeroToTen");
-                    numberOfValueZeroToTen ++;
-                }
-                if(!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("tenToTwenty")) {
-                    tenToTwenty += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("tenToTwenty");
-                    numberOfValueTenToTwenty ++;
-                }
-                if(!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("twentyToThirty")) {
-                    twentyToThirty += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("twentyToThirty");
-                    numberOfValueTwentyToThirsty ++;
-
-                }
-                if(!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("thirtyToEnd")) {
-                    thirtyToEnd += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("thirtyToEnd");
-                    numberOfValueThirtyToEnd ++;
+                if(jsonChampion.getInt("id") == user.getChampion().getId()) {
+                    JSONObject jsonStats = (JSONObject)jsonChampion.get("stats");
+                    if(!jsonStats.isNull("totalChampionKills")) {
+                        kill = jsonStats.getInt("totalChampionKills");
+                    }
+                    if(!jsonStats.isNull("totalAssists")) {
+                        assist = jsonStats.getInt("totalAssists");
+                    }
+                    if(!jsonStats.isNull("totalDeathsPerSession")) {
+                        death = jsonStats.getInt("totalDeathsPerSession");
+                    }
+                    if(!jsonStats.isNull("totalSessionsWon")) {
+                        win = jsonStats.getInt("totalSessionsWon");
+                    }
+                    if(!jsonStats.isNull("totalSessionsLost")) {
+                        loose = jsonStats.getInt("totalSessionsLost");
+                    }
+                    kill/= (win + loose);
+                    assist/= (win + loose);
+                    death/= (win + loose);
                 }
             }
-            int numberOfGames = win + loose;
-            kill /= numberOfGames;
-            death /= numberOfGames;
-            assist /= numberOfGames;
-            zeroToTen/= numberOfValueZeroToTen;
-            tenToTwenty /= numberOfValueTenToTwenty;
-            twentyToThirty /= numberOfValueTwentyToThirsty;
-            thirtyToEnd /= numberOfValueThirtyToEnd;
-            double[][] creepChartInfo = new double[2][4];
-            for(int i=0;i<2;i++)
-            {
-                creepChartInfo[i] = new double[4];
-            }
-            creepChartInfo[0][0] = zeroToTen*10;
-            creepChartInfo[0][1] = tenToTwenty*10;
-            creepChartInfo[0][2] = twentyToThirty*10;
-            creepChartInfo[0][3] = thirtyToEnd*10;
-            for(int i=1;i<2;i++){
-                for(int j=0;j<4;j++)
-                {
-                    creepChartInfo[i][j] = 100 - creepChartInfo[i-1][j];
-                }
-            }
-
             Statistic statsUser = new Statistic(kill, death, assist, win, loose, (float) 0, (float) 0, (float) 0, null);
             user.getChampion().setStatistic(statsUser);
             getCreepChartInfo(user);
-            return null;
 
         } catch (Exception e) {
             e.printStackTrace();
             Log.v("Erreur stats", e.getMessage());
-            return null;
         }
     }
 
@@ -280,61 +239,65 @@ public class CurrentGameDAO {
                     "?championIds=" +
                     user.getChampion().getId() +
                     "&rankedQueus=RANKED_SOLO_5x5&beginIndex=" + 0 + "&endIndex=" + 10));
-            JSONArray jsonMatches = jsonResult.getJSONArray("matches");
-            JSONArray jsonParticipants;
-            double zeroToTen, tenToTwenty, twentyToThirty, thirtyToEnd;
-            zeroToTen = tenToTwenty = twentyToThirty = thirtyToEnd = 0;
-            int numberOfValueZeroToTen, numberOfValueTenToTwenty, numberOfValueTwentyToThirsty, numberOfValueThirtyToEnd;
-            numberOfValueZeroToTen = numberOfValueTenToTwenty = numberOfValueTwentyToThirsty = numberOfValueThirtyToEnd = 0;
+            JSONArray jsonMatches = null;
+            if(!jsonResult.isNull("matches")) {
+                jsonMatches = jsonResult.getJSONArray("matches");
 
-            for (int i = 0; i < jsonMatches.length(); i++) {
-                jsonParticipants = jsonMatches.getJSONObject(i).getJSONArray("participants");
+                JSONArray jsonParticipants;
+                double zeroToTen, tenToTwenty, twentyToThirty, thirtyToEnd;
+                zeroToTen = tenToTwenty = twentyToThirty = thirtyToEnd = 0;
+                int numberOfValueZeroToTen, numberOfValueTenToTwenty, numberOfValueTwentyToThirsty, numberOfValueThirtyToEnd;
+                numberOfValueZeroToTen = numberOfValueTenToTwenty = numberOfValueTwentyToThirsty = numberOfValueThirtyToEnd = 0;
 
-                if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("zeroToTen")) {
-                    zeroToTen += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("zeroToTen");
-                    numberOfValueZeroToTen++;
-                }
-                if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("tenToTwenty")) {
-                    tenToTwenty += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("tenToTwenty");
-                    numberOfValueTenToTwenty++;
-                }
-                if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("twentyToThirty")) {
-                    twentyToThirty += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("twentyToThirty");
-                    numberOfValueTwentyToThirsty++;
+                for (int i = 0; i < jsonMatches.length(); i++) {
+                    jsonParticipants = jsonMatches.getJSONObject(i).getJSONArray("participants");
 
-                }
-                if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("thirtyToEnd")) {
-                    thirtyToEnd += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("thirtyToEnd");
-                    numberOfValueThirtyToEnd++;
-                }
-            }
+                    if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("zeroToTen")) {
+                        zeroToTen += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("zeroToTen");
+                        numberOfValueZeroToTen++;
+                    }
+                    if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("tenToTwenty")) {
+                        tenToTwenty += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("tenToTwenty");
+                        numberOfValueTenToTwenty++;
+                    }
+                    if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("twentyToThirty")) {
+                        twentyToThirty += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("twentyToThirty");
+                        numberOfValueTwentyToThirsty++;
 
-            if (numberOfValueZeroToTen != 0) {
-                zeroToTen /= numberOfValueZeroToTen;
-            }
-            if (numberOfValueTenToTwenty != 0) {
-                tenToTwenty /= numberOfValueTenToTwenty;
-            }
-            if (numberOfValueTwentyToThirsty != 0) {
-                twentyToThirty /= numberOfValueTwentyToThirsty;
-            }
-            if (numberOfValueThirtyToEnd != 0) {
-                thirtyToEnd /= numberOfValueThirtyToEnd;
-            }
-            double[][] creepChartInfo = new double[2][4];
-            for (int i = 0; i < 2; i++) {
-                creepChartInfo[i] = new double[4];
-            }
-            creepChartInfo[0][0] = zeroToTen * 10;
-            creepChartInfo[0][1] = tenToTwenty * 10;
-            creepChartInfo[0][2] = twentyToThirty * 10;
-            creepChartInfo[0][3] = thirtyToEnd * 10;
-            for (int i = 1; i < 2; i++) {
-                for (int j = 0; j < 4; j++) {
-                    creepChartInfo[i][j] = 100 - creepChartInfo[i - 1][j];
+                    }
+                    if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("thirtyToEnd")) {
+                        thirtyToEnd += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("thirtyToEnd");
+                        numberOfValueThirtyToEnd++;
+                    }
                 }
+
+                if (numberOfValueZeroToTen != 0) {
+                    zeroToTen /= numberOfValueZeroToTen;
+                }
+                if (numberOfValueTenToTwenty != 0) {
+                    tenToTwenty /= numberOfValueTenToTwenty;
+                }
+                if (numberOfValueTwentyToThirsty != 0) {
+                    twentyToThirty /= numberOfValueTwentyToThirsty;
+                }
+                if (numberOfValueThirtyToEnd != 0) {
+                    thirtyToEnd /= numberOfValueThirtyToEnd;
+                }
+                double[][] creepChartInfo = new double[2][4];
+                for (int i = 0; i < 2; i++) {
+                    creepChartInfo[i] = new double[4];
+                }
+                creepChartInfo[0][0] = zeroToTen * 10;
+                creepChartInfo[0][1] = tenToTwenty * 10;
+                creepChartInfo[0][2] = twentyToThirty * 10;
+                creepChartInfo[0][3] = thirtyToEnd * 10;
+                for (int i = 1; i < 2; i++) {
+                    for (int j = 0; j < 4; j++) {
+                        creepChartInfo[i][j] = 100 - creepChartInfo[i - 1][j];
+                    }
+                }
+                user.getChampion().getStatistic().setCreepChartInfo(creepChartInfo);
             }
-            user.getChampion().getStatistic().setCreepChartInfo(creepChartInfo);
         } catch (Exception e) {
             e.printStackTrace();
             Log.v("Erreur creep", e.getMessage());
@@ -354,6 +317,7 @@ public class CurrentGameDAO {
             JSONObject json = new JSONObject(jsonResult);
             JSONArray jsonArray = (JSONArray) json.get("champions");
             ArrayList<Champion> allChampionsPlayed = new ArrayList<>();
+            getSummonerHistoryStatistic(summoner, jsonArray);
 
             for(int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonChampion = ((JSONObject) jsonArray.get(i));

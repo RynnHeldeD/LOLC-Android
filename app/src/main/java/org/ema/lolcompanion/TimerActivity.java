@@ -1,6 +1,7 @@
 package org.ema.lolcompanion;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Shader;
@@ -38,6 +39,9 @@ public class TimerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+	//TODO recuperer la liste des summoner
+        //ArrayList<Summoner> summonerList =
     }
 
     @Override

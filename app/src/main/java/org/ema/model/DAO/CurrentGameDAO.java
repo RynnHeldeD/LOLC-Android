@@ -101,7 +101,7 @@ public class CurrentGameDAO {
                 }
                 ultimate.setCooldown(cooldowns);
                 current.getChampion().setSpell(ultimate);
-                new Utils.SetObjectIcon().execute(ultimate);            
+                new Utils.SetObjectIcon().execute(ultimate);
 	        }
 
             getSummonersRank(summonerList);

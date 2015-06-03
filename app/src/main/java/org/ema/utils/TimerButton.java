@@ -8,9 +8,6 @@ import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 
-/**
- * Created by Utilisateur on 02/06/2015.
- */
 public class TimerButton extends RoundedImageView {
 
     protected Timer timer;
@@ -36,6 +33,4 @@ public class TimerButton extends RoundedImageView {
     public void setTimer(Timer timer) {
         this.timer = timer;
     }
-
-
 }

@@ -29,6 +29,9 @@ public class TimerActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/lol.ttf");
+        TextView timers = (TextView) findViewById(R.id.timers);
+        timers.setTypeface(font);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 

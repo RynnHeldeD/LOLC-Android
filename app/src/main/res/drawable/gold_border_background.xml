@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item >
+        <shape android:shape="rectangle">
+
+            <padding android:left="3px"
+                android:top="3px"
+                android:right="3px"
+                android:bottom="3px"/>
+
+            <solid android:color="@color/frame_first_border"/>
+
+        </shape>
+    </item>
+    <item >
+        <shape android:shape="rectangle">
+
+            <padding android:left="3.25px"
+                android:top="3.25px"
+                android:right="3.25px"
+                android:bottom="3.25px"/>
+
+            <solid android:color="@color/frame_second_border"/>
+
+        </shape>
+    </item>
+    <item >
+        <shape android:shape="rectangle">
+
+            <padding android:left="3.5px"
+                android:top="3.5px"
+                android:right="3.5px"
+                android:bottom="3.5px"/>
+
+            <solid android:color="@color/frame_third_border"/>
+
+        </shape>
+    </item>
+    <item >
+        <shape android:shape="rectangle">
+            <gradient android:startColor="@color/frame_background_border"
+                android:endColor="@color/frame_background_border"
+                android:angle="0"/>
+
+        </shape>
+    </item>
+
+
+</layer-list>

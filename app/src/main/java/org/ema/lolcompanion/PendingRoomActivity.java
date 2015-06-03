@@ -98,11 +98,12 @@ public class PendingRoomActivity extends Activity {
         if (isInGame) {
             //TODO : impossible d'acceder aux ressources via un thread, voir comment recuperer et setter la ressource
             //On change le texte "Waiting signal game" en "Loading your data"
-            TextView pendingRoomText = (TextView) findViewById(R.id.pending_initial_state);
+            //TextView pendingRoomText = (TextView) findViewById(R.id.pending_initial_state);
             //pendingRoomText.setText(this.getString(R.string.pending_loading_state));
+            //pendingRoomText.setText("Loading your data...");
             //Fin TODO
 
-            pendingRoomText.setText("Loading your data...");
+
 
             summonerList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
             if (summonerList != null) {

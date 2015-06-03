@@ -16,6 +16,7 @@
     <string name="pending">Pending Room</string>
     <string name="pending_description">The application will start automatically with your online game</string>
     <string name="pending_initial_state">Waiting for game signal...</string>
+    <string name="pending_loading_state">Loading your data...</string>
 
     <!-- Timer room -->
     <string name="title_activity_timer">TimerActivity</string>

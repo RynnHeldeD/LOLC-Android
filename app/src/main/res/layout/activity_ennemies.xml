@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,14 +9,14 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="org.ema.lolcompanion.AlliesActivity">
+    tools:context="org.ema.lolcompanion.EnnemiesActivity">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        tools:context="org.ema.lolcompanion.AlliesActivity">
+        tools:context="org.ema.lolcompanion.EnnemiesActivity">
 
 
         <ImageView
@@ -24,6 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="false"
             android:layout_alignParentRight="true"
+            android:layout_marginTop="-15dp"
             android:src="@drawable/title_tab" />
 
         <TextView
@@ -46,16 +48,1707 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_high_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_high_margin"
-        android:background="@color/bg_black_transparent"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:orientation="vertical"
         android:paddingBottom="@dimen/activity_horizontal_margin"
-        android:paddingLeft="@dimen/activity_vertical_margin"
-        android:paddingRight="@dimen/activity_vertical_margin"
-        android:paddingTop="@dimen/activity_horizontal_margin"
-        tools:context=".PendingRoomActivity">
+        android:layout_marginTop="-10dp"
+        tools:context="org.ema.lolcompanion.EnnemiesActivity">
 
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/stats_line_container_size"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:background="@drawable/gold_border_background"
+            android:orientation="horizontal"
+            tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/stats_line_size"
+                android:orientation="horizontal"
+                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                <org.ema.utils.VerticalProgressBar
+                    android:id="@+id/s1Perf"
+                    style="@android:style/Widget.ProgressBar.Horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:max="100"
+                    android:maxHeight="@dimen/stats_summoner_size"
+                    android:maxWidth="4dip"
+                    android:minHeight="@dimen/stats_summoner_size"
+                    android:minWidth="4dip"
+                    android:progress="50"
+                    android:progressBackgroundTint="@color/performance_bar_background"
+                    android:progressTint="@color/performance_bar_normal" />
+
+                <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="@dimen/stats_summoner_size"
+                    android:layout_height="@dimen/stats_summoner_size"
+                    android:layout_centerVertical="true">
+
+                    <ImageView
+                        android:id="@+id/s1Image"
+                        android:layout_width="@dimen/stats_summoner_size"
+                        android:layout_height="@dimen/stats_summoner_size"
+                        android:layout_gravity="center_vertical"
+                        android:clickable="false"
+                        android:src="@drawable/test_round" />
+
+                    <ImageView
+                        android:id="@+id/s1Main"
+                        android:layout_width="@dimen/stats_ismain_size"
+                        android:layout_height="@dimen/stats_ismain_size"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="@dimen/activity_vertical_low_margin"
+                        android:src="@drawable/ismainchamp"
+                        android:visibility="invisible"/>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <!-- PART 2 - Stats -->
+            <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/stats_line_size"
+                android:orientation="vertical"
+                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                <!-- Tips and Champ Name -->
+                <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                    android:orientation="horizontal"
+                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                    <ImageView
+                        android:id="@+id/s1tips"
+                        android:layout_width="@dimen/stats_tips_size"
+                        android:layout_height="@dimen/stats_tips_size"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                        android:src="@drawable/tip" />
+
+                    <TextView
+                        android:id="@+id/s1name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/stats_tips_size"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_toEndOf="@+id/s1Team"
+                        android:layout_toLeftOf="@+id/s1Team"
+                        android:layout_toRightOf="@+id/s1tips"
+                        android:layout_toStartOf="@+id/s1tips"
+                        android:gravity="start"
+                        android:shadowColor="#000000"
+                        android:shadowDx="3"
+                        android:shadowDy="3"
+                        android:shadowRadius="8"
+                        android:text="VEIGAR"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black_font" />
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/s1Team"
+                        android:layout_width="@dimen/stats_teamicon_size"
+                        android:layout_height="@dimen/stats_teamicon_size"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/team_icon_1"
+                        app:riv_border_color="#FFFFFF"
+                        app:riv_border_width="2dip"
+                        app:riv_corner_radius="0dip"
+                        app:riv_mutate_background="true"
+                        app:riv_oval="true"
+                        app:riv_tile_mode="clamp"
+                        android:visibility="invisible"/>
+
+                </RelativeLayout>
+
+                <!-- KDA and Damage summary -->
+                <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                    android:orientation="horizontal"
+                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <TextView
+                            android:id="@+id/s1K"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="K"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s1Kv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="37"
+                            android:textColor="@color/summoner_kill"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s1D"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="D"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s1Dv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="27"
+                            android:textColor="@color/summoner_death"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s1A"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="A"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s1Av"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="9"
+                            android:textColor="@color/summoner_assist"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                    </LinearLayout>
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:gravity="end"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <ImageView
+                            android:id="@+id/s1DmD"
+                            android:layout_width="@dimen/stats_icon_damage_size"
+                            android:layout_height="@dimen/stats_icon_damage_size"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:src="@drawable/damage_dealt" />
+
+                        <TextView
+                            android:id="@+id/s1DmDv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="22.3%"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_damage_size" />
+
+                        <ImageView
+                            android:id="@+id/s1DmR"
+                            android:layout_width="@dimen/stats_icon_damage_size"
+                            android:layout_height="@dimen/stats_icon_damage_size"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:src="@drawable/damage_received" />
+
+                        <TextView
+                            android:id="@+id/s1DmRv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="18.5%"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_damage_size" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Win | Def Rank -->
+                <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                    android:orientation="horizontal"
+                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <TextView
+                            android:id="@+id/s1Wins"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="17 W"
+                            android:textColor="@color/summoner_wins"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="/"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s1Defs"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="19 L"
+                            android:textColor="@color/summoner_defs"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                    </LinearLayout>
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:gravity="end"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <ImageView
+                            android:id="@+id/s1Rank"
+                            android:layout_width="@dimen/stats_rank_icon_size"
+                            android:layout_height="@dimen/stats_rank_icon_size"
+                            android:layout_marginBottom="3dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:src="@drawable/rank_gold" />
+
+                        <TextView
+                            android:id="@+id/s1LP"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="BRON 4 (521 LP)"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_damage_size" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/stats_line_container_size"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:background="@drawable/gold_border_background"
+            android:orientation="horizontal"
+            tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/stats_line_size"
+                android:orientation="horizontal"
+                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                <org.ema.utils.VerticalProgressBar
+                    android:id="@+id/s2Perf"
+                    style="@android:style/Widget.ProgressBar.Horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:max="100"
+                    android:maxHeight="@dimen/stats_summoner_size"
+                    android:maxWidth="4dip"
+                    android:minHeight="@dimen/stats_summoner_size"
+                    android:minWidth="4dip"
+                    android:progress="50"
+                    android:progressBackgroundTint="@color/performance_bar_background"
+                    android:progressTint="@color/performance_bar_normal" />
+
+                <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="@dimen/stats_summoner_size"
+                    android:layout_height="@dimen/stats_summoner_size"
+                    android:layout_centerVertical="true">
+
+                    <ImageView
+                        android:id="@+id/s2Image"
+                        android:layout_width="@dimen/stats_summoner_size"
+                        android:layout_height="@dimen/stats_summoner_size"
+                        android:layout_gravity="center_vertical"
+                        android:clickable="false"
+                        android:src="@drawable/test_round" />
+
+                    <ImageView
+                        android:id="@+id/s2Main"
+                        android:layout_width="@dimen/stats_ismain_size"
+                        android:layout_height="@dimen/stats_ismain_size"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="@dimen/activity_vertical_low_margin"
+                        android:src="@drawable/ismainchamp"
+                        android:visibility="invisible"/>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <!-- PART 2 - Stats -->
+            <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/stats_line_size"
+                android:orientation="vertical"
+                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                <!-- Tips and Champ Name -->
+                <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                    android:orientation="horizontal"
+                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                    <ImageView
+                        android:id="@+id/s2tips"
+                        android:layout_width="@dimen/stats_tips_size"
+                        android:layout_height="@dimen/stats_tips_size"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                        android:src="@drawable/tip" />
+
+                    <TextView
+                        android:id="@+id/s2name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/stats_tips_size"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_toEndOf="@+id/s2Team"
+                        android:layout_toLeftOf="@+id/s2Team"
+                        android:layout_toRightOf="@+id/s2tips"
+                        android:layout_toStartOf="@+id/s2tips"
+                        android:gravity="start"
+                        android:shadowColor="#000000"
+                        android:shadowDx="3"
+                        android:shadowDy="3"
+                        android:shadowRadius="8"
+                        android:text="VEIGAR"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black_font" />
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/s2Team"
+                        android:layout_width="@dimen/stats_teamicon_size"
+                        android:layout_height="@dimen/stats_teamicon_size"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/team_icon_1"
+                        app:riv_border_color="#FFFFFF"
+                        app:riv_border_width="2dip"
+                        app:riv_corner_radius="0dip"
+                        app:riv_mutate_background="true"
+                        app:riv_oval="true"
+                        app:riv_tile_mode="clamp"
+                        android:visibility="invisible"/>
+
+                </RelativeLayout>
+
+                <!-- KDA and Damage summary -->
+                <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                    android:orientation="horizontal"
+                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <TextView
+                            android:id="@+id/s2K"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="K"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s2Kv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="37"
+                            android:textColor="@color/summoner_kill"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s2D"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="D"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s2Dv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="27"
+                            android:textColor="@color/summoner_death"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s2A"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="A"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s2Av"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="9"
+                            android:textColor="@color/summoner_assist"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                    </LinearLayout>
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:gravity="end"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <ImageView
+                            android:id="@+id/s2DmD"
+                            android:layout_width="@dimen/stats_icon_damage_size"
+                            android:layout_height="@dimen/stats_icon_damage_size"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:src="@drawable/damage_dealt" />
+
+                        <TextView
+                            android:id="@+id/s2DmDv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="22.3%"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_damage_size" />
+
+                        <ImageView
+                            android:id="@+id/s2DmR"
+                            android:layout_width="@dimen/stats_icon_damage_size"
+                            android:layout_height="@dimen/stats_icon_damage_size"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:src="@drawable/damage_received" />
+
+                        <TextView
+                            android:id="@+id/s2DmRv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="18.5%"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_damage_size" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Win | Def Rank -->
+                <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                    android:orientation="horizontal"
+                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <TextView
+                            android:id="@+id/s2Wins"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="17 W"
+                            android:textColor="@color/summoner_wins"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="/"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s2Defs"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="19 L"
+                            android:textColor="@color/summoner_defs"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                    </LinearLayout>
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:gravity="end"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <ImageView
+                            android:id="@+id/s2Rank"
+                            android:layout_width="@dimen/stats_rank_icon_size"
+                            android:layout_height="@dimen/stats_rank_icon_size"
+                            android:layout_marginBottom="3dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:src="@drawable/rank_gold" />
+
+                        <TextView
+                            android:id="@+id/s2LP"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="BRON 4 (521 LP)"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_damage_size" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/stats_line_container_size"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:background="@drawable/gold_border_background"
+            android:orientation="horizontal"
+            tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/stats_line_size"
+                android:orientation="horizontal"
+                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                <org.ema.utils.VerticalProgressBar
+                    android:id="@+id/s3Perf"
+                    style="@android:style/Widget.ProgressBar.Horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:max="100"
+                    android:maxHeight="@dimen/stats_summoner_size"
+                    android:maxWidth="4dip"
+                    android:minHeight="@dimen/stats_summoner_size"
+                    android:minWidth="4dip"
+                    android:progress="50"
+                    android:progressBackgroundTint="@color/performance_bar_background"
+                    android:progressTint="@color/performance_bar_normal" />
+
+                <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="@dimen/stats_summoner_size"
+                    android:layout_height="@dimen/stats_summoner_size"
+                    android:layout_centerVertical="true">
+
+                    <ImageView
+                        android:id="@+id/s3Image"
+                        android:layout_width="@dimen/stats_summoner_size"
+                        android:layout_height="@dimen/stats_summoner_size"
+                        android:layout_gravity="center_vertical"
+                        android:clickable="false"
+                        android:src="@drawable/test_round" />
+
+                    <ImageView
+                        android:id="@+id/s3Main"
+                        android:layout_width="@dimen/stats_ismain_size"
+                        android:layout_height="@dimen/stats_ismain_size"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="@dimen/activity_vertical_low_margin"
+                        android:src="@drawable/ismainchamp"
+                        android:visibility="invisible"/>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <!-- PART 2 - Stats -->
+            <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/stats_line_size"
+                android:orientation="vertical"
+                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                <!-- Tips and Champ Name -->
+                <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                    android:orientation="horizontal"
+                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                    <ImageView
+                        android:id="@+id/s3tips"
+                        android:layout_width="@dimen/stats_tips_size"
+                        android:layout_height="@dimen/stats_tips_size"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                        android:src="@drawable/tip" />
+
+                    <TextView
+                        android:id="@+id/s3name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/stats_tips_size"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_toEndOf="@+id/s3Team"
+                        android:layout_toLeftOf="@+id/s3Team"
+                        android:layout_toRightOf="@+id/s3tips"
+                        android:layout_toStartOf="@+id/s3tips"
+                        android:gravity="start"
+                        android:shadowColor="#000000"
+                        android:shadowDx="3"
+                        android:shadowDy="3"
+                        android:shadowRadius="8"
+                        android:text="VEIGAR"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black_font" />
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/s3Team"
+                        android:layout_width="@dimen/stats_teamicon_size"
+                        android:layout_height="@dimen/stats_teamicon_size"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/team_icon_1"
+                        app:riv_border_color="#FFFFFF"
+                        app:riv_border_width="2dip"
+                        app:riv_corner_radius="0dip"
+                        app:riv_mutate_background="true"
+                        app:riv_oval="true"
+                        app:riv_tile_mode="clamp"
+                        android:visibility="invisible"/>
+
+                </RelativeLayout>
+
+                <!-- KDA and Damage summary -->
+                <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                    android:orientation="horizontal"
+                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <TextView
+                            android:id="@+id/s3K"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="K"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s3Kv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="37"
+                            android:textColor="@color/summoner_kill"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s3D"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="D"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s3Dv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="27"
+                            android:textColor="@color/summoner_death"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s3A"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="A"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s3Av"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="9"
+                            android:textColor="@color/summoner_assist"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                    </LinearLayout>
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:gravity="end"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <ImageView
+                            android:id="@+id/s3DmD"
+                            android:layout_width="@dimen/stats_icon_damage_size"
+                            android:layout_height="@dimen/stats_icon_damage_size"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:src="@drawable/damage_dealt" />
+
+                        <TextView
+                            android:id="@+id/s3DmDv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="22.3%"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_damage_size" />
+
+                        <ImageView
+                            android:id="@+id/s3DmR"
+                            android:layout_width="@dimen/stats_icon_damage_size"
+                            android:layout_height="@dimen/stats_icon_damage_size"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:src="@drawable/damage_received" />
+
+                        <TextView
+                            android:id="@+id/s3DmRv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="18.5%"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_damage_size" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Win | Def Rank -->
+                <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                    android:orientation="horizontal"
+                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <TextView
+                            android:id="@+id/s3Wins"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="17 W"
+                            android:textColor="@color/summoner_wins"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="/"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s3Defs"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="19 L"
+                            android:textColor="@color/summoner_defs"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                    </LinearLayout>
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:gravity="end"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <ImageView
+                            android:id="@+id/s3Rank"
+                            android:layout_width="@dimen/stats_rank_icon_size"
+                            android:layout_height="@dimen/stats_rank_icon_size"
+                            android:layout_marginBottom="3dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:src="@drawable/rank_gold" />
+
+                        <TextView
+                            android:id="@+id/s3LP"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="BRON 4 (521 LP)"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_damage_size" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/stats_line_container_size"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:background="@drawable/gold_border_background"
+            android:orientation="horizontal"
+            tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/stats_line_size"
+                android:orientation="horizontal"
+                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                <org.ema.utils.VerticalProgressBar
+                    android:id="@+id/s4Perf"
+                    style="@android:style/Widget.ProgressBar.Horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:max="100"
+                    android:maxHeight="@dimen/stats_summoner_size"
+                    android:maxWidth="4dip"
+                    android:minHeight="@dimen/stats_summoner_size"
+                    android:minWidth="4dip"
+                    android:progress="50"
+                    android:progressBackgroundTint="@color/performance_bar_background"
+                    android:progressTint="@color/performance_bar_normal" />
+
+                <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="@dimen/stats_summoner_size"
+                    android:layout_height="@dimen/stats_summoner_size"
+                    android:layout_centerVertical="true">
+
+                    <ImageView
+                        android:id="@+id/s4Image"
+                        android:layout_width="@dimen/stats_summoner_size"
+                        android:layout_height="@dimen/stats_summoner_size"
+                        android:layout_gravity="center_vertical"
+                        android:clickable="false"
+                        android:src="@drawable/test_round" />
+
+                    <ImageView
+                        android:id="@+id/s4Main"
+                        android:layout_width="@dimen/stats_ismain_size"
+                        android:layout_height="@dimen/stats_ismain_size"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="@dimen/activity_vertical_low_margin"
+                        android:src="@drawable/ismainchamp"
+                        android:visibility="invisible"/>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <!-- PART 2 - Stats -->
+            <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/stats_line_size"
+                android:orientation="vertical"
+                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                <!-- Tips and Champ Name -->
+                <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                    android:orientation="horizontal"
+                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                    <ImageView
+                        android:id="@+id/s4tips"
+                        android:layout_width="@dimen/stats_tips_size"
+                        android:layout_height="@dimen/stats_tips_size"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                        android:src="@drawable/tip" />
+
+                    <TextView
+                        android:id="@+id/s4name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/stats_tips_size"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_toEndOf="@+id/s4Team"
+                        android:layout_toLeftOf="@+id/s4Team"
+                        android:layout_toRightOf="@+id/s4tips"
+                        android:layout_toStartOf="@+id/s4tips"
+                        android:gravity="start"
+                        android:shadowColor="#000000"
+                        android:shadowDx="3"
+                        android:shadowDy="3"
+                        android:shadowRadius="8"
+                        android:text="VEIGAR"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black_font" />
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/s4Team"
+                        android:layout_width="@dimen/stats_teamicon_size"
+                        android:layout_height="@dimen/stats_teamicon_size"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/team_icon_1"
+                        app:riv_border_color="#FFFFFF"
+                        app:riv_border_width="2dip"
+                        app:riv_corner_radius="0dip"
+                        app:riv_mutate_background="true"
+                        app:riv_oval="true"
+                        app:riv_tile_mode="clamp"
+                        android:visibility="invisible"/>
+
+                </RelativeLayout>
+
+                <!-- KDA and Damage summary -->
+                <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                    android:orientation="horizontal"
+                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <TextView
+                            android:id="@+id/s4K"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="K"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s4Kv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="37"
+                            android:textColor="@color/summoner_kill"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s4D"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="D"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s4Dv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="27"
+                            android:textColor="@color/summoner_death"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s4A"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="A"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s4Av"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="9"
+                            android:textColor="@color/summoner_assist"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                    </LinearLayout>
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:gravity="end"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <ImageView
+                            android:id="@+id/s4DmD"
+                            android:layout_width="@dimen/stats_icon_damage_size"
+                            android:layout_height="@dimen/stats_icon_damage_size"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:src="@drawable/damage_dealt" />
+
+                        <TextView
+                            android:id="@+id/s4DmDv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="22.3%"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_damage_size" />
+
+                        <ImageView
+                            android:id="@+id/s4DmR"
+                            android:layout_width="@dimen/stats_icon_damage_size"
+                            android:layout_height="@dimen/stats_icon_damage_size"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:src="@drawable/damage_received" />
+
+                        <TextView
+                            android:id="@+id/s4DmRv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="18.5%"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_damage_size" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Win | Def Rank -->
+                <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                    android:orientation="horizontal"
+                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <TextView
+                            android:id="@+id/s4Wins"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="17 W"
+                            android:textColor="@color/summoner_wins"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="/"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s4Defs"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="19 L"
+                            android:textColor="@color/summoner_defs"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                    </LinearLayout>
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:gravity="end"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <ImageView
+                            android:id="@+id/s4Rank"
+                            android:layout_width="@dimen/stats_rank_icon_size"
+                            android:layout_height="@dimen/stats_rank_icon_size"
+                            android:layout_marginBottom="3dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:src="@drawable/rank_gold" />
+
+                        <TextView
+                            android:id="@+id/s4LP"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="BRON 4 (521 LP)"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_damage_size" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/stats_line_container_size"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:background="@drawable/gold_border_background"
+            android:orientation="horizontal"
+            tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/stats_line_size"
+                android:orientation="horizontal"
+                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                <org.ema.utils.VerticalProgressBar
+                    android:id="@+id/s5Perf"
+                    style="@android:style/Widget.ProgressBar.Horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:max="100"
+                    android:maxHeight="@dimen/stats_summoner_size"
+                    android:maxWidth="4dip"
+                    android:minHeight="@dimen/stats_summoner_size"
+                    android:minWidth="4dip"
+                    android:progress="50"
+                    android:progressBackgroundTint="@color/performance_bar_background"
+                    android:progressTint="@color/performance_bar_normal" />
+
+                <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="@dimen/stats_summoner_size"
+                    android:layout_height="@dimen/stats_summoner_size"
+                    android:layout_centerVertical="true">
+
+                    <ImageView
+                        android:id="@+id/s5Image"
+                        android:layout_width="@dimen/stats_summoner_size"
+                        android:layout_height="@dimen/stats_summoner_size"
+                        android:layout_gravity="center_vertical"
+                        android:clickable="false"
+                        android:src="@drawable/test_round" />
+
+                    <ImageView
+                        android:id="@+id/s5Main"
+                        android:layout_width="@dimen/stats_ismain_size"
+                        android:layout_height="@dimen/stats_ismain_size"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="@dimen/activity_vertical_low_margin"
+                        android:src="@drawable/ismainchamp"
+                        android:visibility="invisible"/>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <!-- PART 2 - Stats -->
+            <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/stats_line_size"
+                android:orientation="vertical"
+                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                <!-- Tips and Champ Name -->
+                <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                    android:orientation="horizontal"
+                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                    <ImageView
+                        android:id="@+id/s5tips"
+                        android:layout_width="@dimen/stats_tips_size"
+                        android:layout_height="@dimen/stats_tips_size"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                        android:src="@drawable/tip" />
+
+                    <TextView
+                        android:id="@+id/s5name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/stats_tips_size"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_toEndOf="@+id/s5Team"
+                        android:layout_toLeftOf="@+id/s5Team"
+                        android:layout_toRightOf="@+id/s5tips"
+                        android:layout_toStartOf="@+id/s5tips"
+                        android:gravity="start"
+                        android:shadowColor="#000000"
+                        android:shadowDx="3"
+                        android:shadowDy="3"
+                        android:shadowRadius="8"
+                        android:text="VEIGAR"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black_font" />
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/s5Team"
+                        android:layout_width="@dimen/stats_teamicon_size"
+                        android:layout_height="@dimen/stats_teamicon_size"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/team_icon_1"
+                        app:riv_border_color="#FFFFFF"
+                        app:riv_border_width="2dip"
+                        app:riv_corner_radius="0dip"
+                        app:riv_mutate_background="true"
+                        app:riv_oval="true"
+                        app:riv_tile_mode="clamp"
+                        android:visibility="invisible"/>
+
+                </RelativeLayout>
+
+                <!-- KDA and Damage summary -->
+                <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                    android:orientation="horizontal"
+                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <TextView
+                            android:id="@+id/s5K"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="K"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s5Kv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="37"
+                            android:textColor="@color/summoner_kill"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s5D"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="D"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s5Dv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="27"
+                            android:textColor="@color/summoner_death"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s5A"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="A"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s5Av"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="9"
+                            android:textColor="@color/summoner_assist"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                    </LinearLayout>
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:gravity="end"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <ImageView
+                            android:id="@+id/s5DmD"
+                            android:layout_width="@dimen/stats_icon_damage_size"
+                            android:layout_height="@dimen/stats_icon_damage_size"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:src="@drawable/damage_dealt" />
+
+                        <TextView
+                            android:id="@+id/s5DmDv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="22.3%"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_damage_size" />
+
+                        <ImageView
+                            android:id="@+id/s5DmR"
+                            android:layout_width="@dimen/stats_icon_damage_size"
+                            android:layout_height="@dimen/stats_icon_damage_size"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:src="@drawable/damage_received" />
+
+                        <TextView
+                            android:id="@+id/s5DmRv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="18.5%"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_damage_size" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Win | Def Rank -->
+                <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                    android:orientation="horizontal"
+                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <TextView
+                            android:id="@+id/s5Wins"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="17 W"
+                            android:textColor="@color/summoner_wins"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_vertical"
+                            android:text="/"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                        <TextView
+                            android:id="@+id/s5Defs"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="19 L"
+                            android:textColor="@color/summoner_defs"
+                            android:textSize="@dimen/stats_font_kda_size" />
+
+                    </LinearLayout>
+
+                    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:gravity="end"
+                        android:orientation="horizontal"
+                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+
+                        <ImageView
+                            android:id="@+id/s5Rank"
+                            android:layout_width="@dimen/stats_rank_icon_size"
+                            android:layout_height="@dimen/stats_rank_icon_size"
+                            android:layout_marginBottom="3dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:src="@drawable/rank_gold" />
+
+                        <TextView
+                            android:id="@+id/s5LP"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/stats_tips_size"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
+                            android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                            android:gravity="center_vertical"
+                            android:text="BRON 4 (521 LP)"
+                            android:textColor="@color/black_font"
+                            android:textSize="@dimen/stats_font_damage_size" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -10,17 +10,17 @@ import java.util.ArrayList;
 public class SummonerList {
 
    //Get the min and max performance in a float array [min,max];
-    public static float[] getMinAndMAxPerformance(ArrayList<Summoner> summoners) {
-        float minValue = 1;
-        float maxValue = 0;
+    public static int[] getMinAndMAxPerformance(ArrayList<Summoner> summoners) {
+        int minValue = 100;
+        int maxValue = 0;
 
         for(Summoner current : summoners) {
-            float performance = current.getChampion().getStatistic().getPerformance();
+            int performance = current.getChampion().getStatistic().getIntPerformance();
             minValue = Math.min(performance,minValue);
             maxValue = Math.max(performance,maxValue);
         }
 
-        float[] result = new float[2];
+        int[] result = new int[2];
         result[0] = minValue;
         result[1] = maxValue;
 

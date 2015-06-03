@@ -12,6 +12,7 @@ public class Summoner {
     private Champion champion;
     private League league;
     private int teamId;
+    //0 not, 1 or 2 == premade
     private int premade;
     private int level;
     private float wins;

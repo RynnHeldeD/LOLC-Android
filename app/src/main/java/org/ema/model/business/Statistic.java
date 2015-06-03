@@ -44,6 +44,10 @@ public class Statistic {
         return win;
     }
 
+    public int getIntPerformance() {
+        return Math.round(performance * 100);
+    }
+
     public void setWin(int win) {
         this.win = win;
     }

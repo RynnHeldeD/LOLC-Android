@@ -4,11 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.SystemClock;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -16,11 +12,13 @@ import android.util.Log;
 import org.ema.model.DAO.CurrentGameDAO;
 import org.ema.model.DAO.SummonerDAO;
 import org.ema.model.business.Summoner;
+import org.ema.utils.GlobalDataManager;
+
 import java.util.ArrayList;
 
 public class PendingRoomActivity extends Activity {
 
-    public ArrayList<Summoner> summonerList;
+    public ArrayList<Summoner> summonersList;
     public Thread waitingThread;
     //public Handler handlerWaitingThread;
     public int count = 0;
@@ -71,6 +69,7 @@ public class PendingRoomActivity extends Activity {
 
         //Launch thread if the user login is good
         if (user != null) {
+            GlobalDataManager.add("user", user);
             Log.v("DAO", user.toString());
             waitingThread.start();
         }
@@ -78,7 +77,7 @@ public class PendingRoomActivity extends Activity {
 
     public void launchTimerActivity() {
         Intent intent = new Intent(this, TimerActivity.class);
-        //TODO : envoyer la summonerList a la TimerActivity
+        GlobalDataManager.add("summonersList", summonersList);
 
         //TODO : mettre le channel enregistre dans la case channel
         // MainActivity.settingsManager.set(this, "summonerName", message);
@@ -107,11 +106,11 @@ public class PendingRoomActivity extends Activity {
 
 
 
-            summonerList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
-            if (summonerList != null) {
-                Log.v("DAO", "SummonerList: " + summonerList.toString());
+            summonersList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
+            if (summonersList != null) {
+                Log.v("DAO", "summonersList: " + summonersList.toString());
             } else {
-                Log.v("DAO", "FATAL : SummonerList is NULL. Summoner :" + summonerNameFromPreviousView);
+                Log.v("DAO", "FATAL : summonersList is NULL. Summoner :" + summonerNameFromPreviousView);
             }
             shouldContinue = false;
             return true;
@@ -122,11 +121,11 @@ public class PendingRoomActivity extends Activity {
         return false;
     }
 
-    public ArrayList<Summoner> getSummonerList() {
-        return summonerList;
+    public ArrayList<Summoner> getSummonersList() {
+        return summonersList;
     }
 
-    public void setSummonerList(ArrayList<Summoner> summonerList) {
-        this.summonerList = summonerList;
+    public void setSummonersList(ArrayList<Summoner> summonersList) {
+        this.summonersList = summonersList;
     }
 }

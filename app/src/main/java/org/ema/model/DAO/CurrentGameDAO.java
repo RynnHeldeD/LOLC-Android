@@ -138,16 +138,22 @@ public class CurrentGameDAO {
             JSONObject jsonResult = new JSONObject(Utils.getDocument(Constant.API_LEAGUE_URI + concatIds + "/entry"));
 
             for(Summoner user : summoners) {
-                JSONArray leagueSummonerJSON = jsonResult.getJSONArray(String.valueOf(user.getId()));
-                String tier = leagueSummonerJSON.getJSONObject(0).getString("tier") ;
-                JSONArray entitiesLeagueJSON = leagueSummonerJSON.getJSONObject(0).getJSONArray("entries");
-                int leaguePoints = entitiesLeagueJSON.getJSONObject(0).getInt("leaguePoints");
-                tier += " " + entitiesLeagueJSON.getJSONObject(0).getString("division");
-                user.setWins(entitiesLeagueJSON.getJSONObject(0).getInt("wins"));
-                user.setLooses(entitiesLeagueJSON.getJSONObject(0).getInt("losses"));
+                if(!jsonResult.isNull(String.valueOf(user.getId()))) {
+                    JSONArray leagueSummonerJSON = jsonResult.getJSONArray(String.valueOf(user.getId()));
+                    String tier = leagueSummonerJSON.getJSONObject(0).getString("tier");
+                    JSONArray entitiesLeagueJSON = leagueSummonerJSON.getJSONObject(0).getJSONArray("entries");
+                    int leaguePoints = entitiesLeagueJSON.getJSONObject(0).getInt("leaguePoints");
+                    tier += " " + entitiesLeagueJSON.getJSONObject(0).getString("division");
+                    user.setWins(entitiesLeagueJSON.getJSONObject(0).getInt("wins"));
+                    user.setLooses(entitiesLeagueJSON.getJSONObject(0).getInt("losses"));
 
-                League summonerLeague = new League(tier, null, leaguePoints);
-                user.setLeague(summonerLeague);
+                    League summonerLeague = new League(tier, null, leaguePoints);
+                    user.setLeague(summonerLeague);
+                }
+                else{
+                    League summonerLeague = new League("Unranked", null, 0);
+                    user.setLeague(summonerLeague);
+                }
             }
             //*/
         }

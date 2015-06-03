@@ -6,7 +6,6 @@ import org.ema.model.business.League;
 import org.ema.model.business.Spell;
 import org.ema.model.business.Statistic;
 import org.ema.model.business.Summoner;
-import org.ema.utils.CallbackMatcher;
 import org.ema.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,7 +14,7 @@ import org.ema.utils.Constant;
 import java.util.ArrayList;
 
 public class CurrentGameDAO {
-    public static ArrayList<Summoner> getSummunerListInGameFromCurrentUser(Summoner user) {
+    public static ArrayList<Summoner> getSummonerListInGameFromCurrentUser(Summoner user) {
         //Get request
         String jsonResult = Utils.getDocument(Constant.API_CURRENT_GAME_URI + user.getId());
 
@@ -101,8 +100,8 @@ public class CurrentGameDAO {
                 }
                 ultimate.setCooldown(cooldowns);
                 current.getChampion().setSpell(ultimate);
-                new Utils.SetObjectIcon().execute(ultimate);            
-	        }
+                new Utils.SetObjectIcon().execute(ultimate);
+            }
 
             getSummonersRank(summonerList);
 
@@ -119,17 +118,20 @@ public class CurrentGameDAO {
             return null;
         }
     }
-
+<<<<<<< HEAD
     public static void getSummonersRank(ArrayList<Summoner> summoners){
-	
-	String concatIds = "";
+
+        String concatIds = "";
         for(Summoner current : summoners){
             concatIds += current.getId() + ",";
         }
         concatIds = concatIds.substring(0,concatIds.length()-1);
-        
-	//Get request
 
+=======
+
+    public static League getSummonerRank(Summoner user){
+>>>>>>> origin/issue-007-load-icons-async
+        //Get request
         try {
             String request = Constant.API_LEAGUE_URI + concatIds + "/entry";
             JSONObject jsonResult = new JSONObject(Utils.getDocument(Constant.API_LEAGUE_URI + concatIds + "/entry"));

@@ -2,10 +2,9 @@ package org.ema.model.business;
 
 import android.graphics.Bitmap;
 
-/**
- * Created by romain on 01/05/2015.
- */
-public class Spell {
+import org.ema.model.interfaces.ISettableIcon;
+
+public class Spell implements ISettableIcon {
     private int id;
     private String iconName;
     private Bitmap icon;

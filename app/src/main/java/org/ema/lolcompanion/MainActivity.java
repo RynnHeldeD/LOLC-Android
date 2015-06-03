@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
         MainActivity.settingsManager = new SettingsManager();
         PreferenceManager.getDefaultSharedPreferences(this);
 
-        user = SummonerDAO.getSummoner("Cedinho6");
+        user = SummonerDAO.getSummoner("Darwirin");
         summonerList = CurrentGameDAO.getSummonerListInGameFromCurrentUser(user);
         int i = -9999;
         while(i < 9999){

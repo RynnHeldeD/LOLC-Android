@@ -2,6 +2,7 @@ package org.ema.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.nfc.tech.IsoDep;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
@@ -13,11 +14,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.ema.model.business.Champion;
-import org.ema.model.business.Item;
-import org.ema.model.business.League;
-import org.ema.model.business.Spell;
-import org.ema.model.business.Summoner;
+import org.ema.model.interfaces.ISettableIcon;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -70,59 +67,50 @@ public class Utils {
         }
     }
 
-    public static class SetIconFromUrl extends AsyncTask<Object, Void, Bitmap> {
+    /**
+     * Set the icon of a business class if its iconName is set.
+     * Class must implements ISettableIcon interface.
+     * Call with : new SetObjectIcon().execute(myObject);
+     */
+    public static class SetObjectIcon extends AsyncTask<Object, Void, Bitmap> {
         private String path = "";
 
         @Override
         protected Bitmap doInBackground(Object... params) {
-            String objectClass = params[0].getClass().getSimpleName().toString();
+            if(!(params[0] instanceof ISettableIcon)){
+                return null;
+            }
 
+            String objectClass = params[0].getClass().getSimpleName().toString();
             switch(objectClass){
                 case "Summoner":
-                    path = Constant.DDRAGON_SUMMONER_ICON_URI + ((Summoner)params[0]).getName();
+                    path = Constant.DDRAGON_SUMMONER_ICON_URI;
                     break;
                 case "Spell":
-                    path = Constant.DDRAGON_SUMMONER_SPELL_ICON_URI + ((Spell)params[0]).getIconName();
+                    path = Constant.DDRAGON_SUMMONER_SPELL_ICON_URI;
                     break;
                 case "Champion":
-                    path = Constant.DDRAGON_CHAMPION_ICON_URI + ((Champion)params[0]).getIconName();
+                    path = Constant.DDRAGON_CHAMPION_ICON_URI;
                     break;
                 case "Item":
-                    path = Constant.DDRAGON_ITEMS_ICON_URI + ((Item)params[0]).getName();
+                    path = Constant.DDRAGON_ITEMS_ICON_URI;
                     break;
                 case "League":
-                    path = Constant.DDRAGON_SCOREBOARD_ICON_URI + ((League)params[0]).getDivision();
+                    path = Constant.DDRAGON_SCOREBOARD_ICON_URI;
                     break;
                 default:
                     break;
             }
+            path += ((ISettableIcon)params[0]).getIconName();
 
             try {
                 URL url = new URL(path);
-                Log.v("[DEBUG]", path);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setDoInput(true);
                 connection.connect();
                 InputStream input = connection.getInputStream();
                 Bitmap bitmap = BitmapFactory.decodeStream(input);
-
-                switch(objectClass){
-                    case "Spell":
-                        ((Spell) params[0]).setIcon(bitmap);
-                        break;
-                    case "Champion":
-                        ((Champion) params[0]).setIcon(bitmap);
-                        break;
-                    case "Item":
-                        ((Item) params[0]).setIcon(bitmap);
-                        break;
-                    case "League":
-                        ((League) params[0]).setIcon(bitmap);
-                        break;
-                    case "Summoner":
-                    default:
-                        break;
-                }
+                ((ISettableIcon)params[0]).setIcon(bitmap);
 
                 return bitmap;
             } catch (MalformedURLException e) {

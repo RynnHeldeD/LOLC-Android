@@ -14,19 +14,26 @@ import org.ema.lolcompanion.R;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.Timestamp;
 
 public class TimerButton extends RoundedImageView {
-
+    public static final int DELAY = 200;
     protected Timer timer;
+    protected long clickedTimestamp;
+    protected boolean triggered;
 
     public TimerButton(Context context) {
         super(context);
-        timer = null;
+        this.timer = null;
+        this.clickedTimestamp = 0;
+        this.triggered = false;
     }
 
     public TimerButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        timer = null;
+        this.timer = null;
+        this.clickedTimestamp = 0;
+        this.triggered = false;
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TimerButton);
 
@@ -90,6 +97,10 @@ public class TimerButton extends RoundedImageView {
 
     public TimerButton(final Context context, final AttributeSet attrs, final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        this.timer = null;
+        this.clickedTimestamp = 0;
+        this.triggered = false;
+
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TimerButton);
 
         final int N = a.getIndexCount();
@@ -162,4 +173,19 @@ public class TimerButton extends RoundedImageView {
         int timerCountDown = Integer.getInteger(this.getTimer().getTimerTextView().getText().toString(),0);
     }
 
+    public long getClickedTimestamp() {
+        return this.clickedTimestamp;
+    }
+
+    public void setClickedTimestamp(long clickedTimestamp) {
+        this.clickedTimestamp = clickedTimestamp;
+    }
+
+    public boolean isTriggered() {
+        return triggered;
+    }
+
+    public void setTriggered(boolean triggered) {
+        this.triggered = triggered;
+    }
 }

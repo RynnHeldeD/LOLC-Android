@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +33,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimerTask;
@@ -108,34 +110,70 @@ public class TimerActivity extends Activity {
         //loading the league of legend equiv fonts
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/lol.ttf");
 
-        //Timer is null and has never been instancied
-        if(tbtn.getTimer() == null){
-            //Setting the TextView so the timer update the countdown in FO
-            int timerTextViewID = getResources().getIdentifier(IDButton.concat("t"), "id", getBaseContext().getPackageName());
-            //settings the textView with the font
-            TextView txtv = (TextView) findViewById(timerTextViewID);
-            txtv.setTypeface(font);
-            tbtn.setTimer(new Timer(0, 0, txtv));
-        }
+        java.util.Date date= new java.util.Date();
+        long now = date.getTime();
+        long btnTimestp = tbtn.getClickedTimestamp();
+        tbtn.setClickedTimestamp(now);
 
-        //Timer isn't ticking, we can launch the countdown
-        if(tbtn.getTimer() != null && !tbtn.getTimer().isTicking()){
+        final Handler handler = new Handler();
+        if(!tbtn.isTriggered()){
+            tbtn.setTriggered(true);
 
-            java.util.Date date= new java.util.Date();
-            Timestamp tstmp = new Timestamp(date.getTime());
+            class PostponedClick implements Runnable {
+                public TimerButton tbtn;
+                public String buttonID;
+                public String IDButton;
+                public Typeface font;
 
-            //To-DO : send the signal to websocket with timestamps and button id
-            //TO-do : retrieve the good time in the LOL champion array
-            WsEventHandling.timerActivation(buttonID, tstmp.toString());
+                public PostponedClick(TimerButton tbtn, String IDButton, String buttonID, Typeface font){
+                    this.tbtn = tbtn;
+                    this.buttonID = buttonID;
+                    this.IDButton = IDButton;
+                    this.font = font;
+                }
 
-            long timeToCount = timerMap.get(buttonID) * 1000;
-            tbtn.setTimer(new Timer(timeToCount,1000,tbtn.getTimer().getTimerTextView()));
-            tbtn.getTimer().start();
-            tbtn.getTimer().setVisible(true);
-        } else if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
-            WsEventHandling.timerDelay(buttonID);
-            //int
-            //tbtn.getTimer().cancel();
+                public void run(){
+                    if (this.tbtn.isTriggered()) {
+                        Log.v("DAO", this.buttonID + " simple click postponed");
+
+                        //Timer is null and has never been instancied
+                        if(tbtn.getTimer() == null){
+                            //Setting the TextView so the timer update the countdown in FO
+                            int timerTextViewID = getResources().getIdentifier(IDButton.concat("t"), "id", getBaseContext().getPackageName());
+                            //settings the textView with the font
+                            TextView txtv = (TextView) findViewById(timerTextViewID);
+                            txtv.setTypeface(font);
+                            tbtn.setTimer(new Timer(0, 0, txtv));
+                        }
+
+                        //Timer isn't ticking, we can launch the countdown
+                        if(tbtn.getTimer() != null && !tbtn.getTimer().isTicking()){
+                            Date date = new java.util.Date();
+                            Timestamp tstmp = new Timestamp(date.getTime());
+
+                            //To-DO : send the signal to websocket with timestamps and button id
+                            //TO-do : retrieve the good time in the LOL champion array
+                            WsEventHandling.timerActivation(buttonID, tstmp.toString());
+
+                            long timeToCount = timerMap.get(buttonID) * 1000;
+                            tbtn.setTimer(new Timer(timeToCount,1000,tbtn.getTimer().getTimerTextView()));
+                            tbtn.getTimer().start();
+                            tbtn.getTimer().setVisible(true);
+                        } else if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
+                            WsEventHandling.timerDelay(buttonID);
+                            //int
+                            //tbtn.getTimer().cancel();
+                        }
+                        this.tbtn.setTriggered(false);
+                    }
+                }
+            }
+            handler.postDelayed(new PostponedClick(tbtn, IDButton, buttonID, font), 200);
+        } else {
+            if((now <= btnTimestp + TimerButton.DELAY)){
+                Log.v("DAO", buttonID + " double click");
+            }
+            tbtn.setTriggered(false);
         }
     }
 

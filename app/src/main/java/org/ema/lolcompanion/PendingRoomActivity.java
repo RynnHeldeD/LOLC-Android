@@ -149,27 +149,17 @@ public class PendingRoomActivity extends Activity {
             //pendingRoomText.setText("Loading game data...");
             //Fin TODO
 
-            summonersList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
-            if (summonersList != null) {
-                Log.v("DAO", "summonersList: " + summonersList.toString());
-            } else {
-                Log.v("DAO", "FATAL : summonersList is NULL. Summoner :" + summonerNameFromPreviousView);
-            }
-            shouldContinue = false;
-
-            while(!this.areAllImagesLoaded(summonersList)){
-                SystemClock.sleep(500);
-            }
-
             resumeThread();
             isAllowedToBack = false;
             summonersList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
             if (summonersList != null) {
                 Log.v("DAO", "SummonerList: " + summonersList.toString());
-                //waitingThread.interrupt();
+                while(!this.areAllImagesLoaded(summonersList)){
+                    SystemClock.sleep(500);
+                }
                 launchTimerActivity();
             }
-            //shouldContinue = false;
+
             stopThread();
             isAllowedToBack = true;
             return true;

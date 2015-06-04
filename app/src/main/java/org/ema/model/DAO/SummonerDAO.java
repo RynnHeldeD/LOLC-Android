@@ -41,6 +41,19 @@ public class SummonerDAO {
     public static boolean isInGame(int id){
         //Get request
         String jsonResult = Utils.getDocument(Constant.API_CURRENT_GAME_URI + id);
-        return jsonResult != null;
+        if(jsonResult != null) {
+            String gameMode = null;
+            try {
+                JSONObject inGameResult = new JSONObject(jsonResult);
+                gameMode = inGameResult.getString("gameMode");
+                return gameMode.equals("CLASSIC");
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
     }
 }

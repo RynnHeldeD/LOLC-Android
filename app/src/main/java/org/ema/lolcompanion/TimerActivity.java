@@ -26,7 +26,9 @@ import org.ema.utils.GlobalDataManager;
 import org.ema.utils.SortSummonerId;
 import org.ema.utils.Timer;
 import org.ema.utils.TimerButton;
+import org.ema.utils.WebSocket;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,6 +52,8 @@ public class TimerActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
+
+        WebSocket.connectWebSocket();
     }
 
     @Override
@@ -99,6 +103,8 @@ public class TimerActivity extends Activity {
         TimerButton tbtn = (TimerButton) tbt;
         //Name of the clicked button => example : b21
         String IDButton = getResources().getResourceName(tbtn.getId());
+        //button ID formated like "b12"
+        String buttonID = IDButton.substring(IDButton.lastIndexOf("/") + 1);
         //loading the league of legend equiv fonts
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/lol.ttf");
 
@@ -112,15 +118,24 @@ public class TimerActivity extends Activity {
             tbtn.setTimer(new Timer(0, 0, txtv));
         }
 
-        //Timer isn't ticking, we can lauch the countdown
+        //Timer isn't ticking, we can launch the countdown
         if(tbtn.getTimer() != null && !tbtn.getTimer().isTicking()){
+
+            java.util.Date date= new java.util.Date();
+            Timestamp tstmp = new Timestamp(date.getTime());
+
             //To-DO : send the signal to websocket with timestamps and button id
             //TO-do : retrieve the good time in the LOL champion array
-            String toDelete = IDButton.substring(IDButton.lastIndexOf("/")+1);
-            long timeToCount = timerMap.get(IDButton.substring(IDButton.lastIndexOf("/")+1)) * 1000;
+            WsEventHandling.timerActivation(buttonID, tstmp.toString());
+
+            long timeToCount = timerMap.get(buttonID) * 1000;
             tbtn.setTimer(new Timer(timeToCount,1000,tbtn.getTimer().getTimerTextView()));
             tbtn.getTimer().start();
             tbtn.getTimer().setVisible(true);
+        } else if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
+            WsEventHandling.timerDelay(buttonID);
+            //int
+            //tbtn.getTimer().cancel();
         }
     }
 
@@ -210,8 +225,5 @@ public class TimerActivity extends Activity {
             timerMap.put(s,(long)cdSummonerSpell);
             summonerIndex++;
         }
-
-
-        Log.v("DAO", "Timer des tableau chargement termine");
     }
 }

@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
         EditText summoner_name = (EditText) findViewById(R.id.summoner_name);
         String message = summoner_name.getText().toString();
 
-        if (!message.matches("([a-zA-Z0-9]){3,20}")){
+        if (!message.matches("([a-zA-Z0-9 ]){3,20}")){
             //TODO pop up erreur
             Log.v("DAO", "Erreur dans le pseudo: " + message);
         } else {

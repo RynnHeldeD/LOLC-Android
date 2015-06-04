@@ -33,4 +33,9 @@ public class TimerButton extends RoundedImageView {
     public void setTimer(Timer timer) {
         this.timer = timer;
     }
+
+    public void getTimestamp () {
+        int timerCountDown = Integer.getInteger(this.getTimer().getTimerTextView().getText().toString(),0);
+    }
+
 }

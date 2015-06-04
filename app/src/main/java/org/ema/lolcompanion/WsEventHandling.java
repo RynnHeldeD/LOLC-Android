@@ -17,14 +17,9 @@ import java.util.TimerTask;
  */
 public class WsEventHandling {
 
-    private ArrayList<String> playersInChannel_g;
-    private WebSocketClient ws_g;
+    private static ArrayList<String> playersInChannel_g;
 
-    public WsEventHandling(WebSocketClient ws_g) {
-        this.ws_g = ws_g;
-    }
-
-    public void handlingMessage(String message) {
+    public static void handlingMessage(String message) {
         Log.v("Websocket:","message from websocket: " + message);
 
         try{
@@ -60,21 +55,21 @@ public class WsEventHandling {
         }
     }
 
-    public void firstMessage(JSONArray playersInChannel) {
+    public static void firstMessage(JSONArray playersInChannel) {
         updateChannelPlayers(playersInChannel);
 
         //Lancement du timer pour les 5 minutes
-        TimerTask tasknew = new TimerGetTimeStamp();
+       // TimerTask tasknew = new TimerGetTimeStamp();
         Timer timer = new Timer();
 
         Log.v("Websocket","Timer Starting");
         // scheduling the task at interval
         //300000ms = 5 minutes
-        timer.schedule(tasknew, 300000);
+        //timer.schedule(tasknew, 300000);
         Log.v("Websocket","Timer Ending");
     }
 
-    public void updateChannelPlayers(JSONArray playersInChannel) {
+    public static void updateChannelPlayers(JSONArray playersInChannel) {
 
         //on recréer la liste des joueurs du channel
         playersInChannel_g = new ArrayList<String>();
@@ -96,13 +91,13 @@ public class WsEventHandling {
 
     }
 
-    class TimerGetTimeStamp extends TimerTask {
+   /* class TimerGetTimeStamp extends TimerTask {
         public void run() {
             System.out.println("Timer task executed.");
         }
-    }
+    }*/
 
-    public void getErrorFromJson(JSONObject obj) {
+    public static void getErrorFromJson(JSONObject obj) {
         try {
             Log.v("Websocket","Error : server return error during action -" + obj.getString("action") + "- message : " + obj.getString("message"));
         } catch (JSONException e) {
@@ -110,28 +105,28 @@ public class WsEventHandling {
         }
     }
 
-    private void sendMessage(String msg) {
-        ws_g.send(msg);
+    private static void sendMessage(String msg) {
+        WebSocket.send(msg);
         Log.v("Websocket","Message send to websocket: " + msg);
     }
 
-    public void pickedChampion(Integer gameId, Integer teamId, String championIconName, String channel) {
+    public static void pickedChampion(Integer gameId, Integer teamId, String championIconName, String channel) {
         sendMessage("{\"action\":\"pickedChampion\",\"gameId\":\""+ gameId +"\",\"teamId\":\""+ teamId +"\",\"championIconId\":\""+ championIconName +"\",\"passphrase\":\""+ channel +"\"}");
     }
 
-    public void switchChannel(String newChannel) {
+    public static void switchChannel(String newChannel) {
         sendMessage("{\"action\":\"switchChannel\",\"channel\":\""+ newChannel +"\"}");
     }
 
-    public void timerActivation(Integer gridSpellId, String timestampOfTrigger) {
+    public static void timerActivation(String gridSpellId, String timestampOfTrigger) {
         sendMessage("{\"action\":\"timerActivation\",\"idSortGrille\":\""+ gridSpellId +"\",\"timestampDeclenchement\":\""+ timestampOfTrigger +"\"}");
     }
 
-    public void timerDelay(Integer gridSpellId) {
+    public static void timerDelay(String gridSpellId) {
         sendMessage("{\"action\":\"timerDelay\",\"idSortGrille\":\""+ gridSpellId +"\"}");
     }
 
-    public void resetTimer(Integer gridSpellId) {
+    public static void resetTimer(String gridSpellId) {
         sendMessage("{\"action\":\"razTimer\",\"idSortGrille\":\""+ gridSpellId +"\"}");
     }
 

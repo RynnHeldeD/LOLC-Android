@@ -135,7 +135,13 @@ public class Statistic implements Parcelable {
         this.damageDealtPercentage = in.readFloat();
         this.damageTakenPercentage = in.readFloat();
         this.performance = in.readFloat();
-        this.creepChartInfo = in.createIntArray();
+        double[][] array;
+        int N = 4;
+        array = new double[2][N];
+        for (int i=0; i<N; i++) {
+            array[i] = in.createDoubleArray();
+        }
+        this.creepChartInfo = array;
     }
 
     public int describeContents(){
@@ -152,7 +158,10 @@ public class Statistic implements Parcelable {
         dest.writeFloat(this.damageDealtPercentage);
         dest.writeFloat(this.damageTakenPercentage);
         dest.writeFloat(this.performance);
-        dest.writeIntArray(this.creepChartInfo);
+        final int N = this.creepChartInfo.length;
+        for (int i=0; i<N; i++) {
+            dest.writeDoubleArray(this.creepChartInfo[i]);
+        }
     }
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public Statistic createFromParcel(Parcel in) {

@@ -117,6 +117,7 @@ public class PendingRoomActivity extends Activity {
             shouldContinue = false;
 
             while(!this.areAllImagesLoaded(summonersList)){
+                Log.v("RYNN", "NOT READY");
                 SystemClock.sleep(500);
             }
 
@@ -141,9 +142,13 @@ public class PendingRoomActivity extends Activity {
 
         for (Iterator<Summoner> it = notReadySummoners.iterator() ; it.hasNext();) {
             Summoner s = it.next();
+            Log.v("RYNN", "Summoner: " + s.getName());
             if (!s.areImagesLoaded()) {
                 areImagesLoaded = false;
+                Log.v("RYNN", "NOT");
                 break;
+            } else {
+                Log.v("RYNN", "YES");
             }
         }
 

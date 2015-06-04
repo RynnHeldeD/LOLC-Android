@@ -222,8 +222,19 @@ public class TimerActivity extends Activity {
         summonerIndex = 0;
         for (String s : ultimateButtons){
             float cdSummonerSpell = teamSummonersList.get(summonerIndex).getChampion().getSpell().getCooldown()[0];
-            timerMap.put(s,(long)cdSummonerSpell);
+            timerMap.put(s, (long) cdSummonerSpell);
             summonerIndex++;
+        }
+    }
+
+    public void timerCancel(View tbt){
+        TimerButton tbtn = (TimerButton) tbt;
+        String IDButton = getResources().getResourceName(tbtn.getId());
+        String buttonID = IDButton.substring(IDButton.lastIndexOf("/") + 1);
+
+        if(tbtn.getTimer() != null){
+            tbtn.setTimer(null);
+            // TODO Send cancel to WS
         }
     }
 }

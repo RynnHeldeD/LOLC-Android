@@ -404,8 +404,8 @@ public class CurrentGameDAO {
     //Get premades
     public static void getPremades(Summoner summoner, ArrayList<Summoner> summoners) {
         try {
-            JSONObject jsonChampions = new JSONObject(Utils.getDocument(Constant.API_SUMMONER_GAMES + summoner.getId() + "/recent"));
-            String result = jsonChampions.toString();
+            JSONObject json = new JSONObject(Utils.getDocument(Constant.API_SUMMONER_GAMES + summoner.getId() + "/recent"));
+
             int[][] nbGamesWithUser = new int[(summoners.size() / 2) - 1][2];
 
             int index = 0;
@@ -413,7 +413,7 @@ public class CurrentGameDAO {
                 if (summoners.get(i).getId() != summoner.getId() && summoners.get(i).getTeamId() == summoner.getTeamId()) {
                     int[] line = new int[2];
                     //User id
-                    line[0] = summoners.get(index).getId();
+                    line[0] = summoners.get(i).getId();
                     //Nb times saw on games
                     line[1] = 0;
                     nbGamesWithUser[index] = line;
@@ -421,9 +421,33 @@ public class CurrentGameDAO {
                 }
             }
 
-            for (int i = 0; i < nbGamesWithUser.length; i++) {
-                Log.v("TOTO", nbGamesWithUser[i][0] + " " + nbGamesWithUser[i][1]);
+            JSONArray jsonArray = (JSONArray)json.get("games");
+
+            //For each games
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonGame = ((JSONObject) jsonArray.get(i));
+
+                if(!jsonGame.isNull("fellowPlayers")) {
+                    JSONArray jsonPlayers = (JSONArray)jsonGame.get("fellowPlayers");
+
+                    for(int j = 0; j < jsonPlayers.length(); j++) {
+                        JSONObject jsonPlayer = ((JSONObject) jsonPlayers.get(j));
+
+                        for(int x = 0; x < nbGamesWithUser.length; x++) {
+                            if(nbGamesWithUser[x][0] == jsonPlayer.getInt("summonerId")) {
+                                nbGamesWithUser[x][1]++;
+                                break;
+                            }
+                        }
+                    }
+                }
             }
+
+            /*Log.v("TOTO","Team = " + summoner.getTeamId());
+
+            for (int i = 0; i < nbGamesWithUser.length; i++) {
+                Log.v("PREMADES", nbGamesWithUser[i][0] + " " + nbGamesWithUser[i][1]);
+            }*/
 
             int limit;
             switch (summoner.getLeague().getDivision().split(" ")[0].toString()) {
@@ -452,7 +476,42 @@ public class CurrentGameDAO {
                     limit = 1;
                     break;
             }
-            Log.v("TOTO", "Limit = " + String.valueOf(limit));
+
+            for(int i = 0; i < nbGamesWithUser.length; i++) {
+                if(nbGamesWithUser[i][1] >= limit) {
+                    for(Summoner premadeCurrent : summoners) {
+                        if(premadeCurrent.getId() == nbGamesWithUser[i][0]) {
+                            Log.v("PREMADES",summoner.getName() + " and " + premadeCurrent.getName() + " are premade");
+
+                            if(premadeCurrent.getPremade() != 0 && summoner.getPremade() != 0) {
+                                //1 and 2 are friends, need merge
+                                if(premadeCurrent.getPremade() != summoner.getPremade()) {
+                                    for(Summoner summonerPremade : summoners) {
+                                        if(summonerPremade.getPremade() != 0) {
+                                            summonerPremade.setPremade(1);
+                                        }
+                                    }
+                                }
+                            }
+                            //Get the premade to summoner
+                            else if(premadeCurrent.getPremade() != 0){
+                                summoner.setPremade(premadeCurrent.getPremade());
+                            }
+                            //Get the premade to premadeCurrent
+                            else if(summoner.getPremade() != 0) {
+                                premadeCurrent.setPremade(summoner.getPremade());
+                            }
+                            //New premades detected
+                            else {
+                                premadeCurrent.setPremade(getMaxPremades(summoner.getTeamId(), summoners)+1);
+                                summoner.setPremade(premadeCurrent.getPremade());
+                            }
+                        }
+                    }
+                }
+            }
+
+            //Log.v("TOTO", "Limit = " + String.valueOf(limit));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -461,5 +520,18 @@ public class CurrentGameDAO {
     {
         JSONArray json = jsonParticipants;
         int[] build;
+    }
+
+    //Get the max value of premades
+    private static int getMaxPremades(int team, ArrayList<Summoner> summoners) {
+        int value = 0;
+
+        for(Summoner summoner  : summoners) {
+            if(summoner.getPremade() > value && summoner.getTeamId() == team) {
+                value = summoner.getPremade();
+            }
+        }
+
+        return value;
     }
 }

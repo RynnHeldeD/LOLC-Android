@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.os.SystemClock;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,9 @@ public class PendingRoomActivity extends Activity {
     public boolean shouldContinue = true;
     public Summoner user;
     public String summonerNameFromPreviousView;
+    private boolean isAllowedToBack = true;
+    public final Object signal = new Object();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,32 +61,67 @@ public class PendingRoomActivity extends Activity {
         //Creating thread
         waitingThread = new Thread(new Runnable() {
             public void run() {
-                while(shouldContinue) {
-                    Log.v("Thread", "New thread running");
-                    //Waiting 10 seconds before make a new request to the server
-                    if(!loadData()){
-                        SystemClock.sleep(10000);
+                while (true) {
+                    if(!shouldContinue)
+                    {
+                        try {
+                            Log.v("DAO", "Waiting");
+                            synchronized(signal){ signal.wait();}
+                        }catch(Exception e)
+                        {
+                            e.printStackTrace();
+                            Log.v("Erreur stats", e.getMessage());
+                        }
+                    }
+                    else {
+                        //Waiting 10 seconds before make a new request to the server
+                        Log.v("DAO", "Loading data");
+                        if (!loadData()) {
+                            SystemClock.sleep(10000);
+                        }
                     }
                 }
-                Log.v("DAO", "On a recupere les , on affiche la vue timer");
-                launchTimerActivity();
+                //Log.v("DAO", "On a recupere les , on affiche la vue timer");
+                //launchTimerActivity();
             }
         });
 
+
+    }
+    public void stopThread() {
+        Log.v("DAO", "Stopping thread");
+        shouldContinue = false;
+        //synchronized(signal){ signal.notify();}
+    }
+    public void resumeThread() {
+        Log.v("DAO", "Resuming thread");
+        shouldContinue = true;
+        synchronized(signal){ signal.notify();}
+    }
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
         //Launch thread if the user login is good
         if (user != null) {
             Log.v("DAO", user.toString());
-            waitingThread.start();
+            //shouldContinue = true;
+            resumeThread();
+            if (waitingThread.getState() == Thread.State.NEW) {
+                waitingThread.start();
+            }
         }
+        //resumeThread();
     }
-
     public void launchTimerActivity() {
         Intent intent = new Intent(this, TimerActivity.class);
         //TODO : mettre le channel enregistre dans la case channel
         // MainActivity.settingsManager.set(this, "summonerName", message);
         startActivity(intent);
     }
-
+    public void launchMainActivity(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
     public boolean loadData() {
 
         count ++;
@@ -103,13 +142,17 @@ public class PendingRoomActivity extends Activity {
             //pendingRoomText.setText("Loading your data...");
             //Fin TODO
 
-
-
+            resumeThread();
+            isAllowedToBack = false;
             summonerList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
             if (summonerList != null) {
                 Log.v("DAO", "SummonerList: " + summonerList.toString());
+                //waitingThread.interrupt();
+                launchTimerActivity();
             }
-            shouldContinue = false;
+            //shouldContinue = false;
+            stopThread();
+            isAllowedToBack = true;
             return true;
         } else {
             Log.v("Error", "User not in game");
@@ -118,4 +161,18 @@ public class PendingRoomActivity extends Activity {
         return false;
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(isAllowedToBack) {
+            Log.v("Back", "Going back");
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                shouldContinue = false;
+                launchMainActivity();
+                return true;
+            }
+
+            return super.onKeyDown(keyCode, event);
+        }
+        return true;
+    }
 }

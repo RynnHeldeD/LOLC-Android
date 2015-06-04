@@ -62,7 +62,7 @@ public class TimerActivity extends Activity {
         // Recuperation et tri des summoners de l'equipe du joueur
         ArrayList<Summoner> teamSummonersList = new ArrayList<Summoner>();
         for(Summoner s : summonersList){
-            if(s.getTeamId() == user.getTeamId()){
+            if(s.getTeamId() != user.getTeamId()){
                 teamSummonersList.add(s);
             }
         }

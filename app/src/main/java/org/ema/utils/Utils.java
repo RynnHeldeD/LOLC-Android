@@ -120,7 +120,6 @@ public class Utils {
                 return null;
             } catch (IOException e) {
                 // In case of 404, return a cute Poro
-                Log.v("RYNN", "PORO");
                 URL url = null;
                 try {
                     url = new URL(Constant.DDRAGON_SUMMONER_ICON_URI + "588.png");

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.CountDownTimer;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -167,6 +168,20 @@ public class TimerButton extends RoundedImageView {
 
     public void setTimer(Timer timer) {
         this.timer = timer;
+    }
+
+    public long getCurrentTimestamp(){
+        return  Long.parseLong(this.getTimer().getTimerTextView().getText().toString()) * 1000;
+    }
+
+    public void timerDelay(long delayToRetrench){
+        long currentTimestamp = Long.parseLong(this.getTimer().getTimerTextView().getText().toString()) * 1000;
+
+        if (currentTimestamp != 0) {
+            this.getTimer().cancel();
+            this.setTimer(new Timer(currentTimestamp - delayToRetrench, 1000, this.getTimer().getTimerTextView()));
+            this.getTimer().start();
+        }
     }
 
     public void getTimestamp () {

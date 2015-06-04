@@ -1,6 +1,7 @@
 package org.ema.utils;
 
 import android.os.Build;
+import android.os.SystemClock;
 import android.util.Log;
 
 import org.ema.lolcompanion.WsEventHandling;
@@ -20,6 +21,7 @@ public class WebSocket {
         try {
             //    uri = new URI("ws://10.0.2.2:12345/");
             uri = new URI("ws://5.135.153.45:8080/");
+
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;

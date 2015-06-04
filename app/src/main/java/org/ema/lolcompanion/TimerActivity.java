@@ -30,6 +30,7 @@ import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,10 +43,12 @@ import java.util.TimerTask;
 public class TimerActivity extends Activity {
 
     public HashMap<String,Long> timerMap;
+    public static TimerActivity instance = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         timerMap = new HashMap<String,Long>();
         setContentView(R.layout.activity_timer);
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/lol.ttf");
@@ -99,9 +102,13 @@ public class TimerActivity extends Activity {
         channelSummary.addView(riv, 25, 25);
     }
 
+    //On créer une deuxième fonction avec un paramètre en plus car on ne peut pas passer de paramètres depuis la vue
+    public void timerListener(View tbt){
+        timerListener(tbt,false,0);
+    }
 
     //This function handle the onclick (short) events for all buttons on the timer view
-    public void timerListener(View tbt){
+    public void timerListener(View tbt, boolean fromWebSocket, long delayOfTransfert){
         TimerButton tbtn = (TimerButton) tbt;
         //Name of the clicked button => example : b21
         String IDButton = getResources().getResourceName(tbtn.getId());
@@ -124,12 +131,16 @@ public class TimerActivity extends Activity {
                 public String buttonID;
                 public String IDButton;
                 public Typeface font;
+                boolean fromWebSocket;
+                long delayOfTransfert;
 
-                public PostponedClick(TimerButton tbtn, String IDButton, String buttonID, Typeface font){
+                public PostponedClick(TimerButton tbtn, String IDButton, String buttonID, Typeface font, boolean fromWebSocket, long delayOfTransfert){
                     this.tbtn = tbtn;
                     this.buttonID = buttonID;
                     this.IDButton = IDButton;
                     this.font = font;
+                    this.fromWebSocket = fromWebSocket;
+                    this.delayOfTransfert = delayOfTransfert;
                 }
 
                 public void run(){
@@ -153,22 +164,26 @@ public class TimerActivity extends Activity {
 
                             //To-DO : send the signal to websocket with timestamps and button id
                             //TO-do : retrieve the good time in the LOL champion array
-                            WsEventHandling.timerActivation(buttonID, tstmp.toString());
+            		    if(!fromWebSocket){
+                	    	WsEventHandling.timerActivation(buttonID, tstmp.toString());
+			    }
 
-                            long timeToCount = timerMap.get(buttonID) * 1000;
+
+                            long timeToCount = timerMap.get(buttonID) * 1000 - delayOfTransfert;
                             tbtn.setTimer(new Timer(timeToCount,1000,tbtn.getTimer().getTimerTextView()));
                             tbtn.getTimer().start();
                             tbtn.getTimer().setVisible(true);
                         } else if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
-                            WsEventHandling.timerDelay(buttonID);
-                            //int
-                            //tbtn.getTimer().cancel();
+                            if(!fromWebSocket){
+		                WsEventHandling.timerDelay(buttonID);
+			    }
+			    tbtn.timerDelay(5000);
                         }
                         this.tbtn.setTriggered(false);
                     }
                 }
             }
-            handler.postDelayed(new PostponedClick(tbtn, IDButton, buttonID, font), 200);
+            handler.postDelayed(new PostponedClick(tbtn, IDButton, buttonID, font, fromWebSocket, delayOfTransfert), 200);
         } else {
             if((now <= btnTimestp + TimerButton.DELAY)){
                 Log.v("DAO", buttonID + " double click");
@@ -269,7 +284,25 @@ public class TimerActivity extends Activity {
         TimerButton tbtn = (TimerButton) tbt;
         String IDButton = getResources().getResourceName(tbtn.getId());
         String buttonID = IDButton.substring(IDButton.lastIndexOf("/") + 1);
+}
 
-        Log.v("DAO", buttonID + " long pressed !");
+    //Fonctions pour les évènements WS
+    public void activateTimer(String buttonID,long delayOfTransfert){
+            View tbtn = findViewById(getResources().getIdentifier(buttonID, "id", getPackageName()));
+            timerListener(tbtn,true,delayOfTransfert);
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        instance = this;
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        instance = null;
     }
 }

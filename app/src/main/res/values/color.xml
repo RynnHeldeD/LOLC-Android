@@ -3,8 +3,31 @@
     <!-- fonts -->
     <color name="light_font">#FBFBFB</color>
     <color name="grey_font">#ff9e9e9e</color>
+    <color name="black_font">#000000</color>
 
     <!-- backgrounds -->
     <color name="bg_black_transparent">#AA000000</color>
+    <color name="bg_white_transparent">#88FFFFFF</color>
+    <!-- cadres -->
+    <color name="channel_summary_frames">#FFFFFF</color>
+    <color name="champions_frame_gold">#ffc952</color>
+    <color name="champions_frame">#FFFFFF</color>
 
+    <!-- allies ennemies background border (effet doré  -->
+    <color name="frame_first_border">#ffc952</color>
+    <color name="frame_second_border">#cb8515</color>
+    <color name="frame_third_border">#9a7539</color>
+    <color name="frame_background_border">#f8f5f3</color>
+
+    <color name="performance_bar_background">#f8f5f3</color>
+    <color name="performance_bar_normal">#4bb100</color>
+    <color name="performance_bar_avg">#e59c00</color>
+    <color name="performance_bar_danger">#e90000</color>
+
+    <color name="summoner_kill">#4bb000</color>
+    <color name="summoner_death">#e90000</color>
+    <color name="summoner_assist">#e59c00</color>
+
+    <color name="summoner_wins">#4bb000</color>
+    <color name="summoner_defs">#e90000</color>
 </resources>

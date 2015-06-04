@@ -2,8 +2,7 @@ package org.ema.lolcompanion;
 
 
 import android.app.Activity;
-import android.os.*;
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -18,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -29,26 +29,17 @@ import org.ema.utils.Constant;
 import org.ema.model.DAO.*;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class MainActivity extends Activity {
-    // Summoner
-    public Summoner user;
     public final static String SUMMONER_NAME = "";
-    public ArrayList<Summoner> summonerList;
 
     // Preferences
     public static SettingsManager settingsManager = null;
-
-    // Threads
-    public Thread waitingThread;
-    //public Handler handlerWaitingThread;
-
-    // Other variables
-    public int count = 0;
-    public boolean shouldContinue = false;
     public boolean isFound = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,26 +51,6 @@ public class MainActivity extends Activity {
         MainActivity.settingsManager = new SettingsManager();
         PreferenceManager.getDefaultSharedPreferences(this);
 
-        user = SummonerDAO.getSummoner("spke30");
-
-        waitingThread = new Thread(new Runnable() {
-            public void run() {
-                while(shouldContinue) {
-                    Log.v("Thread", "New thread running");
-                    //Waiting 30 seconds before make a new request to the server
-                    SystemClock.sleep(30000);
-                    loadData();
-                }
-                }
-        });
-        if (user != null) {
-            Log.v("DAO", user.toString());
-            if(!loadData())
-            {
-                waitingThread.start();
-            }
-
-        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -113,9 +84,28 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, PendingRoomActivity.class);
         EditText summoner_name = (EditText) findViewById(R.id.summoner_name);
         String message = summoner_name.getText().toString();
-        intent.putExtra(SUMMONER_NAME, message);
-        MainActivity.settingsManager.set(this, "summonerName", message);
-        startActivity(intent);
+
+        if (!message.matches("([a-zA-Z0-9]){3,20}")){
+            //TODO pop up erreur
+            Log.v("DAO", "Erreur dans le pseudo: " + message);
+        } else {
+            intent.putExtra(SUMMONER_NAME, message);
+            MainActivity.settingsManager.set(this, "summonerName", message);
+            startActivity(intent);
+        }
+    }
+
+    public boolean checkNickname(String nickName) {
+
+
+
+        Summoner user = SummonerDAO.getSummoner(nickName);
+
+        if(user == null){
+            //TODO message d'erreur
+        }
+
+        return false;
     }
 
     /*
@@ -143,31 +133,4 @@ public class MainActivity extends Activity {
 
     */
 
-    public boolean loadData() {
-        count ++;
-        if(count == 10)
-        {
-            Log.v("Error", "Interrupted");
-            waitingThread.interrupt();
-        }
-
-        int id = user.getId();
-        boolean isInGame = SummonerDAO.isInGame(id);
-        Log.v("DAO", "Is in game: " + isInGame);
-
-
-        if (isInGame) {
-            summonerList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
-            if (summonerList != null) {
-                Log.v("DAO", "SummonerList: " + summonerList.toString());
-            }
-            CurrentGameDAO.getSummonerRank(user);
-            shouldContinue = false;
-            return true;
-        } else {
-            Log.v("Error", "User not in game");
-            shouldContinue = true;
-        }
-        return false;
-    }
 }

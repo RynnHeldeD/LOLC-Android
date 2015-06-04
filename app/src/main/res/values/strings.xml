@@ -16,5 +16,20 @@
     <string name="pending">Pending Room</string>
     <string name="pending_description">The application will start automatically with your online game</string>
     <string name="pending_initial_state">Waiting for game signal...</string>
+    <string name="pending_loading_state">Loading your data...</string>
+
+    <!-- Timer room -->
+    <string name="title_activity_timer">TimerActivity</string>
+    <string name="timers">Timers</string>
+
+    <!-- Allies screen -->
+    <string name="title_activity_allies">AlliesActivity</string>
+    <string name="allies">Allies</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="unrancked">UNRANCKED</string>
+
+    <!-- Ennemies screen -->
+    <string name="title_activity_ennemies">EnnemiesActivity</string>
+    <string name="ennemies">Opponents</string>
 
 </resources>

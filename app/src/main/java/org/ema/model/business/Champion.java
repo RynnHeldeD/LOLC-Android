@@ -2,12 +2,11 @@ package org.ema.model.business;
 
 import android.graphics.Bitmap;
 
+import org.ema.model.interfaces.ISettableIcon;
+
 import java.util.Arrays;
 
-/**
- * Created by romain on 01/05/2015.
- */
-public class Champion {
+public class Champion implements ISettableIcon {
     private int id;
     private String name;
     private Spell spell;

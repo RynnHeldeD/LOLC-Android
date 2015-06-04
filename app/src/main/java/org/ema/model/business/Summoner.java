@@ -12,10 +12,13 @@ public class Summoner {
     private Champion champion;
     private League league;
     private int teamId;
+    //0 not, 1 or 2 == premade
     private int premade;
     private int level;
-    private float winPercentage;
-    private float loosePercentage;
+    private float wins;
+    private float looses;
+    //size between 1 and 3
+    private Champion[] mostChampionsPlayed;
 
     public int getLevel() {
         return level;
@@ -81,26 +84,36 @@ public class Summoner {
         this.premade = premade;
     }
 
-    public float getWinPercentage() {
-        return winPercentage;
+    public float getWins() {
+        return wins;
     }
 
-    public void setWinPercentage(float winPercentage) {
-        this.winPercentage = winPercentage;
+    public void setWins(float wins) {
+        this.wins = wins;
     }
 
-    public float getLoosePercentage() {
-        return loosePercentage;
+    public Champion[] getMostChampionsPlayed() {
+        return mostChampionsPlayed;
     }
 
-    public void setLoosePercentage(float loosePercentage) {
-        this.loosePercentage = loosePercentage;
+    public void setMostChampionsPlayed(Champion[] mostChampionsPlayed) {
+        this.mostChampionsPlayed = mostChampionsPlayed;
     }
+
+    public float getLooses() {
+        return looses;
+    }
+
+    public void setLooses(float looses) {
+        this.looses = looses;
+    }
+
+
 
     public Summoner() {
     }
 
-    public Summoner(int id, String name,int level, Spell[] spells, Champion champion, League league, int teamId, int premade, float winPercentage, float loosePercentage) {
+    public Summoner(int id, String name,int level, Spell[] spells, Champion champion, League league, int teamId, int premade, float wins, float looses,Champion[] mostChampionsPlayed) {
         this.id = id;
         this.name = name;
         this.level = level;
@@ -109,8 +122,9 @@ public class Summoner {
         this.league = league;
         this.teamId = teamId;
         this.premade = premade;
-        this.winPercentage = winPercentage;
-        this.loosePercentage = loosePercentage;
+        this.wins = wins;
+        this.looses = looses;
+        this.mostChampionsPlayed = mostChampionsPlayed;
     }
 
     @Override
@@ -124,8 +138,8 @@ public class Summoner {
                 ", teamId=" + teamId +
                 ", premade=" + premade +
                 ", level=" + level +
-                ", winPercentage=" + winPercentage +
-                ", loosePercentage=" + loosePercentage +
+                ", wins=" + wins +
+                ", looses=" + looses +
                 '}';
     }
 }

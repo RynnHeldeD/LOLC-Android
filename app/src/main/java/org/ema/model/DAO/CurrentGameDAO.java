@@ -16,6 +16,7 @@ import org.ema.utils.Constant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Hashtable;
 
 public class CurrentGameDAO {
     public static ArrayList<Summoner> getSummunerListInGameFromCurrentUser(Summoner user) {
@@ -111,6 +112,7 @@ public class CurrentGameDAO {
 
             for(Summoner current : summonersList) {
                 //current.getChampion().setStatistic(getSummonerHistoryStatistic(current));
+                getPremades(current,summonersList);
                 getStatiscicsAndMostChampionsPlayed(current);
                 calculUserPerformance(current);
             }
@@ -392,6 +394,56 @@ public class CurrentGameDAO {
                     }
                 }
             }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    //Get premades
+    public static void getPremades(Summoner summoner, ArrayList<Summoner> summoners) {
+        try {
+            JSONObject jsonChampions = new JSONObject(Utils.getDocument(Constant.API_SUMMONER_GAMES + summoner.getId() + "/recent"));
+            String result = jsonChampions.toString();
+            int[][] nbGamesWithUser = new int[(summoners.size()/2)-1][2];
+
+            int index = 0;
+            for(int i = 0; i < summoners.size(); i++) {
+                if(summoners.get(i).getId() != summoner.getId() && summoners.get(i).getTeamId() == summoner.getTeamId()) {
+                    int[] line = new int[2];
+                    //User id
+                    line[0] = summoners.get(index).getId();
+                    //Nb times saw on games
+                    line[1] = 0;
+                    nbGamesWithUser[index] = line;
+                    index++;
+                }
+            }
+
+            for(int i = 0; i < nbGamesWithUser.length; i++) {
+                Log.v("TOTO", nbGamesWithUser[i][0] + " " + nbGamesWithUser[i][1]);
+            }
+
+            int limit;
+            switch (summoner.getLeague().getDivision().split(" ")[0].toString()) {
+                case "BRONZE": limit = 1;
+                    break;
+                case "SILVER": limit = 1;
+                    break;
+                case "GOLD": limit = 2;
+                    break;
+                case "PLATINUM": limit = 2;
+                    break;
+                case "DIAMOND": limit = 2;
+                    break;
+                case "MASTER": limit = 3;
+                    break;
+                case "CHALLENGER": limit = 4;
+                    break;
+                default: limit = 1;
+                    break;
+            }
+            Log.v("TOTO","Limit = " + String.valueOf(limit));
         }
         catch(Exception e){
             e.printStackTrace();

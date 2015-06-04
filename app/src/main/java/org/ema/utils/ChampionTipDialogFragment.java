@@ -57,61 +57,26 @@ public class ChampionTipDialogFragment extends DialogFragment {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
+        // Get the layout inflater and set the view with custom layout
+        View dialogLayout = getActivity().getLayoutInflater().inflate(R.layout.dialog_champion_tips, null);
 
-        // Get the layout inflater
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View dialogLayout = inflater.inflate(R.layout.dialog_champion_tips, null);
         //View dialogLayout = new View(this.getActivity());
         Typeface font = Typeface.createFromAsset(this.getActivity().getAssets(), "fonts/lol.ttf");
-
-        /*TextView advice_title = (TextView) dialogLayout.findViewById(R.id.dialog_advice_title);
+        TextView advice_title = (TextView) dialogLayout.findViewById(R.id.dialog_advice_title);
         advice_title.setText(((String) this.getArguments().get("name")));
-        advice_title.setTypeface(font);*/
-        /*
-        //Parent layout for title
-        LinearLayout layoutParent = new LinearLayout(this.getActivity());
-        LinearLayout.LayoutParams paramsParent = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParent.setOrientation(LinearLayout.VERTICAL);
-        layoutParent.setBackgroundResource(R.drawable.gold_border_background);
-        layoutParent.setLayoutParams(paramsParent);
+        advice_title.setTypeface(font);
 
-        TextView title = new TextView(this.getActivity());
-        title.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        title.setText((String) this.getArguments().get("name"));
-        title.setPadding(R.dimen.activity_vertical_margin, R.dimen.activity_horizontal_margin, R.dimen.activity_vertical_margin, R.dimen.activity_horizontal_margin);
-        title.setGravity(Gravity.CENTER);
-        title.setTextSize(R.dimen.tips_champion_font_title);
-        title.setTextColor(getResources().getColor(R.color.black_font));
-        title.setTypeface(font);
-        layoutParent.addView(title);
-
-        //Scrollview parent
-        ScrollView scrollView = new ScrollView(this.getActivity());
-        ScrollView.LayoutParams paramsScrollView = new ScrollView.LayoutParams(ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.MATCH_PARENT);
-        scrollView.setLayoutParams(paramsScrollView);
-
-        //Linear layout of the advices
-        LinearLayout layout = new LinearLayout(this.getActivity());
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setLayoutParams(params);
-        */
         LinearLayout layout = (LinearLayout) dialogLayout.findViewById(R.id.dialog_advices);
-        String[] advices = ((String) this.getArguments().get("tips")).replace("\"", "").split(",");
+        String[] advices = ((String) this.getArguments().get("tips")).split("\",\"");
+        LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         for(String advice : advices) {
             TextView tv = new TextView(this.getActivity());
-            tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-            tv.setText(advice);
-            tv.setPadding(R.dimen.activity_vertical_margin, R.dimen.activity_horizontal_margin, R.dimen.activity_vertical_margin, R.dimen.activity_horizontal_margin);
-            tv.setGravity(Gravity.CENTER);
-            tv.setTextSize(R.dimen.tips_champion_font);
+            tv.setText(advice.replace("\"", ""));
+            tv.setPadding(10,5,10,5);
+            tv.setTextSize(getResources().getDimension(R.dimen.tips_champion_font));
             tv.setTextColor(getResources().getColor(R.color.black_font));
-            layout.addView(tv);
-            Log.v("MIC", tv.toString());
+            layout.addView(tv, tvParams);
         }
-
-        //scrollView.addView(layout);
-        //layoutParent.addView(scrollView);
 
         builder.setView(dialogLayout);
 

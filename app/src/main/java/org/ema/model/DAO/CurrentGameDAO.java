@@ -8,6 +8,8 @@ import org.ema.model.business.Statistic;
 import org.ema.model.business.Summoner;
 import org.ema.utils.CallbackMatcher;
 import org.ema.utils.SortChampionsArrayList;
+import org.ema.utils.SortIntegerTabArrayList;
+
 import org.ema.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -263,12 +265,43 @@ public class CurrentGameDAO {
                 zeroToTen = tenToTwenty = twentyToThirty = thirtyToEnd = 0;
                 int numberOfValueZeroToTen, numberOfValueTenToTwenty, numberOfValueTwentyToThirsty, numberOfValueThirtyToEnd;
                 numberOfValueZeroToTen = numberOfValueTenToTwenty = numberOfValueTwentyToThirsty = numberOfValueThirtyToEnd = 0;
+                ArrayList<int[]> itemHistoy = new ArrayList<>();
+                int[] test = new int[2];
 
                 for (int i = 0; i < jsonMatches.length(); i++) {
-                    //MODIF
+
                     if(!jsonMatches.getJSONObject(i).isNull("participants")) {
                         jsonParticipants = jsonMatches.getJSONObject(i).getJSONArray("participants");
-                        getUserFavoiteBuild(jsonParticipants);
+                        if(i==0)
+                        {
+                            int[] itemsSummoner = new int[7];
+                            itemsSummoner = getUserFavoiteBuild(jsonParticipants);
+                            for(int j=0;j<7;j++)
+                            {
+                                int[] item = new int[2];
+                                item[0] = itemsSummoner[j];
+                                item[1] = 0;
+                                itemHistoy.add(item);
+                            }
+                        }
+                        else {
+                            for (int j = 0; j < 7; j++) {
+                                boolean found = false;
+                                for (int k = 0; k < itemHistoy.size(); k++) {
+                                    if (itemHistoy.get(k)[0] == getUserFavoiteBuild(jsonParticipants)[j]) {
+                                        itemHistoy.get(k)[1]++;
+                                        found = true;
+                                    }
+                                }
+                                if (!found) {
+                                    int[] newItem = new int[2];
+                                    newItem[0] = getUserFavoiteBuild(jsonParticipants)[j];
+                                    newItem[1] = 0;
+                                    itemHistoy.add(newItem);
+                                }
+
+                            }
+                        }
                         if(!jsonParticipants.getJSONObject(0).isNull("timeline")) {
                             if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").isNull("creepsPerMinDeltas")) {
                                 if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("zeroToTen")) {
@@ -292,6 +325,8 @@ public class CurrentGameDAO {
                         }
                     }
                 }
+
+                Collections.sort(itemHistoy, new SortIntegerTabArrayList());
 
                 if (numberOfValueZeroToTen != 0) {
                     zeroToTen /= numberOfValueZeroToTen;
@@ -398,9 +433,22 @@ public class CurrentGameDAO {
             e.printStackTrace();
         }
     }
-    public static void getUserFavoiteBuild(JSONArray jsonParticipants)
+    public static int[] getUserFavoiteBuild(JSONArray jsonParticipants)
     {
         JSONArray json = jsonParticipants;
-        int[] build;
+        int[] build = new int[7];
+        try{
+            for(int i=0;i<7;i++)
+            {
+                if(!jsonParticipants.getJSONObject(0).isNull("stats")) {
+                    build[i] = jsonParticipants.getJSONObject(0).getJSONObject("stats").getInt("item" + i);
+                }
+            }
+            return build;
+        }catch (Exception e) {
+            e.printStackTrace();
+            Log.v("Erreur creep", e.getMessage());
+            return null;
+        }
     }
 }

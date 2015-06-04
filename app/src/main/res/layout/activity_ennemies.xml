@@ -35,7 +35,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_gravity="center_horizontal"
-            android:paddingTop="24dp"
+            android:paddingTop="14dp"
             android:text="@string/ennemies"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/light_font"
@@ -53,7 +53,7 @@
         android:orientation="vertical"
         android:paddingBottom="@dimen/activity_horizontal_margin"
         android:layout_marginTop="-10dp"
-        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+        tools:context="org.ema.lolcompanion.AlliesActivity">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -62,14 +62,14 @@
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:background="@drawable/gold_border_background"
             android:orientation="horizontal"
-            tools:context="org.ema.lolcompanion.EnnemiesActivity">
+            tools:context="org.ema.lolcompanion.AlliesActivity">
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/stats_line_size"
                 android:orientation="horizontal"
-                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                tools:context="org.ema.lolcompanion.AlliesActivity">
 
                 <org.ema.utils.VerticalProgressBar
                     android:id="@+id/s1Perf"
@@ -91,7 +91,7 @@
                     android:layout_centerVertical="true">
 
                     <ImageView
-                        android:id="@+id/s1Image"
+                        android:id="@+id/s1Img"
                         android:layout_width="@dimen/stats_summoner_size"
                         android:layout_height="@dimen/stats_summoner_size"
                         android:layout_gravity="center_vertical"
@@ -117,16 +117,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/stats_line_size"
                 android:orientation="vertical"
-                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                tools:context="org.ema.lolcompanion.AlliesActivity">
 
                 <!-- Tips and Champ Name -->
                 <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/s1tips_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_low_margin"
                     android:orientation="horizontal"
-                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                    android:clickable="true"
+                    android:onClick="showChampionTips"
+                    tools:context="org.ema.lolcompanion.AlliesActivity">
 
                     <ImageView
                         android:id="@+id/s1tips"
@@ -172,20 +175,21 @@
 
                 <!-- KDA and Damage summary -->
                 <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/s1KDA_Damages"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_low_margin"
                     android:orientation="horizontal"
-                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                    tools:context="org.ema.lolcompanion.AlliesActivity">
 
                     <LinearLayout xmlns:tools="http://schemas.android.com/tools"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <TextView
                             android:id="@+id/s1K"
@@ -261,7 +265,7 @@
                         android:layout_gravity="end"
                         android:gravity="end"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <ImageView
                             android:id="@+id/s1DmD"
@@ -314,14 +318,15 @@
                     android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_low_margin"
                     android:orientation="horizontal"
-                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                    tools:context="org.ema.lolcompanion.AlliesActivity">
 
                     <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:id="@+id/s1WnD"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <TextView
                             android:id="@+id/s1Wins"
@@ -364,7 +369,7 @@
                         android:layout_gravity="end"
                         android:gravity="end"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <ImageView
                             android:id="@+id/s1Rank"
@@ -385,7 +390,7 @@
                             android:gravity="center_vertical"
                             android:text="BRON 4 (521 LP)"
                             android:textColor="@color/black_font"
-                            android:textSize="@dimen/stats_font_damage_size" />
+                            android:textSize="@dimen/stats_font_rank_size" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -401,14 +406,14 @@
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:background="@drawable/gold_border_background"
             android:orientation="horizontal"
-            tools:context="org.ema.lolcompanion.EnnemiesActivity">
+            tools:context="org.ema.lolcompanion.AlliesActivity">
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/stats_line_size"
                 android:orientation="horizontal"
-                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                tools:context="org.ema.lolcompanion.AlliesActivity">
 
                 <org.ema.utils.VerticalProgressBar
                     android:id="@+id/s2Perf"
@@ -430,7 +435,7 @@
                     android:layout_centerVertical="true">
 
                     <ImageView
-                        android:id="@+id/s2Image"
+                        android:id="@+id/s2Img"
                         android:layout_width="@dimen/stats_summoner_size"
                         android:layout_height="@dimen/stats_summoner_size"
                         android:layout_gravity="center_vertical"
@@ -456,16 +461,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/stats_line_size"
                 android:orientation="vertical"
-                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                tools:context="org.ema.lolcompanion.AlliesActivity">
 
                 <!-- Tips and Champ Name -->
                 <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/s2tips_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_low_margin"
                     android:orientation="horizontal"
-                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                    android:clickable="true"
+                    android:onClick="showChampionTips"
+                    tools:context="org.ema.lolcompanion.AlliesActivity">
 
                     <ImageView
                         android:id="@+id/s2tips"
@@ -511,20 +519,21 @@
 
                 <!-- KDA and Damage summary -->
                 <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/s2KDA_Damages"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_low_margin"
                     android:orientation="horizontal"
-                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                    tools:context="org.ema.lolcompanion.AlliesActivity">
 
                     <LinearLayout xmlns:tools="http://schemas.android.com/tools"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <TextView
                             android:id="@+id/s2K"
@@ -600,7 +609,7 @@
                         android:layout_gravity="end"
                         android:gravity="end"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <ImageView
                             android:id="@+id/s2DmD"
@@ -653,14 +662,15 @@
                     android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_low_margin"
                     android:orientation="horizontal"
-                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                    tools:context="org.ema.lolcompanion.AlliesActivity">
 
                     <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:id="@+id/s2WnD"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <TextView
                             android:id="@+id/s2Wins"
@@ -703,7 +713,7 @@
                         android:layout_gravity="end"
                         android:gravity="end"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <ImageView
                             android:id="@+id/s2Rank"
@@ -724,7 +734,7 @@
                             android:gravity="center_vertical"
                             android:text="BRON 4 (521 LP)"
                             android:textColor="@color/black_font"
-                            android:textSize="@dimen/stats_font_damage_size" />
+                            android:textSize="@dimen/stats_font_rank_size" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -740,14 +750,14 @@
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:background="@drawable/gold_border_background"
             android:orientation="horizontal"
-            tools:context="org.ema.lolcompanion.EnnemiesActivity">
+            tools:context="org.ema.lolcompanion.AlliesActivity">
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/stats_line_size"
                 android:orientation="horizontal"
-                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                tools:context="org.ema.lolcompanion.AlliesActivity">
 
                 <org.ema.utils.VerticalProgressBar
                     android:id="@+id/s3Perf"
@@ -769,7 +779,7 @@
                     android:layout_centerVertical="true">
 
                     <ImageView
-                        android:id="@+id/s3Image"
+                        android:id="@+id/s3Img"
                         android:layout_width="@dimen/stats_summoner_size"
                         android:layout_height="@dimen/stats_summoner_size"
                         android:layout_gravity="center_vertical"
@@ -795,16 +805,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/stats_line_size"
                 android:orientation="vertical"
-                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                tools:context="org.ema.lolcompanion.AlliesActivity">
 
                 <!-- Tips and Champ Name -->
                 <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/s3tips_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_low_margin"
                     android:orientation="horizontal"
-                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                    android:clickable="true"
+                    android:onClick="showChampionTips"
+                    tools:context="org.ema.lolcompanion.AlliesActivity">
 
                     <ImageView
                         android:id="@+id/s3tips"
@@ -850,20 +863,21 @@
 
                 <!-- KDA and Damage summary -->
                 <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/s3KDA_Damages"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_low_margin"
                     android:orientation="horizontal"
-                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                    tools:context="org.ema.lolcompanion.AlliesActivity">
 
                     <LinearLayout xmlns:tools="http://schemas.android.com/tools"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <TextView
                             android:id="@+id/s3K"
@@ -939,7 +953,7 @@
                         android:layout_gravity="end"
                         android:gravity="end"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <ImageView
                             android:id="@+id/s3DmD"
@@ -992,14 +1006,15 @@
                     android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_low_margin"
                     android:orientation="horizontal"
-                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                    tools:context="org.ema.lolcompanion.AlliesActivity">
 
                     <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:id="@+id/s3WnD"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <TextView
                             android:id="@+id/s3Wins"
@@ -1042,7 +1057,7 @@
                         android:layout_gravity="end"
                         android:gravity="end"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <ImageView
                             android:id="@+id/s3Rank"
@@ -1063,7 +1078,7 @@
                             android:gravity="center_vertical"
                             android:text="BRON 4 (521 LP)"
                             android:textColor="@color/black_font"
-                            android:textSize="@dimen/stats_font_damage_size" />
+                            android:textSize="@dimen/stats_font_rank_size" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -1079,14 +1094,14 @@
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:background="@drawable/gold_border_background"
             android:orientation="horizontal"
-            tools:context="org.ema.lolcompanion.EnnemiesActivity">
+            tools:context="org.ema.lolcompanion.AlliesActivity">
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/stats_line_size"
                 android:orientation="horizontal"
-                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                tools:context="org.ema.lolcompanion.AlliesActivity">
 
                 <org.ema.utils.VerticalProgressBar
                     android:id="@+id/s4Perf"
@@ -1108,7 +1123,7 @@
                     android:layout_centerVertical="true">
 
                     <ImageView
-                        android:id="@+id/s4Image"
+                        android:id="@+id/s4Img"
                         android:layout_width="@dimen/stats_summoner_size"
                         android:layout_height="@dimen/stats_summoner_size"
                         android:layout_gravity="center_vertical"
@@ -1134,16 +1149,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/stats_line_size"
                 android:orientation="vertical"
-                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                tools:context="org.ema.lolcompanion.AlliesActivity">
 
                 <!-- Tips and Champ Name -->
                 <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/s4tips_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_low_margin"
                     android:orientation="horizontal"
-                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                    android:clickable="true"
+                    android:onClick="showChampionTips"
+                    tools:context="org.ema.lolcompanion.AlliesActivity">
 
                     <ImageView
                         android:id="@+id/s4tips"
@@ -1189,20 +1207,21 @@
 
                 <!-- KDA and Damage summary -->
                 <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/s4KDA_Damages"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_low_margin"
                     android:orientation="horizontal"
-                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                    tools:context="org.ema.lolcompanion.AlliesActivity">
 
                     <LinearLayout xmlns:tools="http://schemas.android.com/tools"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <TextView
                             android:id="@+id/s4K"
@@ -1278,7 +1297,7 @@
                         android:layout_gravity="end"
                         android:gravity="end"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <ImageView
                             android:id="@+id/s4DmD"
@@ -1318,7 +1337,7 @@
                             android:gravity="center_vertical"
                             android:text="18.5%"
                             android:textColor="@color/black_font"
-                            android:textSize="@dimen/stats_font_damage_size" />
+                            android:textSize="@dimen/stats_font_rank_size" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -1331,14 +1350,15 @@
                     android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_low_margin"
                     android:orientation="horizontal"
-                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                    tools:context="org.ema.lolcompanion.AlliesActivity">
 
                     <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:id="@+id/s4WnD"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <TextView
                             android:id="@+id/s4Wins"
@@ -1381,7 +1401,7 @@
                         android:layout_gravity="end"
                         android:gravity="end"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <ImageView
                             android:id="@+id/s4Rank"
@@ -1418,14 +1438,14 @@
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:background="@drawable/gold_border_background"
             android:orientation="horizontal"
-            tools:context="org.ema.lolcompanion.EnnemiesActivity">
+            tools:context="org.ema.lolcompanion.AlliesActivity">
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/stats_line_size"
                 android:orientation="horizontal"
-                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                tools:context="org.ema.lolcompanion.AlliesActivity">
 
                 <org.ema.utils.VerticalProgressBar
                     android:id="@+id/s5Perf"
@@ -1447,7 +1467,7 @@
                     android:layout_centerVertical="true">
 
                     <ImageView
-                        android:id="@+id/s5Image"
+                        android:id="@+id/s5Img"
                         android:layout_width="@dimen/stats_summoner_size"
                         android:layout_height="@dimen/stats_summoner_size"
                         android:layout_gravity="center_vertical"
@@ -1473,16 +1493,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/stats_line_size"
                 android:orientation="vertical"
-                tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                tools:context="org.ema.lolcompanion.AlliesActivity">
 
                 <!-- Tips and Champ Name -->
                 <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/s5tips_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_low_margin"
                     android:orientation="horizontal"
-                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                    android:clickable="true"
+                    android:onClick="showChampionTips"
+                    tools:context="org.ema.lolcompanion.AlliesActivity">
 
                     <ImageView
                         android:id="@+id/s5tips"
@@ -1528,20 +1551,21 @@
 
                 <!-- KDA and Damage summary -->
                 <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/s5KDA_Damages"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_low_margin"
                     android:orientation="horizontal"
-                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                    tools:context="org.ema.lolcompanion.AlliesActivity">
 
                     <LinearLayout xmlns:tools="http://schemas.android.com/tools"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <TextView
                             android:id="@+id/s5K"
@@ -1617,7 +1641,7 @@
                         android:layout_gravity="end"
                         android:gravity="end"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <ImageView
                             android:id="@+id/s5DmD"
@@ -1670,14 +1694,15 @@
                     android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_low_margin"
                     android:orientation="horizontal"
-                    tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                    tools:context="org.ema.lolcompanion.AlliesActivity">
 
                     <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+                        android:id="@+id/s5WnD"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <TextView
                             android:id="@+id/s5Wins"
@@ -1720,7 +1745,7 @@
                         android:layout_gravity="end"
                         android:gravity="end"
                         android:orientation="horizontal"
-                        tools:context="org.ema.lolcompanion.EnnemiesActivity">
+                        tools:context="org.ema.lolcompanion.AlliesActivity">
 
                         <ImageView
                             android:id="@+id/s5Rank"
@@ -1741,7 +1766,7 @@
                             android:gravity="center_vertical"
                             android:text="BRON 4 (521 LP)"
                             android:textColor="@color/black_font"
-                            android:textSize="@dimen/stats_font_damage_size" />
+                            android:textSize="@dimen/stats_font_rank_size" />
                     </LinearLayout>
 
                 </LinearLayout>

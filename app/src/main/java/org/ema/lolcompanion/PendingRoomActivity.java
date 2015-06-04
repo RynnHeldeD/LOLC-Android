@@ -79,7 +79,7 @@ public class PendingRoomActivity extends Activity {
     }
 
     public void launchTimerActivity() {
-        Intent intent = new Intent(this, TimerActivity.class);
+        Intent intent = new Intent(this, EnnemiesActivity.class);
         GlobalDataManager.add("summonersList", summonersList);
 
         //TODO : mettre le channel enregistre dans la case channel

@@ -23,12 +23,18 @@
     <!-- 1dp border x 3 -->
     <dimen name="stats_line_container_size">86dp</dimen>
     <dimen name="stats_line_size">82dp</dimen>
-    <dimen name="stats_summoner_size">82dp</dimen>
+    <dimen name="stats_summoner_size">78dp</dimen>
     <dimen name="stats_ismain_size">22dp</dimen>
     <dimen name="stats_tips_size">26dp</dimen>
-    <dimen name="stats_rank_icon_size">22dp</dimen>
+    <dimen name="stats_rank_icon_size">20dp</dimen>
     <dimen name="stats_teamicon_size">26dp</dimen>
     <dimen name="stats_icon_damage_size">18dp</dimen>
+    <dimen name="stats_font_rank_size">10sp</dimen>
     <dimen name="stats_font_kda_size">16sp</dimen>
     <dimen name="stats_font_damage_size">12sp</dimen>
+
+    <!-- dialog tip champion -->
+    <dimen name="tips_champion_font_title">26sp</dimen>
+    <dimen name="tips_champion_font">16sp</dimen>
+
 </resources>

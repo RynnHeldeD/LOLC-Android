@@ -218,8 +218,13 @@ public class CurrentGameDAO {
             return;
         }
 
-        float winRateWithChampion = (float)summoner.getChampion().getStatistic().getWin()/((float)summoner.getChampion().getStatistic().getWin()+(float)summoner.getChampion().getStatistic().getLoose());
-        float nbGamesWithChampion = Math.min(summoner.getChampion().getStatistic().getWin()+summoner.getChampion().getStatistic().getLoose()/50,1);
+        float winRateWithChampion = 0;
+        float nbGamesWithChampion = 0;
+        if((float)summoner.getChampion().getStatistic().getWin() + (float)summoner.getChampion().getStatistic().getLoose() != 0){
+             winRateWithChampion = (float)summoner.getChampion().getStatistic().getWin()/((float)summoner.getChampion().getStatistic().getWin()+(float)summoner.getChampion().getStatistic().getLoose());
+             nbGamesWithChampion = Math.min(summoner.getChampion().getStatistic().getWin()+summoner.getChampion().getStatistic().getLoose()/50,1);
+        }
+
         float rank;
 
         switch (summoner.getLeague().getDivision().split(" ")[0].toString()) {

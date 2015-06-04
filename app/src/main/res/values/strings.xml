@@ -25,11 +25,17 @@
     <!-- Allies screen -->
     <string name="title_activity_allies">AlliesActivity</string>
     <string name="allies">Allies</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam placerat magna sit amet elit malesuada, et maximus odio gravida. Vivamus sit amet dictum nulla, fringilla consectetur nibh. In vitae pulvinar neque, vitae congue enim. Nullam ultricies erat quis lectus tristique, in finibus nibh laoreet. Nunc egestas consectetur orci vitae finibus. Curabitur molestie accumsan tempor. Aenean eget mauris sed arcu lacinia molestie vel et augue. Sed elementum pulvinar dignissim. Vivamus pha
+    </string>
     <string name="unrancked">UNRANCKED</string>
 
     <!-- Ennemies screen -->
     <string name="title_activity_ennemies">EnnemiesActivity</string>
     <string name="ennemies">Opponents</string>
+
+    <!-- Champion tip Fragment -->
+    <string name="close_dialog">Close</string>
+    <string name="nex_dialog">Next</string>
 
 </resources>

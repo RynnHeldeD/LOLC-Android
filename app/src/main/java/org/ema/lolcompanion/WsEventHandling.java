@@ -35,10 +35,8 @@ public class WsEventHandling {
                 Log.v("Websocket","Action requise: " +  action);
 
                 switch (action){
-                    case "firstMessage":
-                        //   updateChannelPlayers(obj.getJSONArray("allies"));
-                        break;
                     case "timer":
+                        activateTimer(obj.getString("idSortGrille"), obj.getString("timestampDeclenchement"));
                         break;
                     case "playerList":
                         break;
@@ -53,6 +51,11 @@ public class WsEventHandling {
         } catch (JSONException e) {
             Log.v("Websocket","Error during message parsing: " +e.getMessage());
         }
+    }
+
+    public static void activateTimer(String buttonIdGrid,String activationTimestamp){
+        Log.v("Websocket","Timer activation received");
+        TimerActivity.instance.activateTimer(buttonIdGrid);
     }
 
     public static void firstMessage(JSONArray playersInChannel) {

@@ -3,6 +3,7 @@ package org.ema.utils;
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,8 +35,18 @@ public class TimerButton extends RoundedImageView {
         this.timer = timer;
     }
 
-    public void getTimestamp () {
-        int timerCountDown = Integer.getInteger(this.getTimer().getTimerTextView().getText().toString(),0);
+    public long getCurrentTimestamp(){
+        return  Long.parseLong(this.getTimer().getTimerTextView().getText().toString()) * 1000;
+    }
+
+    public void timerDelay(long delayToRetrench){
+        long currentTimestamp = Long.parseLong(this.getTimer().getTimerTextView().getText().toString()) * 1000;
+
+        if (currentTimestamp != 0) {
+            this.getTimer().cancel();
+            this.setTimer(new Timer(currentTimestamp - delayToRetrench, 1000, this.getTimer().getTimerTextView()));
+            this.getTimer().start();
+        }
     }
 
 }

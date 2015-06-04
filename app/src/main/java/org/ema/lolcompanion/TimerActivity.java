@@ -40,10 +40,12 @@ import java.util.TimerTask;
 public class TimerActivity extends Activity {
 
     public HashMap<String,Long> timerMap;
+    public static TimerActivity instance = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         timerMap = new HashMap<String,Long>();
         setContentView(R.layout.activity_timer);
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/lol.ttf");
@@ -97,14 +99,19 @@ public class TimerActivity extends Activity {
         channelSummary.addView(riv, 25, 25);
     }
 
+    //On créer une deuxième fonction avec un paramètre en plus car on ne peut pas passer de paramètres depuis la vue
+    public void timerListener(View tbt){
+        timerListener(tbt,true);
+    }
 
     //This function handle the onclick (short) events for all buttons on the timer view
-    public void timerListener(View tbt){
+    public void timerListener(View tbt, boolean sendWithWS){
         TimerButton tbtn = (TimerButton) tbt;
         //Name of the clicked button => example : b21
         String IDButton = getResources().getResourceName(tbtn.getId());
         //button ID formated like "b12"
         String buttonID = IDButton.substring(IDButton.lastIndexOf("/") + 1);
+        Log.v("Websocket",buttonID);
         //loading the league of legend equiv fonts
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/lol.ttf");
 
@@ -126,16 +133,19 @@ public class TimerActivity extends Activity {
 
             //To-DO : send the signal to websocket with timestamps and button id
             //TO-do : retrieve the good time in the LOL champion array
-            WsEventHandling.timerActivation(buttonID, tstmp.toString());
+            if(sendWithWS){
+                WsEventHandling.timerActivation(buttonID, tstmp.toString());
+            }
 
             long timeToCount = timerMap.get(buttonID) * 1000;
             tbtn.setTimer(new Timer(timeToCount,1000,tbtn.getTimer().getTimerTextView()));
             tbtn.getTimer().start();
             tbtn.getTimer().setVisible(true);
         } else if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
-            WsEventHandling.timerDelay(buttonID);
-            //int
-            //tbtn.getTimer().cancel();
+            if(sendWithWS){
+                WsEventHandling.timerDelay(buttonID);
+            }
+            tbtn.timerDelay(5000);
         }
     }
 
@@ -222,8 +232,29 @@ public class TimerActivity extends Activity {
         summonerIndex = 0;
         for (String s : ultimateButtons){
             float cdSummonerSpell = teamSummonersList.get(summonerIndex).getChampion().getSpell().getCooldown()[0];
-            timerMap.put(s,(long)cdSummonerSpell);
+            timerMap.put(s, (long) cdSummonerSpell);
             summonerIndex++;
         }
+    }
+
+
+    //Fonctions pour les évènements WS
+    public void activateTimer(String buttonID){
+            View tbtn = findViewById(getResources().getIdentifier(buttonID, "id", getPackageName()));
+            timerListener(tbtn,false);
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        instance = this;
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        instance = null;
     }
 }

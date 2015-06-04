@@ -117,6 +117,25 @@ public class Summoner implements Parcelable {
         this.looses = looses;
     }
 
+    public Summoner(Summoner s){
+        this.id = s.id;
+        this.name = s.name;
+        this.level = s.level;
+        Spell[] spells = new Spell[2];
+        int i = 0;
+        for(Spell sp : s.spells){
+            spells[i] = new Spell(sp);
+            i++;
+        }
+        this.spells = spells;
+        this.champion = new Champion(s.getChampion());
+        this.league = s.league;
+        this.teamId = s.teamId;
+        this.premade = s.premade;
+        this.wins = s.wins;
+        this.looses = s.looses;
+    }
+
     @Override
     public String toString() {
         return "Summoner{" +
@@ -175,4 +194,14 @@ public class Summoner implements Parcelable {
             return new Summoner[size];
         }
     };
+
+    public boolean areImagesLoaded(){
+        boolean areImagesLoaded = false;
+
+        if(this.getChampion().areImagesLoaded() && this.getSpells()[0].isImageLoaded() && this.getSpells()[1].isImageLoaded()){
+            areImagesLoaded = true;
+        }
+
+        return areImagesLoaded;
+    }
 }

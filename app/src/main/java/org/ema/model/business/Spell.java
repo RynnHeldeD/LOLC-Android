@@ -3,6 +3,7 @@ package org.ema.model.business;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import org.ema.model.interfaces.ISettableIcon;
 
@@ -54,6 +55,13 @@ public class Spell implements ISettableIcon, Parcelable {
         this.cooldowns = cooldown;
     }
 
+    public Spell (Spell s){
+        this.id = s.id;
+        this.iconName = s.iconName;
+        this.icon = s.icon;
+        this.cooldowns = s.getCooldown();
+    }
+
     @Override
     public String toString() {
         return "Spell{" +
@@ -83,6 +91,7 @@ public class Spell implements ISettableIcon, Parcelable {
         dest.writeValue(this.icon);
         dest.writeFloatArray(this.cooldowns);
     }
+
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public Spell createFromParcel(Parcel in) {
             return new Spell(in);
@@ -92,4 +101,14 @@ public class Spell implements ISettableIcon, Parcelable {
             return new Spell[size];
         }
     };
+
+    public boolean isImageLoaded(){
+        boolean isImageLoaded = false;
+
+        if(this.getIcon() != null && this.getIcon() instanceof Bitmap){
+            isImageLoaded = true;
+        }
+
+        return isImageLoaded;
+    }
 }

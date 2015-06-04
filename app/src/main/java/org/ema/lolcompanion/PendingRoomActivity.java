@@ -14,7 +14,9 @@ import org.ema.model.DAO.SummonerDAO;
 import org.ema.model.business.Summoner;
 import org.ema.utils.GlobalDataManager;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class PendingRoomActivity extends Activity {
 
@@ -25,6 +27,7 @@ public class PendingRoomActivity extends Activity {
     public boolean shouldContinue = true;
     public Summoner user;
     public String summonerNameFromPreviousView;
+    private int IDRessource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,12 +102,11 @@ public class PendingRoomActivity extends Activity {
         if (isInGame) {
             //TODO : impossible d'acceder aux ressources via un thread, voir comment recuperer et setter la ressource
             //On change le texte "Waiting signal game" en "Loading your data"
-            //TextView pendingRoomText = (TextView) findViewById(R.id.pending_initial_state);
-            //pendingRoomText.setText(this.getString(R.string.pending_loading_state));
-            //pendingRoomText.setText("Loading your data...");
+            //int IDRessourceInitialText = getResources().getIdentifier("pending_initial_state", "id", getBaseContext().getPackageName());
+            //int IDRessourceNewText = getResources().getIdentifier("pending_initial_state", "id", getBaseContext().getPackageName());
+            //TextView pendingRoomText = (TextView) findViewById(IDRessourceInitialText);
+            //pendingRoomText.setText("Loading game data...");
             //Fin TODO
-
-
 
             summonersList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
             if (summonersList != null) {
@@ -113,6 +115,11 @@ public class PendingRoomActivity extends Activity {
                 Log.v("DAO", "FATAL : summonersList is NULL. Summoner :" + summonerNameFromPreviousView);
             }
             shouldContinue = false;
+
+            while(!this.areAllImagesLoaded(summonersList)){
+                SystemClock.sleep(500);
+            }
+
             return true;
         } else {
             Log.v("Error", "User not in game");
@@ -127,5 +134,19 @@ public class PendingRoomActivity extends Activity {
 
     public void setSummonersList(ArrayList<Summoner> summonersList) {
         this.summonersList = summonersList;
+    }
+
+    public boolean areAllImagesLoaded(ArrayList<Summoner> notReadySummoners){
+        boolean areImagesLoaded = true;
+
+        for (Iterator<Summoner> it = notReadySummoners.iterator() ; it.hasNext();) {
+            Summoner s = it.next();
+            if (!s.areImagesLoaded()) {
+                areImagesLoaded = false;
+                break;
+            }
+        }
+
+        return areImagesLoaded;
     }
 }

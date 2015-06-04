@@ -3,6 +3,7 @@ package org.ema.model.business;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import org.ema.model.interfaces.ISettableIcon;
 
@@ -116,6 +117,19 @@ public class Champion implements ISettableIcon, Parcelable {
         this.build = build;
     }
 
+    public Champion(Champion c){
+        this.id = c.id;
+        this.name = c.name;
+        this.spell = new Spell(c.spell);
+        this.iconName = c.iconName;
+        this.icon = c.icon;
+        this.allyTips = c.allyTips;
+        this.enemyTips = c.enemyTips;
+        this.statistic = c.statistic;
+        this.isMain = c.isMain;
+        this.build = c.build;
+    }
+
     @Override
     public String toString() {
         return "Champion{" +
@@ -174,4 +188,13 @@ public class Champion implements ISettableIcon, Parcelable {
         }
     };
 
+    public boolean areImagesLoaded(){
+        boolean areImagesLoaded = false;
+
+        if(this.getIcon() != null && this.getIcon() instanceof  Bitmap && this.getSpell().isImageLoaded()){
+            areImagesLoaded = true;
+        }
+
+        return areImagesLoaded;
+    }
 }

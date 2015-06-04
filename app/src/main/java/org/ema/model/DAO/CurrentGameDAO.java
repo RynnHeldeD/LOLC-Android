@@ -360,6 +360,10 @@ public class CurrentGameDAO {
 
             summoner.setMostChampionsPlayed(mostChampionsPlayed);
 
+            if(mostChampionsPlayed.length != 0 && mostChampionsPlayed[0].getId() == summoner.getChampion().getId()) {
+                summoner.getChampion().setMain(true);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             return;

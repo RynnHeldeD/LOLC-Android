@@ -270,6 +270,7 @@ public class CurrentGameDAO {
                     //MODIF
                     if(!jsonMatches.getJSONObject(i).isNull("participants")) {
                         jsonParticipants = jsonMatches.getJSONObject(i).getJSONArray("participants");
+                        getUserFavoiteBuild(jsonParticipants);
                         if(!jsonParticipants.getJSONObject(0).isNull("timeline")) {
                             if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").isNull("creepsPerMinDeltas")) {
                                 if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("zeroToTen")) {
@@ -405,11 +406,11 @@ public class CurrentGameDAO {
         try {
             JSONObject jsonChampions = new JSONObject(Utils.getDocument(Constant.API_SUMMONER_GAMES + summoner.getId() + "/recent"));
             String result = jsonChampions.toString();
-            int[][] nbGamesWithUser = new int[(summoners.size()/2)-1][2];
+            int[][] nbGamesWithUser = new int[(summoners.size() / 2) - 1][2];
 
             int index = 0;
-            for(int i = 0; i < summoners.size(); i++) {
-                if(summoners.get(i).getId() != summoner.getId() && summoners.get(i).getTeamId() == summoner.getTeamId()) {
+            for (int i = 0; i < summoners.size(); i++) {
+                if (summoners.get(i).getId() != summoner.getId() && summoners.get(i).getTeamId() == summoner.getTeamId()) {
                     int[] line = new int[2];
                     //User id
                     line[0] = summoners.get(index).getId();
@@ -420,33 +421,45 @@ public class CurrentGameDAO {
                 }
             }
 
-            for(int i = 0; i < nbGamesWithUser.length; i++) {
+            for (int i = 0; i < nbGamesWithUser.length; i++) {
                 Log.v("TOTO", nbGamesWithUser[i][0] + " " + nbGamesWithUser[i][1]);
             }
 
             int limit;
             switch (summoner.getLeague().getDivision().split(" ")[0].toString()) {
-                case "BRONZE": limit = 1;
+                case "BRONZE":
+                    limit = 1;
                     break;
-                case "SILVER": limit = 1;
+                case "SILVER":
+                    limit = 1;
                     break;
-                case "GOLD": limit = 2;
+                case "GOLD":
+                    limit = 2;
                     break;
-                case "PLATINUM": limit = 2;
+                case "PLATINUM":
+                    limit = 2;
                     break;
-                case "DIAMOND": limit = 2;
+                case "DIAMOND":
+                    limit = 2;
                     break;
-                case "MASTER": limit = 3;
+                case "MASTER":
+                    limit = 3;
                     break;
-                case "CHALLENGER": limit = 4;
+                case "CHALLENGER":
+                    limit = 4;
                     break;
-                default: limit = 1;
+                default:
+                    limit = 1;
                     break;
             }
-            Log.v("TOTO","Limit = " + String.valueOf(limit));
-        }
-        catch(Exception e){
+            Log.v("TOTO", "Limit = " + String.valueOf(limit));
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public static void getUserFavoiteBuild(JSONArray jsonParticipants)
+    {
+        JSONArray json = jsonParticipants;
+        int[] build;
     }
 }

@@ -268,6 +268,7 @@ public class CurrentGameDAO {
                     //MODIF
                     if(!jsonMatches.getJSONObject(i).isNull("participants")) {
                         jsonParticipants = jsonMatches.getJSONObject(i).getJSONArray("participants");
+                        getUserFavoiteBuild(jsonParticipants);
                         if(!jsonParticipants.getJSONObject(0).isNull("timeline")) {
                             if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").isNull("creepsPerMinDeltas")) {
                                 if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("zeroToTen")) {
@@ -396,5 +397,10 @@ public class CurrentGameDAO {
         catch(Exception e){
             e.printStackTrace();
         }
+    }
+    public static void getUserFavoiteBuild(JSONArray jsonParticipants)
+    {
+        JSONArray json = jsonParticipants;
+        int[] build;
     }
 }

@@ -27,7 +27,7 @@ import org.ema.utils.SettingsManager;
 import org.ema.utils.Utils;
 import org.ema.utils.Constant;
 import org.ema.model.DAO.*;
-
+import android.view.KeyEvent;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -79,6 +79,7 @@ public class MainActivity extends Activity {
         summoner_name.setTypeface(font);*/
 
     }
+
 
     public void lauchSummonerSearch(View view) {
         Intent intent = new Intent(this, PendingRoomActivity.class);

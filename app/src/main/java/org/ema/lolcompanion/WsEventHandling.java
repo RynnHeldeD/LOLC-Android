@@ -1,5 +1,6 @@
 package org.ema.lolcompanion;
 
+import android.os.SystemClock;
 import android.util.Log;
 
 import org.ema.utils.WebSocket;
@@ -8,7 +9,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -39,6 +44,7 @@ public class WsEventHandling {
                         activateTimer(obj.getString("idSortGrille"), obj.getString("timestampDeclenchement"));
                         break;
                     case "playerList":
+                        WsEventHandling.switchChannel("toto");
                         break;
                     case "timerDelay":
                         break;
@@ -55,7 +61,28 @@ public class WsEventHandling {
 
     public static void activateTimer(String buttonIdGrid,String activationTimestamp){
         Log.v("Websocket","Timer activation received");
-        TimerActivity.instance.activateTimer(buttonIdGrid);
+        long delayOfTransfert = 0;
+        SystemClock.sleep(3000);
+        java.util.Date date= new java.util.Date();
+        Timestamp tstmp = new Timestamp(date.getTime());
+
+        try{
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+            Date parsedDate = dateFormat.parse(activationTimestamp);
+            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+            //on fait la difference entre les deux timestamp, et on a arrondis à la seconde
+            delayOfTransfert = tstmp.getTime() - timestamp.getTime();
+            Log.v("Websocket","Delay of transfert: " + delayOfTransfert);
+        }catch(ParseException e){
+            Log.v("Websocket","Erreur: impossible de parser la date reçue:" + e.getMessage());
+        }
+        TimerActivity.instance.activateTimer(buttonIdGrid,delayOfTransfert);
+    }
+
+    public static void delayTimer(String buttonIdGrid) {
+        //Pour l'instant, si le timer est en cours, ça enlève les 5 secondes
+        //Sinon ça démarre le timer. Ce sera corrigé lors de l'implémentation du ShareTimer
+        TimerActivity.instance.activateTimer(buttonIdGrid,0);
     }
 
     public static void firstMessage(JSONArray playersInChannel) {

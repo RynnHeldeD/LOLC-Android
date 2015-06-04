@@ -29,6 +29,7 @@ import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,6 +57,7 @@ public class TimerActivity extends Activity {
         ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
 
         WebSocket.connectWebSocket();
+
     }
 
     @Override
@@ -101,11 +103,11 @@ public class TimerActivity extends Activity {
 
     //On créer une deuxième fonction avec un paramètre en plus car on ne peut pas passer de paramètres depuis la vue
     public void timerListener(View tbt){
-        timerListener(tbt,true);
+        timerListener(tbt,false,0);
     }
 
     //This function handle the onclick (short) events for all buttons on the timer view
-    public void timerListener(View tbt, boolean sendWithWS){
+    public void timerListener(View tbt, boolean fromWebSocket,long delayOfTransfert){
         TimerButton tbtn = (TimerButton) tbt;
         //Name of the clicked button => example : b21
         String IDButton = getResources().getResourceName(tbtn.getId());
@@ -133,16 +135,16 @@ public class TimerActivity extends Activity {
 
             //To-DO : send the signal to websocket with timestamps and button id
             //TO-do : retrieve the good time in the LOL champion array
-            if(sendWithWS){
+            if(!fromWebSocket){
                 WsEventHandling.timerActivation(buttonID, tstmp.toString());
             }
 
-            long timeToCount = timerMap.get(buttonID) * 1000;
+            long timeToCount = (timerMap.get(buttonID) * 1000) - delayOfTransfert;
             tbtn.setTimer(new Timer(timeToCount,1000,tbtn.getTimer().getTimerTextView()));
             tbtn.getTimer().start();
             tbtn.getTimer().setVisible(true);
         } else if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
-            if(sendWithWS){
+            if(!fromWebSocket){
                 WsEventHandling.timerDelay(buttonID);
             }
             tbtn.timerDelay(5000);
@@ -239,9 +241,9 @@ public class TimerActivity extends Activity {
 
 
     //Fonctions pour les évènements WS
-    public void activateTimer(String buttonID){
+    public void activateTimer(String buttonID,long delayOfTransfert){
             View tbtn = findViewById(getResources().getIdentifier(buttonID, "id", getPackageName()));
-            timerListener(tbtn,false);
+            timerListener(tbtn,true,delayOfTransfert);
     }
 
     @Override

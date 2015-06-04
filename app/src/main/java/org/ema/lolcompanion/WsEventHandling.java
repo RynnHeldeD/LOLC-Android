@@ -25,7 +25,7 @@ public class WsEventHandling {
     private static ArrayList<String> playersInChannel_g;
 
     public static void handlingMessage(String message) {
-        Log.v("Websocket:","message from websocket: " + message);
+        Log.v("Websocket:", "message from websocket: " + message);
 
         try{
 
@@ -47,6 +47,7 @@ public class WsEventHandling {
                         WsEventHandling.switchChannel("toto");
                         break;
                     case "timerDelay":
+                        delayTimer(obj.getString("idSortGrille"));
                         break;
                     case "razTimer":
                         break;
@@ -62,7 +63,6 @@ public class WsEventHandling {
     public static void activateTimer(String buttonIdGrid,String activationTimestamp){
         Log.v("Websocket","Timer activation received");
         long delayOfTransfert = 0;
-        SystemClock.sleep(3000);
         java.util.Date date= new java.util.Date();
         Timestamp tstmp = new Timestamp(date.getTime());
 
@@ -76,27 +76,13 @@ public class WsEventHandling {
         }catch(ParseException e){
             Log.v("Websocket","Erreur: impossible de parser la date reçue:" + e.getMessage());
         }
-        TimerActivity.instance.activateTimer(buttonIdGrid,delayOfTransfert);
+        TimerActivity.instance.activateTimer(buttonIdGrid,delayOfTransfert,true);
     }
 
     public static void delayTimer(String buttonIdGrid) {
         //Pour l'instant, si le timer est en cours, ça enlève les 5 secondes
         //Sinon ça démarre le timer. Ce sera corrigé lors de l'implémentation du ShareTimer
-        TimerActivity.instance.activateTimer(buttonIdGrid,0);
-    }
-
-    public static void firstMessage(JSONArray playersInChannel) {
-        updateChannelPlayers(playersInChannel);
-
-        //Lancement du timer pour les 5 minutes
-       // TimerTask tasknew = new TimerGetTimeStamp();
-        Timer timer = new Timer();
-
-        Log.v("Websocket","Timer Starting");
-        // scheduling the task at interval
-        //300000ms = 5 minutes
-        //timer.schedule(tasknew, 300000);
-        Log.v("Websocket","Timer Ending");
+        TimerActivity.instance.activateTimer(buttonIdGrid,0,true);
     }
 
     public static void updateChannelPlayers(JSONArray playersInChannel) {
@@ -141,7 +127,7 @@ public class WsEventHandling {
     }
 
     public static void pickedChampion(Integer gameId, Integer teamId, String championIconName, String channel) {
-        sendMessage("{\"action\":\"pickedChampion\",\"gameId\":\""+ gameId +"\",\"teamId\":\""+ teamId +"\",\"championIconId\":\""+ championIconName +"\",\"passphrase\":\""+ channel +"\"}");
+        sendMessage("{\"action\":\"pickedChampion\",\"gameId\":\"" + gameId + "\",\"teamId\":\"" + teamId + "\",\"championIconId\":\"" + championIconName + "\",\"passphrase\":\"" + channel + "\"}");
     }
 
     public static void switchChannel(String newChannel) {
@@ -158,6 +144,12 @@ public class WsEventHandling {
 
     public static void resetTimer(String gridSpellId) {
         sendMessage("{\"action\":\"razTimer\",\"idSortGrille\":\""+ gridSpellId +"\"}");
+    }
+
+    public static void stopTimer(String gridSpellId) {
+      //TODO:
+        Log.v("Websocket","STOP TIMER");
+      //  sendMessage("{\"action\":\"razTimer\",\"idSortGrille\":\""+ gridSpellId +"\"}");
     }
 
 

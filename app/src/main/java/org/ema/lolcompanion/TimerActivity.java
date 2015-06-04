@@ -232,9 +232,6 @@ public class TimerActivity extends Activity {
         String IDButton = getResources().getResourceName(tbtn.getId());
         String buttonID = IDButton.substring(IDButton.lastIndexOf("/") + 1);
 
-        if(tbtn.getTimer() != null){
-            tbtn.setTimer(null);
-            // TODO Send cancel to WS
-        }
+        Log.v("DAO", buttonID + " long pressed !");
     }
 }

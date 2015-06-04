@@ -104,7 +104,7 @@ public class TimerActivity extends Activity {
 
     //On créer une deuxième fonction avec un paramètre en plus car on ne peut pas passer de paramètres depuis la vue
     public void timerListener(View tbt){
-        timerListener(tbt,false,0);
+        timerListener(tbt, false, 0);
     }
 
     //This function handle the onclick (short) events for all buttons on the timer view
@@ -135,13 +135,7 @@ public class TimerActivity extends Activity {
                 public void run(){
                     if (this.tbtn.isTriggered()) {
                         Log.v("DAO", this.buttonID + " simple click postponed");
-
-                        //Timer isn't ticking, we can launch the countdown
-                        if(tbtn.getTimer() != null && !tbtn.getTimer().isTicking()){
-                           activateTimer(buttonID,0,false);
-                        } else if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
-                            delayTimer(buttonID,false);
-                        }
+                        simpleClickTimer(buttonID,0,false);
                         this.tbtn.setTriggered(false);
                     }
                 }
@@ -217,7 +211,7 @@ public class TimerActivity extends Activity {
 
     private void buildTimerTable(ArrayList<Summoner> teamSummonersList){
         List<String> summonerSpellButtons = Arrays.asList("b13", "b14", "b23","b24","b33","b34","b43","b44","b53","b54");
-        List<String> ultimateButtons = Arrays.asList("b12", "b22","b32","b42","b52");
+        List<String> ultimateButtons = Arrays.asList("b12", "b22", "b32", "b42", "b52");
 
         timerMap.put("b01",(long)300);
         timerMap.put("b02",(long)500);
@@ -252,7 +246,7 @@ public class TimerActivity extends Activity {
 }
 
     //Fonctions pour les évènements WS
-    public void activateTimer(String buttonID,long delayOfTransfert, boolean fromWebSocket){
+    public void simpleClickTimer(String buttonID,long delayOfTransfert, boolean fromWebSocket){
         TimerButton tbtn = getButtonFromIdString(buttonID);
         Date date = new java.util.Date();
         Timestamp tstmp = new Timestamp(date.getTime());
@@ -272,21 +266,17 @@ public class TimerActivity extends Activity {
             tbtn.setTimer(new Timer(0, 0, txtv));
         }
 
-        //On transmet le message
-        if(!fromWebSocket){
-            WsEventHandling.timerActivation(buttonID, tstmp.toString());
-        }
-        //On active le timer
-        long timeToCount = timerMap.get(buttonID) * 1000 - delayOfTransfert;
-        tbtn.setTimer(new Timer(timeToCount,1000,tbtn.getTimer().getTimerTextView()));
-        tbtn.getTimer().start();
-        tbtn.getTimer().setVisible(true);
-    }
-
-    public void delayTimer(String buttonID, boolean fromWebSocket){
-        TimerButton tbtn = getButtonFromIdString(buttonID);
-
-        if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
+        if(tbtn.getTimer() != null && !tbtn.getTimer().isTicking()){
+            //On transmet le message
+            if(!fromWebSocket){
+                WsEventHandling.timerActivation(buttonID, tstmp.toString());
+            }
+            //On active le timer
+            long timeToCount = timerMap.get(buttonID) * 1000 - delayOfTransfert;
+            tbtn.setTimer(new Timer(timeToCount,1000,tbtn.getTimer().getTimerTextView()));
+            tbtn.getTimer().start();
+            tbtn.getTimer().setVisible(true);
+        } else if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
             //On transmet le message
             if(!fromWebSocket){
                 WsEventHandling.timerDelay(buttonID);
@@ -319,7 +309,7 @@ public class TimerActivity extends Activity {
             }
             //On fait l'action sur le timerbutton
             tbtn.getTimer().cancel();
-            activateTimer(buttonID,0,true);
+            simpleClickTimer(buttonID,0,true);
         }
     }
 

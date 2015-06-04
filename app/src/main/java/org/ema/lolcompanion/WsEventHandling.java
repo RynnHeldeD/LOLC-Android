@@ -76,13 +76,13 @@ public class WsEventHandling {
         }catch(ParseException e){
             Log.v("Websocket","Erreur: impossible de parser la date reçue:" + e.getMessage());
         }
-        TimerActivity.instance.activateTimer(buttonIdGrid,delayOfTransfert,true);
+        TimerActivity.instance.simpleClickTimer(buttonIdGrid, delayOfTransfert, true);
     }
 
     public static void delayTimer(String buttonIdGrid) {
         //Pour l'instant, si le timer est en cours, ça enlève les 5 secondes
         //Sinon ça démarre le timer. Ce sera corrigé lors de l'implémentation du ShareTimer
-        TimerActivity.instance.activateTimer(buttonIdGrid,0,true);
+        TimerActivity.instance.simpleClickTimer(buttonIdGrid,0,true);
     }
 
     public static void updateChannelPlayers(JSONArray playersInChannel) {

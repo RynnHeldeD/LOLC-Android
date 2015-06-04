@@ -15,9 +15,11 @@ public class SummonerList {
         int maxValue = 0;
 
         for(Summoner current : summoners) {
-            int performance = current.getChampion().getStatistic().getIntPerformance();
-            minValue = Math.min(performance,minValue);
-            maxValue = Math.max(performance,maxValue);
+            if(current.getChampion().getStatistic() != null) {
+                int performance = current.getChampion().getStatistic().getIntPerformance();
+                minValue = Math.min(performance,minValue);
+                maxValue = Math.max(performance,maxValue);
+            }
         }
 
         int[] result = new int[2];

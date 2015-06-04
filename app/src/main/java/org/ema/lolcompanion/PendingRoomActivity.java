@@ -17,6 +17,9 @@ import android.util.Log;
 import org.ema.model.DAO.CurrentGameDAO;
 import org.ema.model.DAO.SummonerDAO;
 import org.ema.model.business.Summoner;
+import org.ema.utils.Constant;
+import org.ema.utils.Region;
+
 import java.util.ArrayList;
 
 public class PendingRoomActivity extends Activity {
@@ -56,6 +59,7 @@ public class PendingRoomActivity extends Activity {
         //to set the loading off : findViewById(R.id.loadin_panel).setVisibility(View.GONE);
 
         //Launch pending task
+        Constant.setRegion(Region.EUW);
         user = SummonerDAO.getSummoner(summonerNameFromPreviousView);
 
         //Creating thread

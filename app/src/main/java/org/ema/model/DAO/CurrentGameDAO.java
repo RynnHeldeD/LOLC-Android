@@ -321,7 +321,7 @@ public class CurrentGameDAO {
 
     //Get most champions played list and Stats
     public static void getStatiscicsAndMostChampionsPlayed(Summoner summoner) {
-        String jsonResult = Utils.getDocument(Constant.API_STATS_URI + summoner.getId() + "/ranked?season=SEASON2015");
+        String jsonResult = Utils.getDocument(Constant.API_STATS_URI + summoner.getId() + "/ranked");
 
         try {
             //Not on game

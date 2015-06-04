@@ -258,31 +258,37 @@ public class CurrentGameDAO {
             if(!jsonResult.isNull("matches")) {
                 jsonMatches = jsonResult.getJSONArray("matches");
 
-                JSONArray jsonParticipants;
+                JSONArray jsonParticipants = null;
                 double zeroToTen, tenToTwenty, twentyToThirty, thirtyToEnd;
                 zeroToTen = tenToTwenty = twentyToThirty = thirtyToEnd = 0;
                 int numberOfValueZeroToTen, numberOfValueTenToTwenty, numberOfValueTwentyToThirsty, numberOfValueThirtyToEnd;
                 numberOfValueZeroToTen = numberOfValueTenToTwenty = numberOfValueTwentyToThirsty = numberOfValueThirtyToEnd = 0;
 
                 for (int i = 0; i < jsonMatches.length(); i++) {
-                    jsonParticipants = jsonMatches.getJSONObject(i).getJSONArray("participants");
+                    //MODIF
+                    if(!jsonMatches.getJSONObject(i).isNull("participants")) {
+                        jsonParticipants = jsonMatches.getJSONObject(i).getJSONArray("participants");
+                        if(!jsonParticipants.getJSONObject(0).isNull("timeline")) {
+                            if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").isNull("creepsPerMinDeltas")) {
+                                if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("zeroToTen")) {
+                                    zeroToTen += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("zeroToTen");
+                                    numberOfValueZeroToTen++;
+                                }
+                                if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("tenToTwenty")) {
+                                    tenToTwenty += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("tenToTwenty");
+                                    numberOfValueTenToTwenty++;
+                                }
+                                if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("twentyToThirty")) {
+                                    twentyToThirty += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("twentyToThirty");
+                                    numberOfValueTwentyToThirsty++;
 
-                    if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("zeroToTen")) {
-                        zeroToTen += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("zeroToTen");
-                        numberOfValueZeroToTen++;
-                    }
-                    if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("tenToTwenty")) {
-                        tenToTwenty += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("tenToTwenty");
-                        numberOfValueTenToTwenty++;
-                    }
-                    if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("twentyToThirty")) {
-                        twentyToThirty += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("twentyToThirty");
-                        numberOfValueTwentyToThirsty++;
-
-                    }
-                    if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("thirtyToEnd")) {
-                        thirtyToEnd += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("thirtyToEnd");
-                        numberOfValueThirtyToEnd++;
+                                }
+                                if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("thirtyToEnd")) {
+                                    thirtyToEnd += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("thirtyToEnd");
+                                    numberOfValueThirtyToEnd++;
+                                }
+                            }
+                        }
                     }
                 }
 

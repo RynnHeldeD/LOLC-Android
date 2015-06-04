@@ -30,7 +30,7 @@ public class CurrentGameDAO {
 
             JSONObject json = new JSONObject(jsonResult);
             JSONArray jsonArray = (JSONArray)json.get("participants");
-            ArrayList<Summoner> summonerList = new ArrayList<Summoner>();
+            ArrayList<Summoner> summonersList = new ArrayList<Summoner>();
 
             //For each participant
             for(int i = 0; i < jsonArray.length(); i++){
@@ -42,6 +42,7 @@ public class CurrentGameDAO {
                 summoner.setName(jsonParticipant.get("summonerName").toString());
                 summoner.setId((int) (jsonParticipant.get("summonerId")));
                 summoner.setTeamId((int) jsonParticipant.get("teamId"));
+                //TODO: Launch async task to set more info about summoner
 
                 //Set summoner championId
                 Champion champion = new Champion();
@@ -61,13 +62,13 @@ public class CurrentGameDAO {
                     user.setChampion(summoner.getChampion());
                 }
 
-                summonerList.add(summoner);
+                summonersList.add(summoner);
             }
 
             JSONObject jsonSummonerSpells = new JSONObject(Utils.getDocument(Constant.API_SUMMONER_SPELLS));
             JSONObject jsonChampions = new JSONObject(Utils.getDocument(Constant.API_CHAMPION_URI));
 
-            for(Summoner current : summonerList)
+            for(Summoner current : summonersList)
             {
                 //Set spell1
                 JSONObject jsonSpell1 = (JSONObject)((JSONObject)jsonSummonerSpells.get("data")).get(((Integer)current.getSpells()[0].getId()).toString());
@@ -103,21 +104,21 @@ public class CurrentGameDAO {
                 }
                 ultimate.setCooldown(cooldowns);
                 current.getChampion().setSpell(ultimate);
-                new Utils.SetObjectIcon().execute(ultimate);            
+                new Utils.SetObjectIcon().execute(ultimate);
 	        }
 
-            getSummonersRank(summonerList);
+            getSummonersRank(summonersList);
 
-            for(Summoner current : summonerList) {
+            for(Summoner current : summonersList) {
                 //current.getChampion().setStatistic(getSummonerHistoryStatistic(current));
                 getStatiscicsAndMostChampionsPlayed(current);
                 calculUserPerformance(current);
             }
 
             //Load images of mostPlayedChampions
-            loadMostPlayedChampionsImages(summonerList);
+            loadMostPlayedChampionsImages(summonersList);
 
-            return summonerList;
+            return summonersList;
 
         }
         catch(Exception e){
@@ -204,7 +205,6 @@ public class CurrentGameDAO {
             getCreepChartInfo(user);
 
         } catch (Exception e) {
-
             e.printStackTrace();
             Log.v("Erreur stats", e.getMessage());
         }

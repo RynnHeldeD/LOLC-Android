@@ -1,10 +1,13 @@
 package org.ema.model.business;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
 
 import org.ema.model.interfaces.ISettableIcon;
 
-public class Spell implements ISettableIcon {
+public class Spell implements ISettableIcon, Parcelable {
     private int id;
     private String iconName;
     private Bitmap icon;
@@ -52,6 +55,13 @@ public class Spell implements ISettableIcon {
         this.cooldowns = cooldown;
     }
 
+    public Spell (Spell s){
+        this.id = s.id;
+        this.iconName = s.iconName;
+        this.icon = s.icon;
+        this.cooldowns = s.getCooldown();
+    }
+
     @Override
     public String toString() {
         return "Spell{" +
@@ -60,5 +70,45 @@ public class Spell implements ISettableIcon {
                 ", icon=" + icon +
                 ", cooldown=" + cooldowns +
                 '}';
+    }
+
+    // Parcelling part
+    public Spell(Parcel in){
+        this.id = in.readInt();
+        this.iconName = in.readString();
+        this.icon = (Bitmap) in.readValue(Bitmap.class.getClassLoader());
+        this.cooldowns = in.createFloatArray();
+    }
+
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.iconName);
+        dest.writeValue(this.icon);
+        dest.writeFloatArray(this.cooldowns);
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Spell createFromParcel(Parcel in) {
+            return new Spell(in);
+        }
+
+        public Spell[] newArray(int size) {
+            return new Spell[size];
+        }
+    };
+
+    public boolean isImageLoaded(){
+        boolean isImageLoaded = false;
+
+        if(this.getIcon() != null && this.getIcon() instanceof Bitmap){
+            isImageLoaded = true;
+        }
+
+        return isImageLoaded;
     }
 }

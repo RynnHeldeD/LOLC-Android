@@ -1,12 +1,15 @@
 package org.ema.model.business;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
 
 import org.ema.model.interfaces.ISettableIcon;
 
 import java.util.Arrays;
 
-public class Champion implements ISettableIcon {
+public class Champion implements ISettableIcon, Parcelable {
     private int id;
     private String name;
     private Spell spell;
@@ -114,6 +117,19 @@ public class Champion implements ISettableIcon {
         this.build = build;
     }
 
+    public Champion(Champion c){
+        this.id = c.id;
+        this.name = c.name;
+        this.spell = new Spell(c.spell);
+        this.iconName = c.iconName;
+        this.icon = c.icon;
+        this.allyTips = c.allyTips;
+        this.enemyTips = c.enemyTips;
+        this.statistic = c.statistic;
+        this.isMain = c.isMain;
+        this.build = c.build;
+    }
+
     @Override
     public String toString() {
         return "Champion{" +
@@ -128,5 +144,57 @@ public class Champion implements ISettableIcon {
                 ", isMain=" + isMain +
                 ", build=" + Arrays.toString(build) +
                 '}';
+    }
+
+    // Parcelling part
+    public Champion(Parcel in){
+        this.id = in.readInt();
+        this.name = in.readString();
+        this.spell = in.readParcelable(Spell.class.getClassLoader());
+        this.iconName = in.readString();
+        this.icon = (Bitmap) in.readValue(Bitmap.class.getClassLoader());;
+        this.allyTips = in.readString();
+        this.enemyTips = in.readString();
+        this.statistic = in.readParcelable(Statistic.class.getClassLoader());
+        this.isMain = in.readByte() != 0;
+        this.build = (Item[]) in.createTypedArray(Item.CREATOR);
+    }
+
+    public int describeContents(){
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.name);
+        dest.writeParcelable(this.spell, flags);
+        dest.writeString(this.iconName);
+        dest.writeValue(this.icon);
+        dest.writeString(this.allyTips);
+        dest.writeString(this.enemyTips);
+        dest.writeParcelable(this.statistic, flags);
+        dest.writeByte((byte) (this.isMain ? 1 : 0));
+        dest.writeParcelableArray(this.build, flags);
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Champion createFromParcel(Parcel in) {
+            return new Champion(in);
+        }
+
+        public Champion[] newArray(int size) {
+            return new Champion[size];
+        }
+    };
+
+    public boolean areImagesLoaded(){
+        boolean areImagesLoaded = false;
+
+        if(this.getIcon() != null && this.getIcon() instanceof  Bitmap && this.getSpell().isImageLoaded()){
+            areImagesLoaded = true;
+        }
+
+        return areImagesLoaded;
     }
 }

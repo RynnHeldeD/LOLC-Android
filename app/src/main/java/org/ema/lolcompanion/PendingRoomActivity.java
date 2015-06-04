@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.SystemClock;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -12,8 +16,9 @@ import android.util.Log;
 import org.ema.model.DAO.CurrentGameDAO;
 import org.ema.model.DAO.SummonerDAO;
 import org.ema.model.business.Summoner;
+import org.ema.utils.Constant;
+import org.ema.utils.Region;
 import org.ema.utils.GlobalDataManager;
-
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,6 +33,8 @@ public class PendingRoomActivity extends Activity {
     public Summoner user;
     public String summonerNameFromPreviousView;
     private int IDRessource;
+    private boolean isAllowedToBack = true;
+    public final Object signal = new Object();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,31 +60,62 @@ public class PendingRoomActivity extends Activity {
         //to set the loading off : findViewById(R.id.loadin_panel).setVisibility(View.GONE);
 
         //Launch pending task
+        Constant.setRegion(Region.EUW);
         user = SummonerDAO.getSummoner(summonerNameFromPreviousView);
 
         //Creating thread
         waitingThread = new Thread(new Runnable() {
             public void run() {
-                while(shouldContinue) {
-                    Log.v("Thread", "New thread running");
-                    //Waiting 10 seconds before make a new request to the server
-                    if(!loadData()){
-                        SystemClock.sleep(10000);
+                while (true) {
+                    if(!shouldContinue)
+                    {
+                        try {
+                            Log.v("DAO", "Waiting");
+                            synchronized(signal){ signal.wait();}
+                        }catch(Exception e)
+                        {
+                            e.printStackTrace();
+                            Log.v("Erreur stats", e.getMessage());
+                        }
+                    }
+                    else {
+                        //Waiting 10 seconds before make a new request to the server
+                        Log.v("DAO", "Loading data");
+                        if (!loadData()) {
+                            SystemClock.sleep(10000);
+                        }
                     }
                 }
-                Log.v("DAO", "On a recupere les , on affiche la vue timer");
-                launchTimerActivity();
+                //Log.v("DAO", "On a recupere les , on affiche la vue timer");
+                //launchTimerActivity();
             }
         });
 
+
+    }
+    public void stopThread() {
+        Log.v("DAO", "Stopping thread");
+        shouldContinue = false;
+        //synchronized(signal){ signal.notify();}
+    }
+    public void resumeThread() {
+        Log.v("DAO", "Resuming thread");
+        shouldContinue = true;
+        synchronized(signal){ signal.notify();}
+    }
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
         //Launch thread if the user login is good
         if (user != null) {
             GlobalDataManager.add("user", user);
             Log.v("DAO", user.toString());
-            waitingThread.start();
+            resumeThread();
+            if (waitingThread.getState() == Thread.State.NEW) {
+                waitingThread.start();
+            }
         }
     }
-
     public void launchTimerActivity() {
         Intent intent = new Intent(this, TimerActivity.class);
         GlobalDataManager.add("summonersList", summonersList);
@@ -86,7 +124,10 @@ public class PendingRoomActivity extends Activity {
         // MainActivity.settingsManager.set(this, "summonerName", message);
         startActivity(intent);
     }
-
+    public void launchMainActivity(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
     public boolean loadData() {
 
         count ++;
@@ -120,6 +161,17 @@ public class PendingRoomActivity extends Activity {
                 SystemClock.sleep(500);
             }
 
+            resumeThread();
+            isAllowedToBack = false;
+            summonerList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
+            if (summonerList != null) {
+                Log.v("DAO", "SummonerList: " + summonerList.toString());
+                //waitingThread.interrupt();
+                launchTimerActivity();
+            }
+            //shouldContinue = false;
+            stopThread();
+            isAllowedToBack = true;
             return true;
         } else {
             Log.v("Error", "User not in game");
@@ -148,5 +200,20 @@ public class PendingRoomActivity extends Activity {
         }
 
         return areImagesLoaded;
+	}
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(isAllowedToBack) {
+            Log.v("Back", "Going back");
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                shouldContinue = false;
+                launchMainActivity();
+                return true;
+            }
+
+            return super.onKeyDown(keyCode, event);
+        }
+        return true;
     }
 }

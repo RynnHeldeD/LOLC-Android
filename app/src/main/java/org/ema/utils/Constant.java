@@ -1,6 +1,16 @@
 package org.ema.utils;
 
+import android.util.Log;
+
+import org.ema.model.business.Summoner;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+
 public class Constant {
+    //Region
+    private static Region localRegion = Region.EUW;
+
     public static String DDRAGON_SUMMONER_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/profileicon/";
     public static String DDRAGON_CHAMPION_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/champion/";
     public static String DDRAGON_CHAMPION_SPELL_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/spell/";
@@ -22,16 +32,61 @@ public class Constant {
     public static String API_SUMMONER_INFO_URI = CACHE_SERVER_URI + API_DNS + "api/lol/euw/v1.4/summoner/by-name/";
     public static String API_SUMMONER_SPELLS = CACHE_SERVER_URI + API_STATIC_DNS + "api/lol/static-data/euw/v1.2/summoner-spell?dataById=true&spellData=cooldown,image";
 
-    //Give the url with the selected region.
-    //DON'T WORK FOR API_CURRENT_GAME_URI;
-    public static String getApiUrlByRegion(String request, String region)
-    {
-        return request.replace("euw", region);
+    private static Hashtable<Region,String> regionsHashtable = new Hashtable<Region,String>();
+    static {
+        regionsHashtable.put(Region.BR,"br");
+        regionsHashtable.put(Region.EUNE,"eune");
+        regionsHashtable.put(Region.EUW,"euw");
+        regionsHashtable.put(Region.LAN,"lan");
+        regionsHashtable.put(Region.LAS,"las");
+        regionsHashtable.put(Region.NA,"na");
+        regionsHashtable.put(Region.OCE,"oce");
+        regionsHashtable.put(Region.RU,"ru");
+        regionsHashtable.put(Region.TR,"tr");
     }
 
-    //Get API_CURRENT_GAME_URI with the new region
-    public static String getCurrentGameUrlByRegion(String request, String region)
-    {
-        return request.replace("EUW1", region);
+    private static Hashtable<Region,String> regionsCurrentHashtable = new Hashtable<Region,String>();
+    static {
+        regionsCurrentHashtable.put(Region.BR,"BR1");
+        regionsCurrentHashtable.put(Region.EUNE,"EUN1");
+        regionsCurrentHashtable.put(Region.EUW,"EUW1");
+        regionsCurrentHashtable.put(Region.LAN,"LA1");
+        regionsCurrentHashtable.put(Region.LAS,"LA2");
+        regionsCurrentHashtable.put(Region.NA,"NA1");
+        regionsCurrentHashtable.put(Region.OCE,"OC1");
+        regionsCurrentHashtable.put(Region.RU,"RU");
+        regionsCurrentHashtable.put(Region.TR,"TR1");
+    }
+
+    private static Hashtable<Region,String> regionsNameHashtable = new Hashtable<Region,String>();
+    static {
+        regionsNameHashtable.put(Region.BR,"Brazil");
+        regionsNameHashtable.put(Region.EUNE,"Europe Nordic & East");
+        regionsNameHashtable.put(Region.EUW,"Europe West");
+        regionsNameHashtable.put(Region.LAN,"Latin America North");
+        regionsNameHashtable.put(Region.LAS,"Latin America South");
+        regionsNameHashtable.put(Region.NA,"North America");
+        regionsNameHashtable.put(Region.OCE,"Oceania");
+        regionsNameHashtable.put(Region.RU,"Russia");
+        regionsNameHashtable.put(Region.TR,"Turkey");
+    }
+
+    private static String setRequestRegion(String request, Region region) {
+        request = request.replaceAll(regionsHashtable.get(localRegion),regionsHashtable.get(region));
+        request = request.replaceAll(regionsCurrentHashtable.get(localRegion),regionsCurrentHashtable.get(region));
+        return request;
+    }
+
+    public static void setRegion(Region region) {
+        API_DNS = setRequestRegion(API_DNS,region);
+        API_CURRENT_GAME_URI = setRequestRegion(API_CURRENT_GAME_URI,region);
+        API_CHAMPION_URI = setRequestRegion(API_CHAMPION_URI,region);
+        API_LEAGUE_URI = setRequestRegion(API_LEAGUE_URI,region);
+        API_MATCH_HISTORY_URI = setRequestRegion(API_MATCH_HISTORY_URI,region);
+        API_STATS_URI = setRequestRegion(API_STATS_URI,region);
+        API_SUMMONER_INFO_URI = setRequestRegion(API_SUMMONER_INFO_URI,region);
+        API_SUMMONER_SPELLS = setRequestRegion(API_SUMMONER_SPELLS,region);
+        
+        localRegion = region;
     }
 }

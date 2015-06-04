@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -213,5 +214,20 @@ public class TimerActivity extends Activity {
 
 
         Log.v("DAO", "Timer des tableau chargement termine");
+	}
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            launchMainActivity();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public void launchMainActivity(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }

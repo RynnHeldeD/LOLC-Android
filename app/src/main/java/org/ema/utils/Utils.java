@@ -190,10 +190,10 @@ public class Utils {
     //Get document, return null if error or null
     public static String getDocument(String urlToRead) {
         //Return cache if exist.
-       /* if(cache.get(urlToRead) != null) {
+        if(cache.get(urlToRead) != null) {
             Log.v("CACHE",urlToRead);
             return cache.get(urlToRead);
-        }*/
+        }
 
         HttpClient httpclient = new DefaultHttpClient();
         HttpResponse response;
@@ -223,10 +223,10 @@ public class Utils {
     //Get document, if null, do the request again while the limit exist
     public static String getDocumentAndCheck(String urlToRead, int limit) {
         //Return cache if exist.
-        /*if(cache.get(urlToRead) != null) {
+        if(cache.get(urlToRead) != null) {
             Log.v("CACHE",urlToRead);
             return cache.get(urlToRead);
-        }*/
+        }
 
         HttpClient httpclient = new DefaultHttpClient();
         HttpResponse response;

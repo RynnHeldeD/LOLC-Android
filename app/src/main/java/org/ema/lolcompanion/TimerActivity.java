@@ -100,7 +100,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
 
     public void cleanChannelSummary(){
         LinearLayout channelSummary = (LinearLayout) findViewById(R.id.channel_summary);
-        channelSummary.removeAllViews();
+        channelSummary.removeAllViewsInLayout();
     }
 
     //This functions adds dynamically a player icon in the channel summary so user can know who is connected
@@ -284,6 +284,15 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            Thread disconnectThread = new Thread(new Runnable() {
+                public void run() {
+                    WsEventHandling.disconnect();
+                }
+            });
+
+            disconnectThread.start();
+
             launchMainActivity();
             return true;
         }

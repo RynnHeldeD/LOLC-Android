@@ -301,7 +301,7 @@ public class WsEventHandling {
     }
 
     public static void switchChannel(String newChannel) {
-        sendMessage("{\"action\":\"switchChannel\",\"channel\":\""+ newChannel +"\"}");
+        sendMessage("{\"action\":\"switchChannel\",\"channel\":\"" + newChannel + "\"}");
     }
 
     public static void timerActivation(String gridSpellId, String timestampOfTrigger) {
@@ -317,7 +317,11 @@ public class WsEventHandling {
     }
 
     public static void stopTimer(String gridSpellId) {
-        sendMessage("{\"action\":\"stopTimer\",\"idSortGrille\":\""+ gridSpellId +"\"}");
+        sendMessage("{\"action\":\"stopTimer\",\"idSortGrille\":\"" + gridSpellId + "\"}");
+    }
+
+    public static void disconnect() {
+        WebSocket.mWebSocketClient.close();
     }
 
 

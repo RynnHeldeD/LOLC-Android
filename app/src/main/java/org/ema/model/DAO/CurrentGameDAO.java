@@ -21,7 +21,7 @@ import java.util.Hashtable;
 public class CurrentGameDAO {
     public static ArrayList<Summoner> getSummunerListInGameFromCurrentUser(Summoner user) {
         //Get request
-        String jsonResult = Utils.getDocument(Constant.API_CURRENT_GAME_URI + user.getId());
+        String jsonResult = Utils.getDocumentAndCheck(Constant.API_CURRENT_GAME_URI + user.getId(),2);
 
         try {
             //Not on game
@@ -66,8 +66,8 @@ public class CurrentGameDAO {
                 summonersList.add(summoner);
             }
 
-            JSONObject jsonSummonerSpells = new JSONObject(Utils.getDocument(Constant.API_SUMMONER_SPELLS));
-            JSONObject jsonChampions = new JSONObject(Utils.getDocument(Constant.API_CHAMPION_URI));
+            JSONObject jsonSummonerSpells = new JSONObject(Utils.getDocumentAndCheck(Constant.API_SUMMONER_SPELLS,2));
+            JSONObject jsonChampions = new JSONObject(Utils.getDocumentAndCheck(Constant.API_CHAMPION_URI,2));
 
             for(Summoner current : summonersList)
             {
@@ -141,7 +141,7 @@ public class CurrentGameDAO {
 
         try {
             String request = Constant.API_LEAGUE_URI + concatIds + "/entry";
-            JSONObject jsonResult = new JSONObject(Utils.getDocument(Constant.API_LEAGUE_URI + concatIds + "/entry"));
+            JSONObject jsonResult = new JSONObject(Utils.getDocumentAndCheck(Constant.API_LEAGUE_URI + concatIds + "/entry",2));
 
             for(Summoner user : summoners) {
                 if(!jsonResult.isNull(String.valueOf(user.getId()))) {
@@ -382,7 +382,7 @@ public class CurrentGameDAO {
     //Load async images
     public static void loadMostPlayedChampionsImages(ArrayList<Summoner> summoners) {
         try {
-            JSONObject jsonChampions = new JSONObject(Utils.getDocument(Constant.API_CHAMPION_URI));
+            JSONObject jsonChampions = new JSONObject(Utils.getDocumentAndCheck(Constant.API_CHAMPION_URI,5));
 
             for(Summoner current : summoners)
             {
@@ -404,7 +404,7 @@ public class CurrentGameDAO {
     //Get premades
     public static void getPremades(Summoner summoner, ArrayList<Summoner> summoners) {
         try {
-            JSONObject json = new JSONObject(Utils.getDocument(Constant.API_SUMMONER_GAMES + summoner.getId() + "/recent"));
+            JSONObject json = new JSONObject(Utils.getDocumentAndCheck(Constant.API_SUMMONER_GAMES + summoner.getId() + "/recent",2));
 
             int[][] nbGamesWithUser = new int[(summoners.size() / 2) - 1][2];
 

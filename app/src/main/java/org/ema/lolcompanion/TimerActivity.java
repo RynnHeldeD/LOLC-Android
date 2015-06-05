@@ -30,6 +30,7 @@ import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +38,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.TimerTask;
 
 
@@ -248,8 +250,16 @@ public class TimerActivity extends Activity {
     //Fonctions pour les évènements WS
     public void simpleClickTimer(String buttonID,long delayOfTransfert, boolean fromWebSocket){
         TimerButton tbtn = getButtonFromIdString(buttonID);
-        Date date = new java.util.Date();
-        Timestamp tstmp = new Timestamp(date.getTime());
+
+        SimpleDateFormat formatUTC = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ");
+        formatUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Timestamp tstmp;
+        try {
+            tstmp = new Timestamp(formatUTC.parse(formatUTC.format(formatUTC.format(new Date()))).getTime());
+        } catch (ParseException e) {
+            tstmp = new Timestamp(new Date().getTime());
+            Log.v("Websocket","Impossible de parser la date recue via le websocket");
+        }
 
         //Name of the clicked button => example : b21
         String IDButton = getResources().getResourceName(tbtn.getId());

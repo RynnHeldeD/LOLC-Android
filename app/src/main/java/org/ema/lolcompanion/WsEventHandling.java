@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -22,7 +23,6 @@ import java.util.TimerTask;
  */
 public class WsEventHandling {
 
-    private static ArrayList<String> playersInChannel_g;
 
     public static void handlingMessage(String message) {
         Log.v("Websocket:", "message from websocket: " + message);
@@ -63,15 +63,22 @@ public class WsEventHandling {
     public static void activateTimer(String buttonIdGrid,String activationTimestamp){
         Log.v("Websocket","Timer activation received");
         long delayOfTransfert = 0;
-        java.util.Date date= new java.util.Date();
-        Timestamp tstmp = new Timestamp(date.getTime());
+
+        SimpleDateFormat formatUTC = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ");
+        formatUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Timestamp tstmp;
+        try {
+            tstmp = new Timestamp(formatUTC.parse(formatUTC.format(formatUTC.format(new Date()))).getTime());
+        } catch (ParseException e) {
+            tstmp = new Timestamp(new Date().getTime());
+            Log.v("Websocket","Impossible de parser la date recue via le websocket");
+        }
 
         try{
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-            Date parsedDate = dateFormat.parse(activationTimestamp);
-            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+            Date parsedDate = formatUTC.parse(activationTimestamp);
+            Timestamp currentTimestamp = new java.sql.Timestamp(parsedDate.getTime());
             //on fait la difference entre les deux timestamp, et on a arrondis à la seconde
-            delayOfTransfert = tstmp.getTime() - timestamp.getTime();
+            delayOfTransfert = tstmp.getTime() - currentTimestamp.getTime();
             Log.v("Websocket","Delay of transfert: " + delayOfTransfert);
         }catch(ParseException e){
             Log.v("Websocket","Erreur: impossible de parser la date reçue:" + e.getMessage());
@@ -85,26 +92,19 @@ public class WsEventHandling {
         TimerActivity.instance.simpleClickTimer(buttonIdGrid,0,true);
     }
 
-    public static void updateChannelPlayers(JSONArray playersInChannel) {
+    public static void updateChannelPlayers(JSONArray playersInChannelJson) {
 
         //on recréer la liste des joueurs du channel
-        playersInChannel_g = new ArrayList<String>();
+        ArrayList<String> playersInChannel = new ArrayList<String>();
 
         try {
             //on ajoute chaque joueur
-            for(int i = 0; i<playersInChannel.length();i++) {
-                playersInChannel_g.add(i, playersInChannel.getString(i));
+            for(int i = 0; i<playersInChannelJson.length();i++) {
+                playersInChannel.add(i, playersInChannelJson.getString(i));
             }
         } catch (JSONException e) {
             Log.v("Websocket","Error during message parsing in updateChannelPlayers: " +e.getMessage());
         }
-
-        //Récupération des images des joueurs
-
-
-        //Ajout des images à la vue
-
-
     }
 
    /* class TimerGetTimeStamp extends TimerTask {

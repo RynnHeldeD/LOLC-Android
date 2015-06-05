@@ -183,17 +183,7 @@
             android:paddingTop="@dimen/activity_vertical_high_margin"
             tools:context="org.ema.lolcompanion.TimerActivity">
 
-            <com.makeramen.roundedimageview.RoundedImageView
-                android:id="@+id/testRound"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:src="@drawable/test_round"
-                app:riv_border_color="#FFFFFF"
-                app:riv_border_width="1dip"
-                app:riv_corner_radius="25dip"
-                app:riv_mutate_background="true"
-                app:riv_oval="true"
-                app:riv_tile_mode="clamp" />
+
 
         </LinearLayout>
 

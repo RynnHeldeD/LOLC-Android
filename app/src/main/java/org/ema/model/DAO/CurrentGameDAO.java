@@ -207,7 +207,7 @@ public class CurrentGameDAO {
             }
             Statistic statsUser = new Statistic(kill, death, assist, win, loose, (float) 0, (float) 0, (float) 0, null);
             user.getChampion().setStatistic(statsUser);
-            getCreepChartInfo(user);
+            //getCreepChartInfo(user);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -84,6 +84,10 @@ public class TimerActivity extends Activity {
 
         //Chargement des timers
         this.buildTimerTable(teamSummonersList);
+
+        //
+        Handler timerHandler = new Handler();
+        GlobalDataManager.add("timerHandler", timerHandler);
     }
 
     //This functions adds dynamically a player icon in the channel summary so user can know who is connected
@@ -260,6 +264,8 @@ public class TimerActivity extends Activity {
             tstmp = new Timestamp(new Date().getTime());
             Log.v("Websocket","Impossible de parser la date recue via le websocket");
         }
+	Handler timerHandler = (Handler)GlobalDataManager.get("timerHandler");
+
 
         //Name of the clicked button => example : b21
         String IDButton = getResources().getResourceName(tbtn.getId());

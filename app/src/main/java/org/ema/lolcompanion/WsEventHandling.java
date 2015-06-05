@@ -116,6 +116,7 @@ public class WsEventHandling {
     }
 
     public static void delayTimer(final String buttonIdGrid) {
+        // TODO
         //Pour l'instant, si le timer est en cours, ça enlève les 5 secondes
         //Sinon ça démarre le timer. Ce sera corrigé lors de l'implémentation du ShareTimer
         class WebSocketAction implements Runnable {

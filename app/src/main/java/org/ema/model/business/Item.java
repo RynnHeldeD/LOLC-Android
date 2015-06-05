@@ -4,20 +4,24 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Item implements Parcelable {
-    private String name;
+import org.ema.model.interfaces.ISettableIcon;
+
+public class Item implements ISettableIcon, Parcelable {
+    private String iconName;
     private Bitmap icon;
 
-    public String getName() {
-        return name;
+    @Override
+    public String getIconName() {
+        return iconName;
+    }
+
+    @Override
+    public void setIconName(String iconName) {
+        this.iconName = iconName;
     }
 
     public Bitmap getIcon() {
         return icon;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public void setIcon(Bitmap icon) {
@@ -27,22 +31,22 @@ public class Item implements Parcelable {
     public Item() {
     }
 
-    public Item(String name, Bitmap icon) {
-        this.name = name;
+    public Item(String iconName, Bitmap icon) {
+        this.iconName = iconName;
         this.icon = icon;
     }
 
     @Override
     public String toString() {
         return "Item{" +
-                "name='" + name + '\'' +
+                "name='" + iconName + '\'' +
                 ", icon=" + icon +
                 '}';
     }
 
     // Parcelling part
     public Item(Parcel in){
-        this.name = in.readString();
+        this.iconName = in.readString();
         this.icon = (Bitmap) in.readValue(Bitmap.class.getClassLoader());
     }
 
@@ -52,7 +56,7 @@ public class Item implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.name);
+        dest.writeString(this.iconName);
         dest.writeValue(this.icon);
     }
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {

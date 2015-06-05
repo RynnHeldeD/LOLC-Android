@@ -165,7 +165,7 @@ public class PendingRoomActivity extends Activity {
         startActivity(intent);
     }
     public void launchMainActivity(){
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, AlliesActivity.class);
         startActivity(intent);
     }
     public boolean loadData() {

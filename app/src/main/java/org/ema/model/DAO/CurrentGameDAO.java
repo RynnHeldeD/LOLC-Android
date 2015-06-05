@@ -207,7 +207,7 @@ public class CurrentGameDAO {
             }
             Statistic statsUser = new Statistic(kill, death, assist, win, loose, (float) 0, (float) 0, (float) 0, null);
             user.getChampion().setStatistic(statsUser);
-            //getCreepChartInfo(user);
+            getCreepChartInfo(user);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -342,12 +342,12 @@ public class CurrentGameDAO {
                 }
 
                 Collections.sort(itemHistoy, new SortIntegerTabArrayList());
-                /*Item[] Build = new Item[7];
+                Item[] Build = new Item[7];
                 for(int i=0;i<7;i++)
                 {
-                    Build[i] = new Item(itemHistoy.get(i)[0], ;
+                    Build[i] = new Item(String.valueOf(itemHistoy.get(i)[0]) + ".png", null);
                 }
-                user.getChampion().setBuild(Build);*/
+                user.getChampion().setBuild(Build);
                 if (numberOfValueZeroToTen != 0) {
                     zeroToTen /= numberOfValueZeroToTen;
                 }

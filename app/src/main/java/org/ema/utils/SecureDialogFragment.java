@@ -67,7 +67,7 @@ public class SecureDialogFragment extends DialogFragment {
         TextView tv = new TextView(this.getActivity());
         tv.setText(R.string.secure_timers_text);
         tv.setPadding(10, 5, 10, 5);
-        tv.setTextSize(16);
+        tv.setTextSize(getResources().getDimension(R.dimen.tips_champion_font));
         tv.setTextColor(getResources().getColor(R.color.black_font));
         layout.addView(tv, tvParams);
 

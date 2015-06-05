@@ -44,13 +44,16 @@ public class WsEventHandling {
                         activateTimer(obj.getString("idSortGrille"), obj.getString("timestampDeclenchement"));
                         break;
                     case "playerList":
-                       // WsEventHandling.switchChannel("toto");
+                        WsEventHandling.switchChannel("toto");
                         break;
                     case "timerDelay":
                         delayTimer(obj.getString("idSortGrille"));
                         break;
                     case "razTimer":
                         doRestartTimer(obj.getString("idSortGrille"), obj.getString("timestampDeclenchement"));
+                        break;
+                    case "stopTimer":
+                        doStopTimer(obj.getString("idSortGrille"));
                         break;
                     default:
                         break;
@@ -178,6 +181,26 @@ public class WsEventHandling {
         }.start();
     }
 
+    public static void doStopTimer(final String buttonIdGrid){
+        class WebSocketAction implements Runnable {
+            public String buttonIdGrid;
+
+            public WebSocketAction(String buttonIdGrid){
+                this.buttonIdGrid = buttonIdGrid;
+            }
+
+            public void run() {
+                TimerActivity.instance.stopTimer(this.buttonIdGrid, true);
+            }
+        }
+
+        new Thread(){
+            public void run(){
+                TimerActivity.instance.runOnUiThread(new WebSocketAction(buttonIdGrid));
+            }
+        }.start();
+    }
+
     public static void cancelTimer(final String buttonIdGrid){
         class WebSocketAction implements Runnable {
             public String buttonIdGrid;
@@ -253,9 +276,7 @@ public class WsEventHandling {
     }
 
     public static void stopTimer(String gridSpellId) {
-      //TODO:
-        Log.v("Websocket", "STOP TIMER");
-      //  sendMessage("{\"action\":\"razTimer\",\"idSortGrille\":\""+ gridSpellId +"\"}");
+        sendMessage("{\"action\":\"stopTimer\",\"idSortGrille\":\""+ gridSpellId +"\"}");
     }
 
 

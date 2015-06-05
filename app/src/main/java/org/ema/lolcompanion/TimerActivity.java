@@ -348,10 +348,8 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
     }
 
     public void stopTimer(String buttonID, boolean fromWebSocket){
-        //TimerButton tbtn = getButtonFromIdString(buttonID);
+        TimerButton tbtn = getButtonFromIdString(buttonID);
 
-        Log.v("DAO", buttonID + " Long press");
-        /*
         if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
             //On transmet le message
             if(!fromWebSocket){
@@ -360,7 +358,6 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
             //On fait l'action sur le timerbutton
             tbtn.getTimer().onFinish();
         }
-        */
     }
 
 

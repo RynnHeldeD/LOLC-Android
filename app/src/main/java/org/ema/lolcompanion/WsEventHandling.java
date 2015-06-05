@@ -50,6 +50,7 @@ public class WsEventHandling {
                         delayTimer(obj.getString("idSortGrille"));
                         break;
                     case "razTimer":
+                        cancelTimer(obj.getString("idSortGrille"));
                         break;
                     default:
                         break;
@@ -138,6 +139,26 @@ public class WsEventHandling {
         }.start();
     }
 
+    public static void cancelTimer(final String buttonIdGrid){
+        class WebSocketAction implements Runnable {
+            public String buttonIdGrid;
+
+            public WebSocketAction(String buttonIdGrid){
+                this.buttonIdGrid = buttonIdGrid;
+            }
+
+            public void run(){
+                TimerActivity.instance.stopTimer(buttonIdGrid, true);
+            }
+        }
+
+        new Thread(){
+            public void run(){
+                TimerActivity.instance.runOnUiThread(new WebSocketAction(buttonIdGrid));
+            }
+        }.start();
+    }
+
     public static void updateChannelPlayers(JSONArray playersInChannelJson) {
 
         //on recréer la liste des joueurs du channel
@@ -188,7 +209,7 @@ public class WsEventHandling {
         sendMessage("{\"action\":\"timerDelay\",\"idSortGrille\":\""+ gridSpellId +"\"}");
     }
 
-    public static void resetTimer(String gridSpellId) {
+    public static void restartTimer(String gridSpellId) {
         sendMessage("{\"action\":\"razTimer\",\"idSortGrille\":\""+ gridSpellId +"\"}");
     }
 

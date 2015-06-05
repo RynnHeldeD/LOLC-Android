@@ -186,6 +186,10 @@ public class TimerButton extends RoundedImageView {
         }
     }
 
+    public void timerCancel(){
+        Log.v("DAO", "LONG PRESS");
+    }
+
     public long getClickedTimestamp() {
         return this.clickedTimestamp;
     }

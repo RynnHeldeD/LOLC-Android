@@ -53,6 +53,10 @@ public class WsEventHandling {
                         delayTimer(obj.getString("idSortGrille"));
                         break;
                     case "razTimer":
+                        doRestartTimer(obj.getString("idSortGrille"), obj.getString("timestampDeclenchement"));
+                        break;
+                    case "stopTimer":
+                        doStopTimer(obj.getString("idSortGrille"));
                         break;
                     default:
                         break;
@@ -63,7 +67,7 @@ public class WsEventHandling {
         }
     }
 
-    public static void activateTimer(final String buttonIdGrid,String activationTimestamp){
+    public static void activateTimer(final String buttonIdGrid, String activationTimestamp){
         Log.v("Websocket", "Timer activation received");
         long delayOfTransfert = 0;
 
@@ -131,6 +135,85 @@ public class WsEventHandling {
 
             public void run(){
                 TimerActivity.instance.simpleClickTimer(buttonIdGrid, 0, true);
+            }
+        }
+
+        new Thread(){
+            public void run(){
+                TimerActivity.instance.runOnUiThread(new WebSocketAction(buttonIdGrid));
+            }
+        }.start();
+    }
+
+    public static void doRestartTimer(final String buttonIdGrid, final String activationTimestamp){
+        class WebSocketAction implements Runnable {
+            public String buttonIdGrid;
+            public String activationTimestamp;
+
+            public WebSocketAction(String buttonIdGrid, String activationTimestamp){
+                this.buttonIdGrid = buttonIdGrid;
+                this.activationTimestamp = activationTimestamp;
+            }
+
+            public void run() {
+                SimpleDateFormat formatUTC = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss.SSS Z");
+                Timestamp tstmp;
+                try {
+                    tstmp = new Timestamp(formatUTC.parse(formatUTC.format(new Date())).getTime());
+                } catch (ParseException e) {
+                    tstmp = new Timestamp(new Date().getTime());
+                    Log.v("Websocket", "Impossible de parser la current date");
+                }
+
+                Timestamp currentTimestamp = Timestamp.valueOf(activationTimestamp);
+
+                try {
+                    Log.v("Websocket", "CurrentTimeStamp get time :" + currentTimestamp.getTime());
+                    final long delayOfTransfert = tstmp.getTime() - currentTimestamp.getTime();
+                    TimerActivity.instance.restartTimer(buttonIdGrid, delayOfTransfert, true);
+                } catch (Exception e) {
+                    Log.v("Websocket", "Erreur lors du calcul du delay of transfert");
+                }
+            }
+        }
+
+        new Thread(){
+            public void run(){
+                TimerActivity.instance.runOnUiThread(new WebSocketAction(buttonIdGrid, activationTimestamp));
+            }
+        }.start();
+    }
+
+    public static void doStopTimer(final String buttonIdGrid){
+        class WebSocketAction implements Runnable {
+            public String buttonIdGrid;
+
+            public WebSocketAction(String buttonIdGrid){
+                this.buttonIdGrid = buttonIdGrid;
+            }
+
+            public void run() {
+                TimerActivity.instance.stopTimer(this.buttonIdGrid, true);
+            }
+        }
+
+        new Thread(){
+            public void run(){
+                TimerActivity.instance.runOnUiThread(new WebSocketAction(buttonIdGrid));
+            }
+        }.start();
+    }
+
+    public static void cancelTimer(final String buttonIdGrid){
+        class WebSocketAction implements Runnable {
+            public String buttonIdGrid;
+
+            public WebSocketAction(String buttonIdGrid){
+                this.buttonIdGrid = buttonIdGrid;
+            }
+
+            public void run(){
+                TimerActivity.instance.stopTimer(buttonIdGrid, true);
             }
         }
 
@@ -229,14 +312,12 @@ public class WsEventHandling {
         sendMessage("{\"action\":\"timerDelay\",\"idSortGrille\":\""+ gridSpellId +"\"}");
     }
 
-    public static void resetTimer(String gridSpellId) {
-        sendMessage("{\"action\":\"razTimer\",\"idSortGrille\":\""+ gridSpellId +"\"}");
+    public static void restartTimer(String gridSpellId, String timestampOfTrigger) {
+        sendMessage("{\"action\":\"razTimer\",\"idSortGrille\":\""+ gridSpellId +"\",\"timestampDeclenchement\":\""+ timestampOfTrigger +"\"}");
     }
 
     public static void stopTimer(String gridSpellId) {
-      //TODO:
-        Log.v("Websocket", "STOP TIMER");
-      //  sendMessage("{\"action\":\"razTimer\",\"idSortGrille\":\""+ gridSpellId +"\"}");
+        sendMessage("{\"action\":\"stopTimer\",\"idSortGrille\":\""+ gridSpellId +"\"}");
     }
 
 

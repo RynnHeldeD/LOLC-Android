@@ -60,7 +60,10 @@ public class TimerButton extends RoundedImageView {
                                 boolean result = false;
                                 if (mHandler == null) {
                                     try {
-                                        mHandler = getContext().getClass().getMethod(handlerName, View.class);
+                                        Class[] args = new Class[2];
+                                        args[0] = String.class;
+                                        args[1] = boolean.class;
+                                        mHandler = getContext().getClass().getMethod(handlerName, args);
                                     } catch (NoSuchMethodException e) {
                                         int id = getId();
                                         String idText = id == NO_ID ? "" : " with id '"
@@ -74,7 +77,11 @@ public class TimerButton extends RoundedImageView {
                                 }
 
                                 try {
-                                    mHandler.invoke(getContext(), TimerButton.this);
+                                    Object[] params = new Object[2];
+                                    int id = getId();
+                                    params[0] = getContext().getResources().getResourceEntryName(id);
+                                    params[1] = false;
+                                    mHandler.invoke(getContext(), params);
                                     result = true;
                                 } catch (IllegalAccessException e) {
                                     throw new IllegalStateException("Could not execute non "

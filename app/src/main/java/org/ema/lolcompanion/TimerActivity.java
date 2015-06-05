@@ -176,16 +176,15 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
 
                 public void run(){
                     if (this.tbtn.isTriggered()) {
-                        Log.v("DAO", this.buttonID + " simple click postponed");
-                        simpleClickTimer(buttonID,0,false);
+                        simpleClickTimer(buttonID, 0, false);
                         this.tbtn.setTriggered(false);
                     }
                 }
             }
             tbtn.postDelayed(new PostponedClick(tbtn, buttonID), 200);
         } else {
-            if((now <= btnTimestp + TimerButton.DELAY)){
-                Log.v("DAO", buttonID + " double click");
+            if ((now <= btnTimestp + TimerButton.DELAY)) {
+                restartTimer(buttonID, 0, false);
             }
             tbtn.setTriggered(false);
         }
@@ -297,11 +296,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         startActivity(intent);
     }
 
-     public void timerCancel(View tbt){
-            TimerButton tbtn = (TimerButton) tbt;
-            String IDButton = getResources().getResourceName(tbtn.getId());
-            String buttonID = IDButton.substring(IDButton.lastIndexOf("/") + 1);
-     }
+
 
     //Fonctions pour les évènements WS
     public void simpleClickTimer(String buttonID,long delayOfTransfert, boolean fromWebSocket){
@@ -317,8 +312,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
             Log.v("Websocket","Impossible de parser la date recue via le websocket");
         }*/
 
-	    Handler timerHandler = (Handler)GlobalDataManager.get("timerHandler");
-
+	  
         //Name of the clicked button => example : b21
         String IDButton = getResources().getResourceName(tbtn.getId());
         //loading the league of legend equiv fonts
@@ -351,16 +345,18 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         }
     }
 
-    public void resetTimer(String buttonID, boolean fromWebSocket){
+    public void restartTimer(String buttonID, long timestamp, boolean fromWebSocket) {
         TimerButton tbtn = getButtonFromIdString(buttonID);
+        Timestamp tstmp = new Timestamp(new Date().getTime());
 
         if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
             //On transmet le message
-            if(!fromWebSocket){
-                WsEventHandling.resetTimer(buttonID);
+            if (!fromWebSocket) {
+                WsEventHandling.restartTimer(buttonID, tstmp.toString());
             }
             //On fait l'action sur le timerbutton
-            tbtn.getTimer().cancel();
+            tbtn.getTimer().onFinish();
+            simpleClickTimer(buttonID, timestamp, true);
         }
     }
 
@@ -373,8 +369,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
                 WsEventHandling.stopTimer(buttonID);
             }
             //On fait l'action sur le timerbutton
-            tbtn.getTimer().cancel();
-            simpleClickTimer(buttonID,0,true);
+            tbtn.getTimer().onFinish();
         }
     }
 

@@ -43,7 +43,6 @@ public class PendingRoomActivity extends Activity {
     public boolean shouldContinue = true;
     public Summoner user;
     public String summonerNameFromPreviousView;
-    public String region;
     private int IDRessource;
     private boolean isAllowedToBack = true;
     public final Object signal = new Object();
@@ -56,9 +55,6 @@ public class PendingRoomActivity extends Activity {
             Toast toast = new Toast(getApplicationContext());
             toast.setDuration(Toast.LENGTH_SHORT);
             switch(msg.arg1) {
-                case 1:
-                    text.setText("checking summoner nickname...");
-                    break;
                 case 2:
                     text.setText("waiting for game signal...");
                     break;
@@ -90,7 +86,6 @@ public class PendingRoomActivity extends Activity {
 
         //setting summoner name
         summonerNameFromPreviousView = intent.getStringExtra(MainActivity.SUMMONER_NAME);
-        region = intent.getStringExtra("SUMMONER_REGION");
 
         TextView summonerName = (TextView) findViewById(R.id.pending_summoner_name);
         summonerName.setTypeface(font);
@@ -103,10 +98,7 @@ public class PendingRoomActivity extends Activity {
         pendingDescription.setTypeface(font);
         //to set the loading off : findViewById(R.id.loadin_panel).setVisibility(View.GONE);
 
-        //Launch pending task
-        Log.v("REGION", region);
-        Constant.setRegion(Constant.regionsFromViewHashtable.get(region));
-        user = SummonerDAO.getSummoner(summonerNameFromPreviousView);
+        user = (Summoner)intent.getExtras().get("USER");;
 
         //Creating thread
         waitingThread = new Thread(new Runnable() {
@@ -127,8 +119,7 @@ public class PendingRoomActivity extends Activity {
                         //Waiting 10 seconds before make a new request to the server
                         Log.v("DAO", "Loading data");
                         Message msg = handler.obtainMessage();
-                        msg.arg1 = 1;
-                        handler.sendMessage(msg);
+                        
                         if (!loadData()) {
                             SystemClock.sleep(10000);
                         }

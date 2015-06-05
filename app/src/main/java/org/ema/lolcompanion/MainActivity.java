@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 
 public class MainActivity extends Activity {
     public final static String SUMMONER_NAME = "";
-    public final static String SUMMONER_REGION = "";
+    public static Summoner user = null;
 
     // Preferences
     public static SettingsManager settingsManager = null;
@@ -109,25 +109,22 @@ public class MainActivity extends Activity {
             //TODO pop up erreur
             Log.v("DAO", "Erreur dans le pseudo: " + message);
         } else {
-            intent.putExtra(SUMMONER_NAME, message);
-            intent.putExtra("SUMMONER_REGION", spinner.getSelectedItem().toString());
-            MainActivity.settingsManager.set(this, "summonerName", message);
-            MainActivity.settingsManager.set(this, "summonerRegion", String.valueOf(position));
-            startActivity(intent);
+            Constant.setRegion(Constant.regionsFromViewHashtable.get(spinner.getSelectedItem().toString()));
+            text.setText("logging ...");
+            toast.show();
+            user = SummonerDAO.getSummoner(message);
+            if(user != null){
+                intent.putExtra(SUMMONER_NAME, message);
+                intent.putExtra("USER",user);
+                MainActivity.settingsManager.set(this, "summonerName", message);
+                MainActivity.settingsManager.set(this, "summonerRegion", String.valueOf(position));
+                startActivity(intent);
+            }
+            else {
+                text.setText("Player not found on " + spinner.getSelectedItem().toString().split(" ")[0]);
+                toast.show();
+            }
         }
-    }
-
-    public boolean checkNickname(String nickName) {
-
-
-
-        Summoner user = SummonerDAO.getSummoner(nickName);
-
-        if(user == null){
-            //TODO message d'erreur
-        }
-
-        return false;
     }
 
     /*

@@ -30,7 +30,6 @@ import org.ema.utils.ChampionTipDialogFragment;
 import org.ema.utils.GlobalDataManager;
 import org.ema.utils.SecureDialogFragment;
 import org.ema.utils.SettingsManager;
-import org.ema.utils.SortSummonerId;
 import org.ema.utils.Timer;
 import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
@@ -85,7 +84,6 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
                 teamSummonersList.add(s);
             }
         }
-        Collections.sort(teamSummonersList, new SortSummonerId());
 
         // Changement des bitmap
         this.setTimerButtonsImage(teamSummonersList);

@@ -11,6 +11,7 @@ import org.ema.utils.CallbackMatcher;
 import org.ema.utils.SortChampionsArrayList;
 import org.ema.utils.SortIntegerTabArrayList;
 
+import org.ema.utils.SortSummonerByTeamAndPerf;
 import org.ema.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -123,6 +124,8 @@ public class CurrentGameDAO {
             //Load images of mostPlayedChampions
             loadMostPlayedChampionsImages(summonersList);
 
+            Collections.sort(summonersList, new SortSummonerByTeamAndPerf());
+
             return summonersList;
 
         }
@@ -147,7 +150,7 @@ public class CurrentGameDAO {
             JSONObject jsonResult = new JSONObject(Utils.getDocumentAndCheck(Constant.API_LEAGUE_URI + concatIds + "/entry",2));
 
             for(Summoner user : summoners) {
-                if(!jsonResult.isNull(String.valueOf(user.getId()))) {
+                if(!jsonResult.isNull(String.valueOf(user.getId())) && (jsonResult.getJSONArray(String.valueOf(user.getId())).getJSONObject(0).getString("queue").equals("RANKED_SOLO_5x5"))) {
                     JSONArray leagueSummonerJSON = jsonResult.getJSONArray(String.valueOf(user.getId()));
                     String tier = leagueSummonerJSON.getJSONObject(0).getString("tier");
                     JSONArray entitiesLeagueJSON = leagueSummonerJSON.getJSONObject(0).getJSONArray("entries");

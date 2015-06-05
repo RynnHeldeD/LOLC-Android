@@ -6,6 +6,7 @@ import org.ema.model.business.League;
 import org.ema.model.business.Spell;
 import org.ema.model.business.Statistic;
 import org.ema.model.business.Summoner;
+import org.ema.model.business.Item;
 import org.ema.utils.CallbackMatcher;
 import org.ema.utils.SortChampionsArrayList;
 import org.ema.utils.SortIntegerTabArrayList;
@@ -267,40 +268,47 @@ public class CurrentGameDAO {
                 numberOfValueZeroToTen = numberOfValueTenToTwenty = numberOfValueTwentyToThirsty = numberOfValueThirtyToEnd = 0;
                 ArrayList<int[]> itemHistoy = new ArrayList<>();
                 int[] test = new int[2];
+                int[] matchItemHistory = new int[7];
 
                 for (int i = 0; i < jsonMatches.length(); i++) {
-
                     if(!jsonMatches.getJSONObject(i).isNull("participants")) {
                         jsonParticipants = jsonMatches.getJSONObject(i).getJSONArray("participants");
+                        matchItemHistory = getUserFavoiteBuild(jsonParticipants);
                         if(i==0)
                         {
-                            int[] itemsSummoner = new int[7];
-                            itemsSummoner = getUserFavoiteBuild(jsonParticipants);
+                            matchItemHistory = getUserFavoiteBuild(jsonParticipants);
                             for(int j=0;j<7;j++)
                             {
                                 int[] item = new int[2];
-                                item[0] = itemsSummoner[j];
+                                item[0] = matchItemHistory[j];
                                 item[1] = 0;
                                 itemHistoy.add(item);
                             }
                         }
-                        else {
-                            for (int j = 0; j < 7; j++) {
-                                boolean found = false;
-                                for (int k = 0; k < itemHistoy.size(); k++) {
-                                    if (itemHistoy.get(k)[0] == getUserFavoiteBuild(jsonParticipants)[j]) {
-                                        itemHistoy.get(k)[1]++;
-                                        found = true;
+                        else for (int j = 0; j < 7; j++) {
+
+                            boolean found = false;
+                            for (int k = 0; k < itemHistoy.size(); k++) {
+                                if (itemHistoy.get(k)[0] == matchItemHistory[j]) {
+                                    itemHistoy.get(k)[1]++;
+                                    found = true;
+                                }
+                            }
+                            if (!found) {
+                                //Log.v("DAO", "Item into, user : " + user.getName());
+                                int itemID = matchItemHistory[j];
+                                if(itemID != 0) {
+                                    String jsonItems = Utils.getDocument(Constant.API_ITEMS + itemID + "?itemData=into");
+                                    JSONObject result = new JSONObject(jsonItems);
+                                    if (result.isNull("into")) {
+                                        int[] newItem = new int[2];
+                                        newItem[0] = itemID;
+                                        newItem[1] = 0;
+                                        itemHistoy.add(newItem);
                                     }
                                 }
-                                if (!found) {
-                                    int[] newItem = new int[2];
-                                    newItem[0] = getUserFavoiteBuild(jsonParticipants)[j];
-                                    newItem[1] = 0;
-                                    itemHistoy.add(newItem);
-                                }
-
                             }
+
                         }
                         if(!jsonParticipants.getJSONObject(0).isNull("timeline")) {
                             if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").isNull("creepsPerMinDeltas")) {
@@ -327,7 +335,12 @@ public class CurrentGameDAO {
                 }
 
                 Collections.sort(itemHistoy, new SortIntegerTabArrayList());
-
+                /*Item[] Build = new Item[7];
+                for(int i=0;i<7;i++)
+                {
+                    Build[i] = new Item(itemHistoy.get(i)[0], ;
+                }
+                user.getChampion().setBuild(Build);*/
                 if (numberOfValueZeroToTen != 0) {
                     zeroToTen /= numberOfValueZeroToTen;
                 }
@@ -436,12 +449,19 @@ public class CurrentGameDAO {
     public static int[] getUserFavoiteBuild(JSONArray jsonParticipants)
     {
         JSONArray json = jsonParticipants;
+
         int[] build = new int[7];
         try{
             for(int i=0;i<7;i++)
             {
                 if(!jsonParticipants.getJSONObject(0).isNull("stats")) {
-                    build[i] = jsonParticipants.getJSONObject(0).getJSONObject("stats").getInt("item" + i);
+                    if(!jsonParticipants.getJSONObject(0).getJSONObject("stats").isNull("item" + i)){
+                        int itemID = jsonParticipants.getJSONObject(0).getJSONObject("stats").getInt("item" + i);
+                        build[i] = itemID;
+                    }
+                    else{
+                        build[i] = 0;
+                    }
                 }
             }
             return build;

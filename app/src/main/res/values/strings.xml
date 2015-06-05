@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">LOLCompanion</string>
     <!-- Login screen -->
-    <string name="welcome">Welcome in League of Legends Companion</string>
-    <string name="login">Login</string>
+    <string name="welcome">League of Legends Companion</string>
+    <string name="login">Welcome</string>
     <string name="action_settings">Settings</string>
     <string name="cooldown_tip">Share ennemies cooldowns and improve your strategy</string>
     <string name="analysis_tip">Current season analysis for allies and ennemies </string>
@@ -10,6 +10,18 @@
     <string name="security_tip">Sharing channel protected by team password</string>
     <string name="summoner_name">Summoner name</string>
     <string name="login_submit">Go</string>
+
+    <string-array name="lol_regions_array">
+        <item>North America NA</item>
+        <item>Europe West EUW</item>
+        <item>Europe Nordic</item>
+        <item>East EUNE</item>
+        <item>Brasil BR</item>
+        <item>Turkey TR</item>
+        <item>Russia RU</item>
+        <item>Latin America North LAN</item>
+        <item>Oceania OCE</item>
+    </string-array>
 
     <!-- Pending room -->
     <string name="title_activity_pending_room">PendingRoomActivity</string>
@@ -21,15 +33,25 @@
     <!-- Timer room -->
     <string name="title_activity_timer">TimerActivity</string>
     <string name="timers">Timers</string>
+    <string name="secure_timers">Secure your timers</string>
+    <string name="secure_timers_text">Add a passphrase and give it to your mates so they can share the timers with you</string>
+    <string name="secure_timers_edit">passphrase</string>
 
     <!-- Allies screen -->
     <string name="title_activity_allies">AlliesActivity</string>
     <string name="allies">Allies</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam placerat magna sit amet elit malesuada, et maximus odio gravida. Vivamus sit amet dictum nulla, fringilla consectetur nibh. In vitae pulvinar neque, vitae congue enim. Nullam ultricies erat quis lectus tristique, in finibus nibh laoreet. Nunc egestas consectetur orci vitae finibus. Curabitur molestie accumsan tempor. Aenean eget mauris sed arcu lacinia molestie vel et augue. Sed elementum pulvinar dignissim. Vivamus pha
+    </string>
     <string name="unrancked">UNRANCKED</string>
 
     <!-- Ennemies screen -->
     <string name="title_activity_ennemies">EnnemiesActivity</string>
     <string name="ennemies">Opponents</string>
+
+    <!-- Champion tip Fragment -->
+    <string name="close_dialog">Close</string>
+    <string name="next_dialog">Next</string>
+    <string name="confirm_dialog">OK</string>
 
 </resources>

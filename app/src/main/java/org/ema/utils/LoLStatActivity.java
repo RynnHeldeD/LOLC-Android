@@ -1,10 +1,15 @@
 package org.ema.utils;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.ema.lolcompanion.R;
@@ -13,7 +18,7 @@ import org.ema.model.business.Summoner;
 import java.util.Arrays;
 import java.util.List;
 
-public class LoLStatActivity extends Activity {
+public class LoLStatActivity extends FragmentActivity {
 
 
     //Ressources (name) of all summoners Views
@@ -39,30 +44,32 @@ public class LoLStatActivity extends Activity {
             TextView ressource = (TextView) findViewById(IDRessource);
             ressource.setTypeface(font);
 
-            if (s.contains("name"))
+            if (s.contains("name")) {
                 ressource.setText(summoner.getChampion().getName());
-            //if Statistics object is set
-            if(summoner.getChampion().getStatistic() != null) {
-                if (s.contains("Kv"))
-                    ressource.setText(String.valueOf(summoner.getChampion().getStatistic().getKill()));
-                else if (s.contains("Dv"))
-                    ressource.setText(String.valueOf(summoner.getChampion().getStatistic().getDeath()));
-                else if (s.contains("Av"))
-                    ressource.setText(String.valueOf(summoner.getChampion().getStatistic().getAssist()));
-                else if (s.contains("DmDv"))
-                    ressource.setText(String.valueOf(summoner.getChampion().getStatistic().getDamageDealtPercentage()));
-                else if (s.contains("DmRv"))
-                    ressource.setText(String.valueOf(summoner.getChampion().getStatistic().getDamageTakenPercentage()));
-                else if (s.contains("Wins"))
-                    ressource.setText(String.valueOf(summoner.getChampion().getStatistic().getWin()));
-                else if (s.contains("Defs"))
-                    ressource.setText(String.valueOf(summoner.getChampion().getStatistic().getLoose()));
             }
-            else{
-                //we hide everything
-                if(s.contains("K") || s.contains("D") || s.contains("W") || s.contains("A")){
-                    ressource.setVisibility(View.INVISIBLE);
+            //if Statistics object is set
+            if (summoner.getChampion().getStatistic() != null) {
+                if (s.contains("Kv")) {
+                    ressource.setText(String.valueOf(Math.round(summoner.getChampion().getStatistic().getKill())));
+                } else if (s.contains("DmDv")) {
+                    ressource.setText(String.valueOf(Math.round(summoner.getChampion().getStatistic().getDamageDealtPercentage())));
+                } else if (s.contains("DmRv")) {
+                    ressource.setText(String.valueOf(Math.round(summoner.getChampion().getStatistic().getDamageTakenPercentage())));
+                } else if (s.contains("Wins")) {
+                    ressource.setText(String.valueOf(summoner.getChampion().getStatistic().getWin()));
+                } else if (s.contains("Defs")) {
+                    ressource.setText(String.valueOf(summoner.getChampion().getStatistic().getLoose()));
+                } else if (s.contains("Dv")) {
+                    ressource.setText(String.valueOf(Math.round(summoner.getChampion().getStatistic().getDeath())));
+                } else if (s.contains("Av")) {
+                    ressource.setText(String.valueOf(Math.round(summoner.getChampion().getStatistic().getAssist())));
                 }
+            } else {
+                //we hide everything
+                View layoutToHide1 = findViewById(getResources().getIdentifier(s.substring(0, 2) + "WnD", "id", getBaseContext().getPackageName()));
+                View layoutToHide2 = findViewById(getResources().getIdentifier(s.substring(0, 2) + "KDA_Damages", "id", getBaseContext().getPackageName()));
+                layoutToHide1.setVisibility(View.INVISIBLE);
+                layoutToHide2.setVisibility(View.INVISIBLE);
             }
 
             if (s.contains("LP")) {
@@ -75,63 +82,81 @@ public class LoLStatActivity extends Activity {
 
         for (String s : imgRessources) {
             int IDRessource = getResources().getIdentifier(s, "id", getBaseContext().getPackageName());
-            ImageView ressource = (ImageView) findViewById(IDRessource);
 
-            if (s.contains("Image"))
-                ressource.setImageBitmap(summoner.getChampion().getIcon());
-            else if (s.contains("Main") && summoner.getChampion().isMain())
-                ressource.setVisibility(View.VISIBLE);
-            else if (s.contains("Team") && summoner.getPremade() != 0) {
-                if (summoner.getPremade() == 1)
-                    ressource.setImageResource(R.drawable.team_icon_1);
-                else ressource.setImageResource(R.drawable.team_icon_2);
-                ressource.setVisibility(View.VISIBLE);
-            } else if (s.contains("Rank")) {
-                switch (summoner.getLeague().getDivision().split(" ")[0].toString()) {
-                    case "BRONZE":
-                        ressource.setImageResource(R.drawable.rank_bronze);
-                        break;
-                    case "SILVER":
-                        ressource.setImageResource(R.drawable.rank_silver);
-                        break;
-                    case "GOLD":
-                        ressource.setImageResource(R.drawable.rank_gold);
-                        break;
-                    case "PLATINUM":
-                        ressource.setImageResource(R.drawable.rank_platinum);
-                        break;
-                    case "DIAMOND":
-                        ressource.setImageResource(R.drawable.rank_diamond);
-                        break;
-                    case "MASTER":
-                        ressource.setImageResource(R.drawable.rank_master);
-                        break;
-                    case "CHALLENGER":
-                        ressource.setImageResource(R.drawable.rank_challenger);
-                        break;
-                    default: //unranked
-                        ressource.setVisibility(View.GONE);
-                        break;
+            if (!s.contains("Perf")) {
+                ImageView ressource = (ImageView) findViewById(IDRessource);
+
+                if (s.contains("Img")) {
+                    Bitmap bitmap = summoner.getChampion().getIcon();
+                    ressource.setImageBitmap(bitmap);
+                } else if (s.contains("Main") && summoner.getChampion().isMain()) {
+                    ressource.setVisibility(View.VISIBLE);
+                } else if (s.contains("Team") && summoner.getPremade() != 0) {
+                    switch (summoner.getPremade()) {
+                        case 1:
+                            ressource.setImageResource(R.drawable.team_icon_1);
+                            break;
+                        case 2:
+                            ressource.setImageResource(R.drawable.team_icon_2);
+                            break;
+                        case 3:
+                            ressource.setImageResource(R.drawable.team_icon_3);
+                            break;
+                        default:
+                            ressource.setImageResource(R.drawable.team_icon_3);
+                    }
+                    ressource.setVisibility(View.VISIBLE);
+                } else if (s.contains("Rank")) {
+                    switch (summoner.getLeague().getDivision().split(" ")[0].toString()) {
+                        case "BRONZE":
+                            ressource.setImageResource(R.drawable.rank_bronze);
+                            break;
+                        case "SILVER":
+                            ressource.setImageResource(R.drawable.rank_silver);
+                            break;
+                        case "GOLD":
+                            ressource.setImageResource(R.drawable.rank_gold);
+                            break;
+                        case "PLATINUM":
+                            ressource.setImageResource(R.drawable.rank_platinum);
+                            break;
+                        case "DIAMOND":
+                            ressource.setImageResource(R.drawable.rank_diamond);
+                            break;
+                        case "MASTER":
+                            ressource.setImageResource(R.drawable.rank_master);
+                            break;
+                        case "CHALLENGER":
+                            ressource.setImageResource(R.drawable.rank_challenger);
+                            break;
+                        default: //unranked
+                            ressource.setVisibility(View.GONE);
+                            break;
+                    }
                 }
-            } else if (s.contains("Perf")){
+            } else {
                 VerticalProgressBar summonerPerf = (VerticalProgressBar) findViewById(IDRessource);
-                summonerPerf.setMax(maxPerformance - minPerformance);
+                summonerPerf.setMax(maxPerformance);
                 int performance;
-                if(summoner.getChampion().getStatistic() != null) {
-                    performance = Math.round(summoner.getChampion().getStatistic().getPerformance());
+                if (summoner.getChampion().getStatistic() != null) {
+                    performance = summoner.getChampion().getStatistic().getIntPerformance();
+                } else {
+                    performance = 0;
                 }
-                else performance = 0;
 
-                int zoomPerformance = performance - minPerformance;
-                summonerPerf.setProgress(zoomPerformance);
+                summonerPerf.setProgress(performance);
+                int graduation = Math.round(maxPerformance / 3);
+                int low = 0 + graduation;
+                int mid = 0 + 2 * graduation;
 
                 //Setting the color and value of the Performance BAr
-                if(performance < 34)
-                    summonerPerf.getProgressDrawable().setColorFilter(R.color.performance_bar_normal, PorterDuff.Mode.SRC_IN);
-                else if(performance >= 35 && performance < 67)
-                    summonerPerf.getProgressDrawable().setColorFilter(R.color.performance_bar_avg, PorterDuff.Mode.SRC_IN);
-                else if(performance >= 67)
-                    summonerPerf.getProgressDrawable().setColorFilter(R.color.performance_bar_danger, PorterDuff.Mode.SRC_IN);
+                if (performance < low) {
+                    summonerPerf.getProgressDrawable().setColorFilter(getResources().getColor(R.color.performance_bar_normal), PorterDuff.Mode.SRC_IN);
+                } else if (performance >= low && performance < mid) {
+                    summonerPerf.getProgressDrawable().setColorFilter(getResources().getColor(R.color.performance_bar_avg), PorterDuff.Mode.SRC_IN);
+                } else if (performance >= mid) {
+                    summonerPerf.getProgressDrawable().setColorFilter(getResources().getColor(R.color.performance_bar_danger), PorterDuff.Mode.SRC_IN);
+                }
             }
         }
     }

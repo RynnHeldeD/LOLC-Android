@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,6 +34,7 @@ import org.ema.utils.LoLStatActivity;
 import org.ema.utils.SecureDialogFragment;
 import org.ema.utils.SettingsManager;
 import org.ema.utils.SortSummonerId;
+import org.ema.utils.TimerButton;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +48,6 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
     CompanionAdapter cpAdapter;
     ViewPager mPager;
     PagerTabStrip tab_strp;
-    public static SettingsManager settingsManager = null;
     public static TimersFragment instance = null;
     public static CompanionActivity instanceCompanion = null;
 
@@ -65,6 +66,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         mPager.setAdapter(cpAdapter);
         tab_strp=(PagerTabStrip)findViewById(R.id.companion_title_strip);
         tab_strp.setTextColor(Color.WHITE);
+
     }
 
     //Permet de Switcher entre les fragments
@@ -82,11 +84,11 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return alliesFragment;
+                    return ennemiesFragment;
                 case 1:
                     return timerFragment;
                 case 2:
-                    return ennemiesFragment;
+                    return alliesFragment;
                 default: return ennemiesFragment;
             }
         }
@@ -97,35 +99,60 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         }
     }
 
-    //THREAD METHODS
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        Summoner user = (Summoner) GlobalDataManager.get("user");
-        ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
-
-        // Recuperation et tri des summoners de l'equipe du joueur
-        ArrayList<Summoner> teamSummonersList = new ArrayList<Summoner>();
-        for(Summoner s : summonersList){
-            if(s.getTeamId() != user.getTeamId()){
-                teamSummonersList.add(s);
-            }
-        }
-        Collections.sort(teamSummonersList, new SortSummonerId());
-
-        // Changement des bitmap
-        timerFragment.setTimerButtonsImage(teamSummonersList);
-
-        //Chargement des timers
-        timerFragment.buildTimerTable(teamSummonersList);
-
-        //
-        Handler timerHandler = new Handler();
-        GlobalDataManager.add("timerHandler", timerHandler);
+    //On créer une deuxième fonction avec un paramètre en plus car on ne peut pas passer de paramètres depuis la vue
+    public void timerListener(View tbt){
+        timerListener(tbt, false, 0);
     }
 
+
+    //This function handle the onclick (short) events for all buttons on the timer view
+    public void timerListener(View tbt, boolean fromWebSocket, long delayOfTransfert){
+        TimerButton tbtn = (TimerButton) tbt;
+        //Name of the clicked button => example : b21
+        String IDButton = getResources().getResourceName(tbtn.getId());
+        //button ID formated like "b12"
+        String buttonID = IDButton.substring(IDButton.lastIndexOf("/") + 1);
+
+        java.util.Date date= new java.util.Date();
+        long now = date.getTime();
+        long btnTimestp = tbtn.getClickedTimestamp();
+        tbtn.setClickedTimestamp(now);
+
+        if(!tbtn.isTriggered()){
+            tbtn.setTriggered(true);
+
+            class PostponedClick implements Runnable {
+                public TimerButton tbtn;
+                public String buttonID;
+
+                public PostponedClick(TimerButton tbtn, String buttonID){
+                    this.tbtn = tbtn;
+                    this.buttonID = buttonID;
+                }
+
+                public void run(){
+                    if (this.tbtn.isTriggered()) {
+                        Log.v("DAO", this.buttonID + " simple click postponed");
+                        timerFragment.simpleClickTimer(buttonID, 0, false);
+                        this.tbtn.setTriggered(false);
+                    }
+                }
+            }
+            tbtn.postDelayed(new PostponedClick(tbtn, buttonID), 200);
+        } else {
+            if((now <= btnTimestp + TimerButton.DELAY)){
+                Log.v("DAO", buttonID + " double click");
+            }
+            tbtn.setTriggered(false);
+        }
+    }
+
+
     // DIALOG HANDLERS FOR ALL FRAGMENTS
+    public void secureAppSharing(View v){
+        timerFragment.secureAppSharing(v);
+    }
+
     public void showChampionTips(View v) {
         switch (mPager.getCurrentItem()){
             case 0 : alliesFragment.showChampionTips(v);

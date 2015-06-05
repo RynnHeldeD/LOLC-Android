@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.ema.fragments.TimersFragment;
 import org.ema.lolcompanion.R;
 import org.ema.lolcompanion.CompanionActivity;
 import org.ema.model.business.Summoner;
@@ -73,8 +74,8 @@ public class SecureDialogFragment extends DialogFragment {
         et.setId(R.id.secure_channel_edit);
 
         PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-        if(!CompanionActivity.settingsManager.get(this.getActivity(), "passphrase").equals("")) {
-            et.setText(CompanionActivity.settingsManager.get(this.getActivity(), "passphrase"));
+        if(!TimersFragment.settingsManager.get(this.getActivity(), "passphrase").equals("")) {
+            et.setText(TimersFragment.settingsManager.get(this.getActivity(), "passphrase"));
         }
         else et.setText(R.string.secure_timers_edit);
 

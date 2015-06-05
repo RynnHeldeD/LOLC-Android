@@ -7,6 +7,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.ema.lolcompanion.MainActivity;
@@ -41,6 +42,8 @@ public class AlliesFragment extends LoLStatActivity implements ChampionTipDialog
                 summonersAlliesList.add(summoner);
             }
         }
+        //We get the container where we are going to add all the champion lines
+        LinearLayout allies_container = (LinearLayout) rootView.findViewById(R.id.root_allies);
 
         fillSummonerInformations(rootView, textRessourcesSummoner1,imageRessourcesSummoner1, summonersAlliesList.get(0), 0, 100);
         fillSummonerInformations(rootView, textRessourcesSummoner2,imageRessourcesSummoner2, summonersAlliesList.get(1), 0, 100);

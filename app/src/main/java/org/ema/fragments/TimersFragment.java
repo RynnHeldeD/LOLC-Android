@@ -26,6 +26,7 @@ import org.ema.utils.GlobalDataManager;
 import org.ema.utils.LoLStatActivity;
 import org.ema.utils.SecureDialogFragment;
 import org.ema.utils.SettingsManager;
+import org.ema.utils.SortSummonerId;
 import org.ema.utils.Timer;
 import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
@@ -33,6 +34,7 @@ import org.ema.utils.WebSocket;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +59,34 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
 
         WebSocket.connectWebSocket();
         return rootView;
+    }
+
+    //THREAD METHODS
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        Summoner user = (Summoner) GlobalDataManager.get("user");
+        ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
+
+        // Recuperation et tri des summoners de l'equipe du joueur
+        ArrayList<Summoner> teamSummonersList = new ArrayList<Summoner>();
+        for(Summoner s : summonersList){
+            if(s.getTeamId() != user.getTeamId()){
+                teamSummonersList.add(s);
+            }
+        }
+        Collections.sort(teamSummonersList, new SortSummonerId());
+
+        // Changement des bitmap
+        this.setTimerButtonsImage(teamSummonersList);
+
+        //Chargement des timers
+        this.buildTimerTable(teamSummonersList);
+
+        //
+        Handler timerHandler = new Handler();
+        GlobalDataManager.add("timerHandler", timerHandler);
     }
 
     //This functions adds dynamically a player icon in the channel summary so user can know who is connected
@@ -85,60 +115,13 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String passphrase) {
         // Websocket - secure channel
-        CompanionActivity.settingsManager.set(getActivity(), "passphrase", passphrase);
+        this.settingsManager.set(getActivity(), "passphrase", passphrase);
     }
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         // User touched the dialog's negative button
 
-    }
-    //On créer une deuxième fonction avec un paramètre en plus car on ne peut pas passer de paramètres depuis la vue
-    public void timerListener(View tbt){
-        timerListener(tbt, false, 0);
-    }
-
-
-    //This function handle the onclick (short) events for all buttons on the timer view
-    public void timerListener(View tbt, boolean fromWebSocket, long delayOfTransfert){
-        TimerButton tbtn = (TimerButton) tbt;
-        //Name of the clicked button => example : b21
-        String IDButton = getResources().getResourceName(tbtn.getId());
-        //button ID formated like "b12"
-        String buttonID = IDButton.substring(IDButton.lastIndexOf("/") + 1);
-
-        java.util.Date date= new java.util.Date();
-        long now = date.getTime();
-        long btnTimestp = tbtn.getClickedTimestamp();
-        tbtn.setClickedTimestamp(now);
-
-        if(!tbtn.isTriggered()){
-            tbtn.setTriggered(true);
-
-            class PostponedClick implements Runnable {
-                public TimerButton tbtn;
-                public String buttonID;
-
-                public PostponedClick(TimerButton tbtn, String buttonID){
-                    this.tbtn = tbtn;
-                    this.buttonID = buttonID;
-                }
-
-                public void run(){
-                    if (this.tbtn.isTriggered()) {
-                        Log.v("DAO", this.buttonID + " simple click postponed");
-                        simpleClickTimer(buttonID,0,false);
-                        this.tbtn.setTriggered(false);
-                    }
-                }
-            }
-            tbtn.postDelayed(new PostponedClick(tbtn, buttonID), 200);
-        } else {
-            if((now <= btnTimestp + TimerButton.DELAY)){
-                Log.v("DAO", buttonID + " double click");
-            }
-            tbtn.setTriggered(false);
-        }
     }
 
     public void setTimerButtonsImage(ArrayList<Summoner> teamSummonersList){

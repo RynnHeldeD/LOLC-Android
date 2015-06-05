@@ -88,7 +88,6 @@ public class MainActivity extends Activity {
 
     }
 
-
     public void lauchSummonerSearch(View view) {
 
         LayoutInflater inflater = getLayoutInflater();
@@ -106,7 +105,7 @@ public class MainActivity extends Activity {
         String message = summoner_name.getText().toString();
         Spinner spinner = (Spinner) findViewById(R.id.region_spinner);
         int position = spinner.getSelectedItemPosition();
-        if (!message.matches("([a-zA-Z0-9]){3,20}")) {
+        if (!message.matches("([a-zA-Z0-9 ]){3,20}")) {
             //TODO pop up erreur
             Log.v("DAO", "Erreur dans le pseudo: " + message);
         } else {
@@ -121,13 +120,39 @@ public class MainActivity extends Activity {
     public boolean checkNickname(String nickName) {
 
 
+
         Summoner user = SummonerDAO.getSummoner(nickName);
 
-        if (user == null) {
+        if(user == null){
             //TODO message d'erreur
         }
 
         return false;
     }
+
+    /*
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    */
 
 }

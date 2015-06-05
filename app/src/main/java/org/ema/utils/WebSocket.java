@@ -1,6 +1,7 @@
 package org.ema.utils;
 
 import android.os.Build;
+import android.os.SystemClock;
 import android.util.Log;
 
 import org.ema.lolcompanion.WsEventHandling;
@@ -11,17 +12,16 @@ import org.java_websocket.handshake.ServerHandshake;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-/**
- * Created by Constantin on 19/05/2015.
- */
 public class WebSocket {
-    public WebSocketClient mWebSocketClient;
 
-    public void connectWebSocket() {
+    public static WebSocketClient mWebSocketClient;
+
+    public static void connectWebSocket() {
         URI uri;
         try {
             //    uri = new URI("ws://10.0.2.2:12345/");
             uri = new URI("ws://5.135.153.45:8080/");
+
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
@@ -38,8 +38,7 @@ public class WebSocket {
 
             @Override
             public void onMessage(String s) {
-                WsEventHandling wsEventHandling = new WsEventHandling(this);
-                wsEventHandling.handlingMessage(s);
+                WsEventHandling.handlingMessage(s);
             }
 
             @Override
@@ -54,12 +53,11 @@ public class WebSocket {
             }
 
         };
+
         mWebSocketClient.connect();
     }
 
-
-
-
-
-
+    public static void send(String s) {
+        mWebSocketClient.send(s);
+    }
 }

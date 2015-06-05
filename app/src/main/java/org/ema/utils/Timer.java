@@ -1,23 +1,23 @@
 package org.ema.utils;
 
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-/**
- * Created by Utilisateur on 02/06/2015.
- */
 public class Timer extends CountDownTimer {
 
     Boolean isTicking;
     Long startTime;
     Long countDownInterval;
     protected TextView timerTextView;
+    protected TimerButton parent;
 
-    public Timer(long startTime, long countDownInterval, TextView ttv) {
+    public Timer(long startTime, long countDownInterval, TextView ttv, TimerButton parent) {
         super(startTime, countDownInterval);
         isTicking = false;
         timerTextView = ttv;
+        this.parent = parent;
     }
 
     @Override
@@ -38,6 +38,10 @@ public class Timer extends CountDownTimer {
         timerTextView.setText("");
         setVisible(false);
         isTicking = false;
+        this.cancel();
+        if(this.parent.getTimer() != null){
+            this.parent.setTimer(null);
+        }
     }
 
     public Boolean isTicking() {

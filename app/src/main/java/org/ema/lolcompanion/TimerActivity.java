@@ -242,8 +242,8 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         List<String> summonerSpellButtons = Arrays.asList("b13", "b14", "b23","b24","b33","b34","b43","b44","b53","b54");
         List<String> ultimateButtons = Arrays.asList("b12", "b22", "b32", "b42", "b52");
 
-        timerMap.put("b01",(long)600);
-        timerMap.put("b02",(long)700);
+        timerMap.put("b01",(long)420);
+        timerMap.put("b02",(long)360);
 
         int spellIndex = 0;
         int summonerIndex = 0;

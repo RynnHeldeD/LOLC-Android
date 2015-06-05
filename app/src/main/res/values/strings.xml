@@ -33,6 +33,9 @@
     <!-- Timer room -->
     <string name="title_activity_timer">TimerActivity</string>
     <string name="timers">Timers</string>
+    <string name="secure_timers">Secure your timers</string>
+    <string name="secure_timers_text">Add a passphrase and give it to your mates so they can share the timers with you</string>
+    <string name="secure_timers_edit">passphrase</string>
 
     <!-- Allies screen -->
     <string name="title_activity_allies">AlliesActivity</string>
@@ -48,6 +51,7 @@
 
     <!-- Champion tip Fragment -->
     <string name="close_dialog">Close</string>
-    <string name="nex_dialog">Next</string>
+    <string name="next_dialog">Next</string>
+    <string name="confirm_dialog">OK</string>
 
 </resources>

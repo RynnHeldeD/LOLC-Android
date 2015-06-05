@@ -1,6 +1,7 @@
 package org.ema.lolcompanion;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -10,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,7 +24,10 @@ import com.makeramen.roundedimageview.RoundedImageView;
 import org.ema.model.DAO.CurrentGameDAO;
 import org.ema.model.DAO.SummonerDAO;
 import org.ema.model.business.Summoner;
+import org.ema.utils.ChampionTipDialogFragment;
 import org.ema.utils.GlobalDataManager;
+import org.ema.utils.SecureDialogFragment;
+import org.ema.utils.SettingsManager;
 import org.ema.utils.SortSummonerId;
 import org.ema.utils.Timer;
 import org.ema.utils.TimerButton;
@@ -35,9 +40,10 @@ import java.util.List;
 import java.util.TimerTask;
 
 
-public class TimerActivity extends Activity {
+public class TimerActivity extends Activity implements SecureDialogFragment.NoticeDialogListener{
 
     public HashMap<String,Long> timerMap;
+    public static SettingsManager settingsManager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +55,8 @@ public class TimerActivity extends Activity {
         timers.setTypeface(font);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        TimerActivity.settingsManager = new SettingsManager();
+        PreferenceManager.getDefaultSharedPreferences(this);
         ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
     }
 
@@ -93,6 +101,22 @@ public class TimerActivity extends Activity {
         channelSummary.addView(riv, 25, 25);
     }
 
+    public void secureAppSharing(View v){
+        DialogFragment dialog = new SecureDialogFragment();
+        dialog.show(getFragmentManager(), "tips");
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, String passphrase) {
+        // Websocket - secure channel
+        TimerActivity.settingsManager.set(this, "passphrase", passphrase);
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+
+    }
 
     //This function handle the onclick (short) events for all buttons on the timer view
     public void timerListener(View tbt){

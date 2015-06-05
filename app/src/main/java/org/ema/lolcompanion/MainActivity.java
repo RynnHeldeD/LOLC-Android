@@ -14,14 +14,18 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.ema.model.business.Summoner;
 import org.ema.utils.CallbackMatcher;
@@ -85,6 +89,17 @@ public class MainActivity extends Activity {
     }
 
     public void lauchSummonerSearch(View view) {
+
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
+        TextView text = (TextView) layout.findViewById(R.id.text);
+        text.setText("entering pending room...");
+        Toast toast = new Toast(getApplicationContext());
+        toast.setGravity(Gravity.BOTTOM, 0, 40);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(layout);
+        toast.show();
+
         Intent intent = new Intent(this, PendingRoomActivity.class);
         EditText summoner_name = (EditText) findViewById(R.id.summoner_name);
         String message = summoner_name.getText().toString();

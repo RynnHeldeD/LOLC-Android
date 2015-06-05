@@ -7,22 +7,23 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.ema.lolcompanion.MainActivity;
 import org.ema.lolcompanion.R;
+import org.ema.lolcompanion.TimerActivity;
 import org.ema.model.business.Summoner;
 
-public class ChampionTipDialogFragment extends DialogFragment {
+public class SecureDialogFragment extends DialogFragment {
     private Summoner summoner;
 
-    /* The activity that creates an instance of this dialog fragment must
-    * implement this interface in order to receive event callbacks.
-    * Each method passes the DialogFragment in case the host needs to query it.
-    * */
     public interface NoticeDialogListener {
-        public void onDialogNeutralClick(DialogFragment dialog, int idRessource);
+        public void onDialogPositiveClick(DialogFragment dialog, String passphrase);
 
         public void onDialogNegativeClick(DialogFragment dialog);
     }
@@ -52,34 +53,45 @@ public class ChampionTipDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         // Get the layout inflater and set the view with custom layout
-        View dialogLayout = getActivity().getLayoutInflater().inflate(R.layout.custom_dialog, null);
+        final View dialogLayout = getActivity().getLayoutInflater().inflate(R.layout.custom_dialog, null);
 
-        //View dialogLayout = new View(this.getActivity());
+        //Building the Dialog
         Typeface font = Typeface.createFromAsset(this.getActivity().getAssets(), "fonts/lol.ttf");
         TextView advice_title = (TextView) dialogLayout.findViewById(R.id.dialog_advice_title);
-        advice_title.setText(((String) this.getArguments().get("name")));
+        advice_title.setText(R.string.secure_timers);
         advice_title.setTypeface(font);
 
         LinearLayout layout = (LinearLayout) dialogLayout.findViewById(R.id.dialog_advices);
-        String[] advices = ((String) this.getArguments().get("tips")).split("\",\"");
+        layout.setPadding(15,0,15,0);
         LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        for(String advice : advices) {
-            TextView tv = new TextView(this.getActivity());
-            tv.setText(advice.replace("\"", ""));
-            tv.setPadding(10,5,10,5);
-            tv.setTextSize(getResources().getDimension(R.dimen.tips_champion_font));
-            tv.setTextColor(getResources().getColor(R.color.black_font));
-            layout.addView(tv, tvParams);
+        TextView tv = new TextView(this.getActivity());
+        tv.setText(R.string.secure_timers_text);
+        tv.setPadding(10, 5, 10, 5);
+        tv.setTextSize(16);
+        tv.setTextColor(getResources().getColor(R.color.black_font));
+        layout.addView(tv, tvParams);
+
+        EditText et = new EditText(this.getActivity());
+        et.setId(R.id.secure_channel_edit);
+
+        PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        if(!TimerActivity.settingsManager.get(this.getActivity(), "passphrase").equals("")) {
+            et.setText(TimerActivity.settingsManager.get(this.getActivity(), "passphrase"));
         }
+        else et.setText(R.string.secure_timers_edit);
+
+        et.setPadding(10, 5, 10, 5);
+        et.setTextSize(16);
+        et.setTextColor(getResources().getColor(R.color.grey_font));
+        layout.addView(et, tvParams);
 
         builder.setView(dialogLayout);
 
-        final int next = (int)this.getArguments().get("next");
-
-        builder.setNeutralButton(R.string.next_dialog, new DialogInterface.OnClickListener() {
+        builder.setNeutralButton(R.string.confirm_dialog, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 //Go to next champion tips
-                mListener.onDialogNeutralClick(ChampionTipDialogFragment.this, next);
+                String passphrase = ((EditText) dialogLayout.findViewById(R.id.secure_channel_edit)).getText().toString();
+                mListener.onDialogPositiveClick(SecureDialogFragment.this, passphrase);
             }
         });
 

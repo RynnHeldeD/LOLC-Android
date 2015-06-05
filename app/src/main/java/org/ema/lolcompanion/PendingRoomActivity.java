@@ -3,12 +3,20 @@ package org.ema.lolcompanion;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import android.util.Log;
+import android.widget.Toast;
+
 import org.ema.model.DAO.CurrentGameDAO;
 import org.ema.model.DAO.SummonerDAO;
 import org.ema.model.business.Summoner;
@@ -28,6 +36,33 @@ public class PendingRoomActivity extends Activity {
     public Summoner user;
     public String summonerNameFromPreviousView;
     private int IDRessource;
+
+    private final Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            LayoutInflater inflater = getLayoutInflater();
+            View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
+            TextView text = (TextView) layout.findViewById(R.id.text);
+            switch(msg.arg1) {
+                case 1:
+                    text.setText("checking summoner nickname...");
+                    break;
+                case 2:
+                    text.setText("waiting for game signal...");
+                    break;
+                case 3:
+                    text.setText("loading game data...");
+                    break;
+                case 4:
+                    text.setText("loading game icons...");
+                    break;
+            }
+            Toast toast = new Toast(getApplicationContext());
+            toast.setGravity(Gravity.BOTTOM, 0, 40);
+            toast.setDuration(Toast.LENGTH_SHORT);
+            toast.setView(layout);
+            toast.show();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +93,13 @@ public class PendingRoomActivity extends Activity {
         //Creating thread
         waitingThread = new Thread(new Runnable() {
             public void run() {
-                while(shouldContinue) {
+                while (shouldContinue) {
+                    Message msg = handler.obtainMessage();
+                    msg.arg1 = 1;
+                    handler.sendMessage(msg);
                     Log.v("Thread", "New thread running");
                     //Waiting 10 seconds before make a new request to the server
-                    if(!loadData()){
+                    if (!loadData()) {
                         SystemClock.sleep(10000);
                     }
                 }
@@ -79,7 +117,7 @@ public class PendingRoomActivity extends Activity {
     }
 
     public void launchTimerActivity() {
-        Intent intent = new Intent(this, EnnemiesActivity.class);
+        Intent intent = new Intent(this, TimerActivity.class);
         GlobalDataManager.add("summonersList", summonersList);
 
         //TODO : mettre le channel enregistre dans la case channel
@@ -89,14 +127,16 @@ public class PendingRoomActivity extends Activity {
 
     public boolean loadData() {
 
-        count ++;
-        if(count == 10)
-        {
+        count++;
+        if (count == 10) {
             Log.v("Error", "Interrupted");
             waitingThread.interrupt();
         }
         int id = user.getId();
         boolean isInGame = SummonerDAO.isInGame(id);
+        Message msgInGame = handler.obtainMessage();
+        msgInGame.arg1 = 2;
+        handler.sendMessage(msgInGame);
         Log.v("DAO", "Is in game: " + isInGame);
 
         if (isInGame) {
@@ -108,6 +148,10 @@ public class PendingRoomActivity extends Activity {
             //pendingRoomText.setText("Loading game data...");
             //Fin TODO
 
+            Message msgLoadData = handler.obtainMessage();
+            msgLoadData.arg1 = 3;
+            handler.sendMessage(msgLoadData);
+
             summonersList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
             if (summonersList != null) {
                 Log.v("DAO", "summonersList: " + summonersList.toString());
@@ -116,7 +160,7 @@ public class PendingRoomActivity extends Activity {
             }
             shouldContinue = false;
 
-            while(!this.areAllImagesLoaded(summonersList)){
+            while (!this.areAllImagesLoaded(summonersList)) {
                 SystemClock.sleep(500);
             }
 
@@ -136,10 +180,10 @@ public class PendingRoomActivity extends Activity {
         this.summonersList = summonersList;
     }
 
-    public boolean areAllImagesLoaded(ArrayList<Summoner> notReadySummoners){
+    public boolean areAllImagesLoaded(ArrayList<Summoner> notReadySummoners) {
         boolean areImagesLoaded = true;
 
-        for (Iterator<Summoner> it = notReadySummoners.iterator() ; it.hasNext();) {
+        for (Iterator<Summoner> it = notReadySummoners.iterator(); it.hasNext(); ) {
             Summoner s = it.next();
             if (!s.areImagesLoaded()) {
                 areImagesLoaded = false;

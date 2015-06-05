@@ -259,7 +259,7 @@ public class TimerActivity extends Activity {
         formatUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
         Timestamp tstmp;
         try {
-            tstmp = new Timestamp(formatUTC.parse(formatUTC.format(formatUTC.format(new Date()))).getTime());
+            tstmp = new Timestamp(formatUTC.parse(formatUTC.format(new Date())).getTime());
         } catch (ParseException e) {
             tstmp = new Timestamp(new Date().getTime());
             Log.v("Websocket","Impossible de parser la date recue via le websocket");

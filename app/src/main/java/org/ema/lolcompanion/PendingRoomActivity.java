@@ -131,10 +131,12 @@ public class PendingRoomActivity extends Activity {
     public boolean loadData() {
 
         count ++;
-        if(count == 10)
+        if(count == 60)
         {
             Log.v("Error", "Interrupted");
-            waitingThread.interrupt();
+            stopThread();
+            launchMainActivity();
+            return false;
         }
         int id = user.getId();
         boolean isInGame = SummonerDAO.isInGame(id);

@@ -1,18 +1,16 @@
-package org.ema.lolcompanion;
+package org.ema.fragments;
 
-import android.app.Activity;
+import android.support.v4.app.DialogFragment;
 import android.content.Intent;
-import android.app.DialogFragment;
 import android.graphics.Typeface;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.widget.TextView;
-import android.view.KeyEvent;
 
+import org.ema.lolcompanion.MainActivity;
+import org.ema.lolcompanion.R;
 import org.ema.model.business.Summoner;
 import org.ema.utils.ChampionTipDialogFragment;
 import org.ema.utils.GlobalDataManager;
@@ -20,22 +18,18 @@ import org.ema.utils.LoLStatActivity;
 
 import java.util.ArrayList;
 
+public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDialogFragment.NoticeDialogListener{
 
-public class EnnemiesActivity extends LoLStatActivity implements ChampionTipDialogFragment.NoticeDialogListener{
     ArrayList<Summoner> summonersOpponentsList = new ArrayList<Summoner>();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ennemies);
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate the layout resource that'll be returned
+        View rootView = inflater.inflate(R.layout.activity_ennemies, container, false);
         //setting the font for title
-        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/lol.ttf");
-        TextView ennemies = (TextView) findViewById(R.id.ennemies);
+        Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
+        TextView ennemies = (TextView) rootView.findViewById(R.id.ennemies);
         ennemies.setTypeface(font);
-
-        //keeping screen on
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         //parsing summoners list to retrieve only allies
         ArrayList<Summoner> summonersList = (ArrayList<Summoner>) GlobalDataManager.get("summonersList");
@@ -48,17 +42,18 @@ public class EnnemiesActivity extends LoLStatActivity implements ChampionTipDial
             }
         }
 
-        fillSummonerInformations(textRessourcesSummoner1,imageRessourcesSummoner1, summonersOpponentsList.get(0), 0, 100);
-        fillSummonerInformations(textRessourcesSummoner2,imageRessourcesSummoner2, summonersOpponentsList.get(1), 0, 100);
-        fillSummonerInformations(textRessourcesSummoner3,imageRessourcesSummoner3, summonersOpponentsList.get(2), 0, 100);
-        fillSummonerInformations(textRessourcesSummoner4,imageRessourcesSummoner4, summonersOpponentsList.get(3), 0, 100);
-        fillSummonerInformations(textRessourcesSummoner5,imageRessourcesSummoner5, summonersOpponentsList.get(4), 0, 100);
+        fillSummonerInformations(rootView, textRessourcesSummoner1,imageRessourcesSummoner1, summonersOpponentsList.get(0), 0, 100);
+        fillSummonerInformations(rootView, textRessourcesSummoner2,imageRessourcesSummoner2, summonersOpponentsList.get(1), 0, 100);
+        fillSummonerInformations(rootView, textRessourcesSummoner3,imageRessourcesSummoner3, summonersOpponentsList.get(2), 0, 100);
+        fillSummonerInformations(rootView, textRessourcesSummoner4,imageRessourcesSummoner4, summonersOpponentsList.get(3), 0, 100);
+        fillSummonerInformations(rootView, textRessourcesSummoner5,imageRessourcesSummoner5, summonersOpponentsList.get(4), 0, 100);
 
-
+        return rootView;
     }
 
     public void showChampionTips(View v) {
         DialogFragment dialog = new ChampionTipDialogFragment();
+        dialog.setTargetFragment(this, 0);
         Bundle args = new Bundle();
         if(getResources().getResourceName(v.getId()).contains("1")){
             args.putString("name", summonersOpponentsList.get(0).getChampion().getName());
@@ -109,17 +104,9 @@ public class EnnemiesActivity extends LoLStatActivity implements ChampionTipDial
         // User touched the dialog's negative button
 
     }
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            launchMainActivity();
-            return true;
-        }
 
-        return super.onKeyDown(keyCode, event);
-    }
     public void launchMainActivity(){
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this.getActivity(), MainActivity.class);
         startActivity(intent);
     }
 }

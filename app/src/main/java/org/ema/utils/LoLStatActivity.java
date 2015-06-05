@@ -1,15 +1,10 @@
 package org.ema.utils;
 
-import android.app.Activity;
+import android.support.v4.app.Fragment;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.ema.lolcompanion.R;
@@ -18,7 +13,7 @@ import org.ema.model.business.Summoner;
 import java.util.Arrays;
 import java.util.List;
 
-public class LoLStatActivity extends FragmentActivity {
+public class LoLStatActivity extends Fragment {
 
 
     //Ressources (name) of all summoners Views
@@ -34,14 +29,14 @@ public class LoLStatActivity extends FragmentActivity {
     protected List<String> imageRessourcesSummoner5 = Arrays.asList("s5Img", "s5Perf", "s5Main", "s5Team", "s5Rank");
 
     //This function will fill the statistics of one summoner - has to be called in the foreach using the summoner list retrieve by DAO
-    protected void fillSummonerInformations(List<String> textRessources, List<String> imgRessources, Summoner summoner, int minPerformance, int maxPerformance) {
+    protected void fillSummonerInformations(View rootview, List<String> textRessources, List<String> imgRessources, Summoner summoner, int minPerformance, int maxPerformance) {
 
-        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/lol.ttf");
+        Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
 
         //setting the fonts for the ressources
         for (String s : textRessources) {
-            int IDRessource = getResources().getIdentifier(s, "id", getBaseContext().getPackageName());
-            TextView ressource = (TextView) findViewById(IDRessource);
+            int IDRessource = getResources().getIdentifier(s, "id", getActivity().getBaseContext().getPackageName());
+            TextView ressource = (TextView) rootview.findViewById(IDRessource);
             ressource.setTypeface(font);
 
             if (s.contains("name")) {
@@ -66,8 +61,8 @@ public class LoLStatActivity extends FragmentActivity {
                 }
             } else {
                 //we hide everything
-                View layoutToHide1 = findViewById(getResources().getIdentifier(s.substring(0, 2) + "WnD", "id", getBaseContext().getPackageName()));
-                View layoutToHide2 = findViewById(getResources().getIdentifier(s.substring(0, 2) + "KDA_Damages", "id", getBaseContext().getPackageName()));
+                View layoutToHide1 = rootview.findViewById(getResources().getIdentifier(s.substring(0, 2) + "WnD", "id", rootview.getContext().getPackageName()));
+                View layoutToHide2 = rootview.findViewById(getResources().getIdentifier(s.substring(0, 2) + "KDA_Damages", "id", rootview.getContext().getPackageName()));
                 layoutToHide1.setVisibility(View.INVISIBLE);
                 layoutToHide2.setVisibility(View.INVISIBLE);
             }
@@ -81,10 +76,10 @@ public class LoLStatActivity extends FragmentActivity {
         }
 
         for (String s : imgRessources) {
-            int IDRessource = getResources().getIdentifier(s, "id", getBaseContext().getPackageName());
+            int IDRessource = getResources().getIdentifier(s, "id", rootview.getContext().getPackageName());
 
             if (!s.contains("Perf")) {
-                ImageView ressource = (ImageView) findViewById(IDRessource);
+                ImageView ressource = (ImageView) rootview.findViewById(IDRessource);
 
                 if (s.contains("Img")) {
                     Bitmap bitmap = summoner.getChampion().getIcon();
@@ -135,7 +130,7 @@ public class LoLStatActivity extends FragmentActivity {
                     }
                 }
             } else {
-                VerticalProgressBar summonerPerf = (VerticalProgressBar) findViewById(IDRessource);
+                VerticalProgressBar summonerPerf = (VerticalProgressBar) rootview.findViewById(IDRessource);
                 summonerPerf.setMax(maxPerformance);
                 int performance;
                 if (summoner.getChampion().getStatistic() != null) {

@@ -53,5 +53,11 @@
     <string name="close_dialog">Close</string>
     <string name="next_dialog">Next</string>
     <string name="confirm_dialog">OK</string>
+    <string name="title_activity_companion">CompanionActivity</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="title_activity_test">TestActivity</string>
 
 </resources>

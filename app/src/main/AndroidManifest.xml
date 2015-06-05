@@ -30,12 +30,8 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".AlliesActivity"
-            android:label="@string/title_activity_allies" >
-        </activity>
-        <activity
-            android:name=".EnnemiesActivity"
-            android:label="@string/title_activity_ennemies" >
+            android:name=".CompanionActivity"
+            android:label="@string/title_activity_companion" >
         </activity>
     </application>
 

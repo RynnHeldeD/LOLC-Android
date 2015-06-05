@@ -60,7 +60,7 @@ public class WsEventHandling {
         }
     }
 
-    public static void activateTimer(String buttonIdGrid,String activationTimestamp){
+    public static void activateTimer(final String buttonIdGrid,String activationTimestamp){
         Log.v("Websocket","Timer activation received");
         long delayOfTransfert = 0;
         java.util.Date date= new java.util.Date();
@@ -76,13 +76,49 @@ public class WsEventHandling {
         }catch(ParseException e){
             Log.v("Websocket","Erreur: impossible de parser la date reçue:" + e.getMessage());
         }
-        TimerActivity.instance.simpleClickTimer(buttonIdGrid, delayOfTransfert, true);
+
+        final long DoT = delayOfTransfert;
+        class WebSocketAction implements Runnable {
+            public String buttonIdGrid;
+            public long delayOfTransfert;
+
+            public WebSocketAction(String buttonIdGrid, long delayOfTransfert){
+                this.buttonIdGrid = buttonIdGrid;
+                this.delayOfTransfert = delayOfTransfert;
+            }
+
+            public void run(){
+                TimerActivity.instance.simpleClickTimer(this.buttonIdGrid, this.delayOfTransfert, true);
+            }
+        }
+
+        new Thread(){
+            public void run(){
+                TimerActivity.instance.runOnUiThread(new WebSocketAction(buttonIdGrid, DoT));
+            }
+        }.start();
     }
 
-    public static void delayTimer(String buttonIdGrid) {
+    public static void delayTimer(final String buttonIdGrid) {
         //Pour l'instant, si le timer est en cours, ça enlève les 5 secondes
         //Sinon ça démarre le timer. Ce sera corrigé lors de l'implémentation du ShareTimer
-        TimerActivity.instance.simpleClickTimer(buttonIdGrid,0,true);
+        class WebSocketAction implements Runnable {
+            public String buttonIdGrid;
+
+            public WebSocketAction(String buttonIdGrid){
+                this.buttonIdGrid = buttonIdGrid;
+            }
+
+            public void run(){
+                TimerActivity.instance.simpleClickTimer(buttonIdGrid, 0, true);
+            }
+        }
+
+        new Thread(){
+            public void run(){
+                TimerActivity.instance.runOnUiThread(new WebSocketAction(buttonIdGrid));
+            }
+        }.start();
     }
 
     public static void updateChannelPlayers(JSONArray playersInChannel) {
@@ -148,7 +184,7 @@ public class WsEventHandling {
 
     public static void stopTimer(String gridSpellId) {
       //TODO:
-        Log.v("Websocket","STOP TIMER");
+        Log.v("Websocket", "STOP TIMER");
       //  sendMessage("{\"action\":\"razTimer\",\"idSortGrille\":\""+ gridSpellId +"\"}");
     }
 

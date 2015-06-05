@@ -41,7 +41,6 @@ import java.util.TimerTask;
 
 
 public class TimerActivity extends Activity {
-
     public HashMap<String,Long> timerMap;
     public static TimerActivity instance = null;
 
@@ -82,6 +81,10 @@ public class TimerActivity extends Activity {
 
         //Chargement des timers
         this.buildTimerTable(teamSummonersList);
+
+        //
+        Handler timerHandler = new Handler();
+        GlobalDataManager.add("timerHandler", timerHandler);
     }
 
     //This functions adds dynamically a player icon in the channel summary so user can know who is connected
@@ -148,8 +151,6 @@ public class TimerActivity extends Activity {
             tbtn.setTriggered(false);
         }
     }
-
-
 
     private void setTimerButtonsImage(ArrayList<Summoner> teamSummonersList){
         this.setChampionTimerButtonsImage(teamSummonersList);
@@ -250,6 +251,7 @@ public class TimerActivity extends Activity {
         TimerButton tbtn = getButtonFromIdString(buttonID);
         Date date = new java.util.Date();
         Timestamp tstmp = new Timestamp(date.getTime());
+        Handler timerHandler = (Handler)GlobalDataManager.get("timerHandler");
 
         //Name of the clicked button => example : b21
         String IDButton = getResources().getResourceName(tbtn.getId());

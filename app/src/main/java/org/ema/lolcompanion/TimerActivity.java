@@ -264,8 +264,6 @@ public class TimerActivity extends Activity {
             tstmp = new Timestamp(new Date().getTime());
             Log.v("Websocket","Impossible de parser la date recue via le websocket");
         }
-	Handler timerHandler = (Handler)GlobalDataManager.get("timerHandler");
-
 
         //Name of the clicked button => example : b21
         String IDButton = getResources().getResourceName(tbtn.getId());
@@ -279,20 +277,17 @@ public class TimerActivity extends Activity {
             //settings the textView with the font
             TextView txtv = (TextView) findViewById(timerTextViewID);
             txtv.setTypeface(font);
-            tbtn.setTimer(new Timer(0, 0, txtv));
-        }
+            tbtn.setTimer(new Timer(0, 0, txtv, tbtn));
 
-        if(tbtn.getTimer() != null && !tbtn.getTimer().isTicking()){
-            //On transmet le message
             if(!fromWebSocket){
                 WsEventHandling.timerActivation(buttonID, tstmp.toString());
             }
             //On active le timer
             long timeToCount = timerMap.get(buttonID) * 1000 - delayOfTransfert;
-            tbtn.setTimer(new Timer(timeToCount,1000,tbtn.getTimer().getTimerTextView()));
+            tbtn.setTimer(new Timer(timeToCount,1000,tbtn.getTimer().getTimerTextView(), tbtn));
             tbtn.getTimer().start();
             tbtn.getTimer().setVisible(true);
-        } else if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
+        } else {
             //On transmet le message
             if(!fromWebSocket){
                 WsEventHandling.timerDelay(buttonID);

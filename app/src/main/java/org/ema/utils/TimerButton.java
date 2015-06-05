@@ -178,8 +178,10 @@ public class TimerButton extends RoundedImageView {
         long currentTimestamp = Long.parseLong(this.getTimer().getTimerTextView().getText().toString()) * 1000;
 
         if (currentTimestamp != 0) {
-            this.getTimer().cancel();
-            this.setTimer(new Timer(currentTimestamp - delayToRetrench, 1000, this.getTimer().getTimerTextView()));
+            if(this.getTimer() != null) {
+                this.getTimer().cancel();
+            }
+            this.setTimer(new Timer(currentTimestamp - delayToRetrench, 1000, this.getTimer().getTimerTextView(), this));
             this.getTimer().start();
         }
     }

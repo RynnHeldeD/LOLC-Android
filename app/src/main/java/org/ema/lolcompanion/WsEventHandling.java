@@ -68,7 +68,7 @@ public class WsEventHandling {
         formatUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
         Timestamp tstmp;
         try {
-            tstmp = new Timestamp(formatUTC.parse(formatUTC.format(formatUTC.format(new Date()))).getTime());
+            tstmp = new Timestamp(formatUTC.parse(formatUTC.format(new Date())).getTime());
         } catch (ParseException e) {
             tstmp = new Timestamp(new Date().getTime());
             Log.v("Websocket","Impossible de parser la date recue via le websocket");
@@ -107,6 +107,7 @@ public class WsEventHandling {
     }
 
     public static void delayTimer(final String buttonIdGrid) {
+        // TODO
         //Pour l'instant, si le timer est en cours, ça enlève les 5 secondes
         //Sinon ça démarre le timer. Ce sera corrigé lors de l'implémentation du ShareTimer
         class WebSocketAction implements Runnable {

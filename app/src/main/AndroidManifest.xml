@@ -25,11 +25,6 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".TimerActivity"
-            android:label="@string/title_activity_timer"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
             android:name=".CompanionActivity"
             android:label="@string/title_activity_companion" >
         </activity>

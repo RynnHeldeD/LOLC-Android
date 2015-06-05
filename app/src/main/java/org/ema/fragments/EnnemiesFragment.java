@@ -53,7 +53,6 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
 
     public void showChampionTips(View v) {
         DialogFragment dialog = new ChampionTipDialogFragment();
-        dialog.setTargetFragment(this, 0);
         Bundle args = new Bundle();
         if(getResources().getResourceName(v.getId()).contains("1")){
             args.putString("name", summonersOpponentsList.get(0).getChampion().getName());

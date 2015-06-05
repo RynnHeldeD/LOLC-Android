@@ -40,6 +40,7 @@ public class PendingRoomActivity extends Activity {
     public boolean shouldContinue = true;
     public Summoner user;
     public String summonerNameFromPreviousView;
+    public String region;
     private int IDRessource;
     private boolean isAllowedToBack = true;
     public final Object signal = new Object();
@@ -84,6 +85,8 @@ public class PendingRoomActivity extends Activity {
 
         //setting summoner name
         summonerNameFromPreviousView = intent.getStringExtra(MainActivity.SUMMONER_NAME);
+        region = intent.getStringExtra("SUMMONER_REGION");
+
         TextView summonerName = (TextView) findViewById(R.id.pending_summoner_name);
         summonerName.setTypeface(font);
         summonerName.setText(summonerNameFromPreviousView);
@@ -96,7 +99,8 @@ public class PendingRoomActivity extends Activity {
         //to set the loading off : findViewById(R.id.loadin_panel).setVisibility(View.GONE);
 
         //Launch pending task
-        Constant.setRegion(Region.EUW);
+        Log.v("REGION", region);
+        Constant.setRegion(Constant.regionsFromViewHashtable.get(region));
         user = SummonerDAO.getSummoner(summonerNameFromPreviousView);
 
         //Creating thread

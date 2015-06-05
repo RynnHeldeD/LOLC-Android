@@ -12,15 +12,15 @@
     <string name="login_submit">Go</string>
 
     <string-array name="lol_regions_array">
-        <item>North America NA</item>
-        <item>Europe West EUW</item>
-        <item>Europe Nordic</item>
-        <item>East EUNE</item>
-        <item>Brasil BR</item>
-        <item>Turkey TR</item>
-        <item>Russia RU</item>
-        <item>Latin America North LAN</item>
-        <item>Oceania OCE</item>
+        <item>NA - North America</item>
+        <item>EUW - Europe West</item>
+        <item>EUNE - Europe Nordic and East</item>
+        <item>BR - Brasil</item>
+        <item>TR - Turkey</item>
+        <item>RU - Russia</item>
+        <item>LAN - Latin America North</item>
+        <item>LAS - Latin America South</item>
+        <item>OCE - Oceania</item>
     </string-array>
 
     <!-- Pending room -->

@@ -110,7 +110,7 @@ public class MainActivity extends Activity {
             Log.v("DAO", "Erreur dans le pseudo: " + message);
         } else {
             intent.putExtra(SUMMONER_NAME, message);
-            intent.putExtra(SUMMONER_REGION, message);
+            intent.putExtra("SUMMONER_REGION", spinner.getSelectedItem().toString());
             MainActivity.settingsManager.set(this, "summonerName", message);
             MainActivity.settingsManager.set(this, "summonerRegion", String.valueOf(position));
             startActivity(intent);

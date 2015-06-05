@@ -38,15 +38,15 @@ public class Constant {
 
     private static Hashtable<Region,String> regionsHashtable = new Hashtable<Region,String>();
     static {
-        regionsHashtable.put(Region.BR,"br");
-        regionsHashtable.put(Region.EUNE,"eune");
-        regionsHashtable.put(Region.EUW,"euw");
-        regionsHashtable.put(Region.LAN,"lan");
-        regionsHashtable.put(Region.LAS,"las");
-        regionsHashtable.put(Region.NA,"na");
-        regionsHashtable.put(Region.OCE,"oce");
-        regionsHashtable.put(Region.RU,"ru");
-        regionsHashtable.put(Region.TR,"tr");
+        regionsHashtable.put(Region.BR,"/br");
+        regionsHashtable.put(Region.EUNE,"/eune");
+        regionsHashtable.put(Region.EUW,"/euw");
+        regionsHashtable.put(Region.LAN,"/lan");
+        regionsHashtable.put(Region.LAS,"/las");
+        regionsHashtable.put(Region.NA,"/na");
+        regionsHashtable.put(Region.OCE,"/oce");
+        regionsHashtable.put(Region.RU,"/ru");
+        regionsHashtable.put(Region.TR,"/tr");
     }
 
     private static Hashtable<Region,String> regionsCurrentHashtable = new Hashtable<Region,String>();
@@ -64,15 +64,28 @@ public class Constant {
 
     private static Hashtable<Region,String> regionsNameHashtable = new Hashtable<Region,String>();
     static {
-        regionsNameHashtable.put(Region.BR,"Brazil");
-        regionsNameHashtable.put(Region.EUNE,"Europe Nordic & East");
-        regionsNameHashtable.put(Region.EUW,"Europe West");
-        regionsNameHashtable.put(Region.LAN,"Latin America North");
-        regionsNameHashtable.put(Region.LAS,"Latin America South");
-        regionsNameHashtable.put(Region.NA,"North America");
-        regionsNameHashtable.put(Region.OCE,"Oceania");
-        regionsNameHashtable.put(Region.RU,"Russia");
-        regionsNameHashtable.put(Region.TR,"Turkey");
+        regionsNameHashtable.put(Region.BR, "Brazil");
+        regionsNameHashtable.put(Region.EUNE, "Europe Nordic & East");
+        regionsNameHashtable.put(Region.EUW, "Europe West");
+        regionsNameHashtable.put(Region.LAN, "Latin America North");
+        regionsNameHashtable.put(Region.LAS, "Latin America South");
+        regionsNameHashtable.put(Region.NA, "North America");
+        regionsNameHashtable.put(Region.OCE, "Oceania");
+        regionsNameHashtable.put(Region.RU, "Russia");
+        regionsNameHashtable.put(Region.TR, "Turkey");
+    }
+
+        public static Hashtable<String,Region> regionsFromViewHashtable = new Hashtable<String,Region>();
+        static {
+            regionsFromViewHashtable.put("NA - North America",Region.NA);
+            regionsFromViewHashtable.put("EUW - Europe West",Region.EUW);
+            regionsFromViewHashtable.put("EUNE - Europe Nordic and East",Region.EUNE);
+            regionsFromViewHashtable.put("BR - Brasil",Region.BR);
+            regionsFromViewHashtable.put("TR - Turkey",Region.TR);
+            regionsFromViewHashtable.put("RU - Russia",Region.RU);
+            regionsFromViewHashtable.put("LAN - Latin America North",Region.LAN);
+            regionsFromViewHashtable.put("OCE - Oceania",Region.OCE);
+            regionsFromViewHashtable.put("LAS - Latin America South",Region.LAS);
     }
 
     private static String setRequestRegion(String request, Region region) {
@@ -91,6 +104,7 @@ public class Constant {
         API_SUMMONER_INFO_URI = setRequestRegion(API_SUMMONER_INFO_URI,region);
         API_SUMMONER_SPELLS = setRequestRegion(API_SUMMONER_SPELLS,region);
         API_SUMMONER_GAMES = setRequestRegion(API_SUMMONER_GAMES,region);
+        API_ITEMS = setRequestRegion(API_ITEMS,region);
 
         localRegion = region;
     }

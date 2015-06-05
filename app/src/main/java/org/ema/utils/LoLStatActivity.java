@@ -146,16 +146,19 @@ public class LoLStatActivity extends FragmentActivity {
 
                 summonerPerf.setProgress(performance);
                 int graduation = Math.round(maxPerformance / 3);
-                int low = 0 + graduation;
-                int mid = 0 + 2 * graduation;
+                int low = graduation;
+                int mid =  2 * graduation;
 
                 //Setting the color and value of the Performance BAr
                 if (performance < low) {
-                    summonerPerf.getProgressDrawable().setColorFilter(getResources().getColor(R.color.performance_bar_normal), PorterDuff.Mode.SRC_IN);
+                    summonerPerf.setProgressDrawable(getResources().getDrawable(R.drawable.progress_green));
+                    //summonerPerf.getProgressDrawable().setColorFilter(getResources().getColor(R.color.performance_bar_normal), PorterDuff.Mode.DST);
                 } else if (performance >= low && performance < mid) {
-                    summonerPerf.getProgressDrawable().setColorFilter(getResources().getColor(R.color.performance_bar_avg), PorterDuff.Mode.SRC_IN);
+                    summonerPerf.setProgressDrawable(getResources().getDrawable(R.drawable.progress_yellow));
+                    //summonerPerf.getProgressDrawable().setColorFilter(getResources().getColor(R.color.performance_bar_avg), PorterDuff.Mode.DST);
                 } else if (performance >= mid) {
-                    summonerPerf.getProgressDrawable().setColorFilter(getResources().getColor(R.color.performance_bar_danger), PorterDuff.Mode.SRC_IN);
+                    summonerPerf.setProgressDrawable(getResources().getDrawable(R.drawable.progress_red));
+                    //summonerPerf.getProgressDrawable().setColorFilter(getResources().getColor(R.color.performance_bar_danger), PorterDuff.Mode.DST);
                 }
             }
         }

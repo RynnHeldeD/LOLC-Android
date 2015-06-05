@@ -49,6 +49,8 @@ public class PendingRoomActivity extends Activity {
             LayoutInflater inflater = getLayoutInflater();
             View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
             TextView text = (TextView) layout.findViewById(R.id.text);
+            Toast toast = new Toast(getApplicationContext());
+            toast.setDuration(Toast.LENGTH_SHORT);
             switch(msg.arg1) {
                 case 1:
                     text.setText("checking summoner nickname...");
@@ -57,15 +59,14 @@ public class PendingRoomActivity extends Activity {
                     text.setText("waiting for game signal...");
                     break;
                 case 3:
+                    toast.setDuration(Toast.LENGTH_LONG);
                     text.setText("loading game data...");
                     break;
                 case 4:
                     text.setText("loading game icons...");
                     break;
             }
-            Toast toast = new Toast(getApplicationContext());
             toast.setGravity(Gravity.BOTTOM, 0, 40);
-            toast.setDuration(Toast.LENGTH_SHORT);
             toast.setView(layout);
             toast.show();
         }
@@ -104,9 +105,6 @@ public class PendingRoomActivity extends Activity {
                 while (true) {
                     if(!shouldContinue)
                     {
-						Message msg = handler.obtainMessage();
-                   	 	msg.arg1 = 1;
-                    	handler.sendMessage(msg);
                         try {
                             Log.v("DAO", "Waiting");
                             synchronized(signal){ signal.wait();}
@@ -119,6 +117,9 @@ public class PendingRoomActivity extends Activity {
                     else {
                         //Waiting 10 seconds before make a new request to the server
                         Log.v("DAO", "Loading data");
+                        Message msg = handler.obtainMessage();
+                        msg.arg1 = 1;
+                        handler.sendMessage(msg);
                         if (!loadData()) {
                             SystemClock.sleep(10000);
                         }
@@ -156,7 +157,7 @@ public class PendingRoomActivity extends Activity {
     }
 
     public void launchTimerActivity() {
-        Intent intent = new Intent(this, TimerActivity.class);
+        Intent intent = new Intent(this, AlliesActivity.class);
         GlobalDataManager.add("summonersList", summonersList);
 
         //TODO : mettre le channel enregistre dans la case channel

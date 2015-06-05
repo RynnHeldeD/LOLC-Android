@@ -48,16 +48,16 @@ import java.util.TimeZone;
 import java.util.TimerTask;
 
 
-public class TimerActivity extends Activity implements SecureDialogFragment.NoticeDialogListener{
+public class TimerActivity extends Activity implements SecureDialogFragment.NoticeDialogListener {
 
-    public HashMap<String,Long> timerMap;
+    public HashMap<String, Long> timerMap;
     public static SettingsManager settingsManager = null;
-    public static TimerActivity instance = null;	
+    public static TimerActivity instance = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        timerMap = new HashMap<String,Long>();
+        timerMap = new HashMap<String, Long>();
         setContentView(R.layout.activity_timer);
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/lol.ttf");
         TextView timers = (TextView) findViewById(R.id.timers);
@@ -66,7 +66,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
 
         TimerActivity.settingsManager = new SettingsManager();
         PreferenceManager.getDefaultSharedPreferences(this);
-        ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
+        ArrayList<Summoner> summonersList = (ArrayList<Summoner>) GlobalDataManager.get("summonersList");
 
         WebSocket.connectWebSocket();
     }
@@ -75,13 +75,13 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
     protected void onStart() {
         super.onStart();
 
-        Summoner user = (Summoner)GlobalDataManager.get("user");
-        ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
+        Summoner user = (Summoner) GlobalDataManager.get("user");
+        ArrayList<Summoner> summonersList = (ArrayList<Summoner>) GlobalDataManager.get("summonersList");
 
         // Recuperation et tri des summoners de l'equipe du joueur
         ArrayList<Summoner> teamSummonersList = new ArrayList<Summoner>();
-        for(Summoner s : summonersList){
-            if(s.getTeamId() != user.getTeamId()){
+        for (Summoner s : summonersList) {
+            if (s.getTeamId() != user.getTeamId()) {
                 teamSummonersList.add(s);
             }
         }
@@ -99,7 +99,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
     }
 
     //This functions adds dynamically a player icon in the channel summary so user can know who is connected
-    protected void appendPlayerIconToChannelSummary(Bitmap playerIcon){
+    protected void appendPlayerIconToChannelSummary(Bitmap playerIcon) {
         LinearLayout channelSummary = (LinearLayout) findViewById(R.id.channel_summary);
         RoundedImageView riv = new RoundedImageView(this);
         riv.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -116,7 +116,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         channelSummary.addView(riv, 25, 25);
     }
 
-    public void secureAppSharing(View v){
+    public void secureAppSharing(View v) {
         DialogFragment dialog = new SecureDialogFragment();
         dialog.show(getFragmentManager(), "tips");
     }
@@ -132,66 +132,67 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         // User touched the dialog's negative button
 
     }
-//On créer une deuxième fonction avec un paramètre en plus car on ne peut pas passer de paramètres depuis la vue
-    public void timerListener(View tbt){
+
+    //On créer une deuxième fonction avec un paramètre en plus car on ne peut pas passer de paramètres depuis la vue
+    public void timerListener(View tbt) {
         timerListener(tbt, false, 0);
     }
 
 
     //This function handle the onclick (short) events for all buttons on the timer view
-    public void timerListener(View tbt, boolean fromWebSocket, long delayOfTransfert){
+    public void timerListener(View tbt, boolean fromWebSocket, long delayOfTransfert) {
         TimerButton tbtn = (TimerButton) tbt;
         //Name of the clicked button => example : b21
         String IDButton = getResources().getResourceName(tbtn.getId());
         //button ID formated like "b12"
         String buttonID = IDButton.substring(IDButton.lastIndexOf("/") + 1);
 
-        java.util.Date date= new java.util.Date();
+        java.util.Date date = new java.util.Date();
         long now = date.getTime();
         long btnTimestp = tbtn.getClickedTimestamp();
         tbtn.setClickedTimestamp(now);
 
-        if(!tbtn.isTriggered()){
+        if (!tbtn.isTriggered()) {
             tbtn.setTriggered(true);
 
             class PostponedClick implements Runnable {
                 public TimerButton tbtn;
                 public String buttonID;
 
-                public PostponedClick(TimerButton tbtn, String buttonID){
+                public PostponedClick(TimerButton tbtn, String buttonID) {
                     this.tbtn = tbtn;
                     this.buttonID = buttonID;
                 }
 
-                public void run(){
+                public void run() {
                     if (this.tbtn.isTriggered()) {
-                        simpleClickTimer(buttonID,0,false);
+                        simpleClickTimer(buttonID, 0, false);
                         this.tbtn.setTriggered(false);
                     }
                 }
             }
             tbtn.postDelayed(new PostponedClick(tbtn, buttonID), 200);
         } else {
-            if((now <= btnTimestp + TimerButton.DELAY)){
-                restartTimer(buttonID, false);
+            if ((now <= btnTimestp + TimerButton.DELAY)) {
+                restartTimer(buttonID, 0, false);
             }
             tbtn.setTriggered(false);
         }
     }
 
-    private void setTimerButtonsImage(ArrayList<Summoner> teamSummonersList){
+    private void setTimerButtonsImage(ArrayList<Summoner> teamSummonersList) {
         this.setChampionTimerButtonsImage(teamSummonersList);
         this.setUltimateTimerButtonsImage(teamSummonersList);
         this.setSpellsTimerButtonsImage(teamSummonersList);
     }
 
-    private void setChampionTimerButtonsImage(ArrayList<Summoner> summonersList){
+    private void setChampionTimerButtonsImage(ArrayList<Summoner> summonersList) {
         List<String> ids = Arrays.asList("b11", "b21", "b31", "b41", "b51");
         RoundedImageView tb;
         int IDRessource;
 
         int i = 0;
-        for (String s : ids){
+        for (String s : ids) {
             IDRessource = getResources().getIdentifier(s, "id", getBaseContext().getPackageName());
             tb = (RoundedImageView) findViewById(IDRessource);
             Bitmap bm = summonersList.get(i).getChampion().getIcon();
@@ -200,13 +201,13 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         }
     }
 
-    private void setUltimateTimerButtonsImage(ArrayList<Summoner> summonersList){
+    private void setUltimateTimerButtonsImage(ArrayList<Summoner> summonersList) {
         List<String> ids = Arrays.asList("b12", "b22", "b32", "b42", "b52");
         TimerButton tb;
         int IDRessource;
 
         int i = 0;
-        for (String s : ids){
+        for (String s : ids) {
             IDRessource = getResources().getIdentifier(s, "id", getBaseContext().getPackageName());
             tb = (TimerButton) findViewById(IDRessource);
             tb.setImageBitmap(summonersList.get(i).getChampion().getSpell().getIcon());
@@ -214,13 +215,13 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         }
     }
 
-    private void setSpellsTimerButtonsImage(ArrayList<Summoner> summonersList){
+    private void setSpellsTimerButtonsImage(ArrayList<Summoner> summonersList) {
         List<String> ids = Arrays.asList("b13", "b23", "b33", "b43", "b53");
         TimerButton tb;
         int IDRessource;
 
         int i = 0;
-        for (String s : ids){
+        for (String s : ids) {
             IDRessource = getResources().getIdentifier(s, "id", getBaseContext().getPackageName());
             tb = (TimerButton) findViewById(IDRessource);
             tb.setImageBitmap(summonersList.get(i).getSpells()[0].getIcon());
@@ -229,7 +230,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
 
         ids = Arrays.asList("b14", "b24", "b34", "b44", "b54");
         i = 0;
-        for (String s : ids){
+        for (String s : ids) {
             IDRessource = getResources().getIdentifier(s, "id", getBaseContext().getPackageName());
             tb = (TimerButton) findViewById(IDRessource);
             tb.setImageBitmap(summonersList.get(i).getSpells()[1].getIcon());
@@ -237,21 +238,21 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         }
     }
 
-    private void buildTimerTable(ArrayList<Summoner> teamSummonersList){
-        List<String> summonerSpellButtons = Arrays.asList("b13", "b14", "b23","b24","b33","b34","b43","b44","b53","b54");
+    private void buildTimerTable(ArrayList<Summoner> teamSummonersList) {
+        List<String> summonerSpellButtons = Arrays.asList("b13", "b14", "b23", "b24", "b33", "b34", "b43", "b44", "b53", "b54");
         List<String> ultimateButtons = Arrays.asList("b12", "b22", "b32", "b42", "b52");
 
-        timerMap.put("b01",(long)420);
-        timerMap.put("b02",(long)360);
+        timerMap.put("b01", (long) 420);
+        timerMap.put("b02", (long) 360);
 
         int spellIndex = 0;
         int summonerIndex = 0;
 
-        for (String s : summonerSpellButtons){
+        for (String s : summonerSpellButtons) {
             float cdSummonerSpell = teamSummonersList.get(summonerIndex).getSpells()[spellIndex].getCooldown()[0];
-            timerMap.put(s,(long)cdSummonerSpell);
+            timerMap.put(s, (long) cdSummonerSpell);
 
-            if(spellIndex == 1) {
+            if (spellIndex == 1) {
                 summonerIndex++;
                 spellIndex = 0;
             } else {
@@ -260,7 +261,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         }
 
         summonerIndex = 0;
-        for (String s : ultimateButtons){
+        for (String s : ultimateButtons) {
             float cdSummonerSpell = teamSummonersList.get(summonerIndex).getChampion().getSpell().getCooldown()[0];
             timerMap.put(s, (long) cdSummonerSpell);
             summonerIndex++;
@@ -268,7 +269,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
 
 
         Log.v("DAO", "Timer des tableau chargement termine");
-	}
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -280,13 +281,13 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         return super.onKeyDown(keyCode, event);
     }
 
-    public void launchMainActivity(){
+    public void launchMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
     //Fonctions pour les évènements WS
-    public void simpleClickTimer(String buttonID,long delayOfTransfert, boolean fromWebSocket){
+    public void simpleClickTimer(String buttonID, long delayOfTransfert, boolean fromWebSocket) {
         TimerButton tbtn = getButtonFromIdString(buttonID);
 
         //SimpleDateFormat formatUTC = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss.S Z");
@@ -305,7 +306,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/lol.ttf");
 
         //Timer is null and has never been instancied
-        if(tbtn.getTimer() == null){
+        if (tbtn.getTimer() == null) {
             //Setting the TextView so the timer update the countdown in FO
             int timerTextViewID = getResources().getIdentifier(IDButton.concat("t"), "id", getBaseContext().getPackageName());
             //settings the textView with the font
@@ -313,17 +314,17 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
             txtv.setTypeface(font);
             tbtn.setTimer(new Timer(0, 0, txtv, tbtn));
 
-            if(!fromWebSocket){
+            if (!fromWebSocket) {
                 WsEventHandling.timerActivation(buttonID, tstmp.toString());
             }
             //On active le timer
             long timeToCount = timerMap.get(buttonID) * 1000 - delayOfTransfert;
-            tbtn.setTimer(new Timer(timeToCount,1000,tbtn.getTimer().getTimerTextView(), tbtn));
+            tbtn.setTimer(new Timer(timeToCount, 1000, tbtn.getTimer().getTimerTextView(), tbtn));
             tbtn.getTimer().start();
             tbtn.getTimer().setVisible(true);
         } else {
             //On transmet le message
-            if(!fromWebSocket){
+            if (!fromWebSocket) {
                 WsEventHandling.timerDelay(buttonID);
             }
             //On fait l'action sur le timerbutton
@@ -331,23 +332,26 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         }
     }
 
-    public void restartTimer(String buttonID, boolean fromWebSocket){
+    public void restartTimer(String buttonID, long timestamp, boolean fromWebSocket) {
         TimerButton tbtn = getButtonFromIdString(buttonID);
+        Timestamp tstmp = new Timestamp(new Date().getTime());
 
         if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
             //On transmet le message
-            if(!fromWebSocket){
-                WsEventHandling.restartTimer(buttonID);
+            if (!fromWebSocket) {
+                WsEventHandling.restartTimer(buttonID, tstmp.toString());
             }
             //On fait l'action sur le timerbutton
             tbtn.getTimer().onFinish();
-            simpleClickTimer(buttonID, 0, true);
+            simpleClickTimer(buttonID, timestamp, true);
         }
     }
 
     public void stopTimer(String buttonID, boolean fromWebSocket){
-        TimerButton tbtn = getButtonFromIdString(buttonID);
+        //TimerButton tbtn = getButtonFromIdString(buttonID);
 
+        Log.v("DAO", buttonID + " Long press");
+        /*
         if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
             //On transmet le message
             if(!fromWebSocket){
@@ -356,6 +360,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
             //On fait l'action sur le timerbutton
             tbtn.getTimer().onFinish();
         }
+        */
     }
 
 

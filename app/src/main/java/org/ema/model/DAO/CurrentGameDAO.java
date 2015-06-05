@@ -434,7 +434,7 @@ public class CurrentGameDAO {
                         JSONObject jsonPlayer = ((JSONObject) jsonPlayers.get(j));
 
                         for(int x = 0; x < nbGamesWithUser.length; x++) {
-                            if(nbGamesWithUser[x][0] == jsonPlayer.getInt("summonerId")) {
+                            if(summoner.getTeamId() == jsonPlayer.getInt("teamId") && nbGamesWithUser[x][0] == jsonPlayer.getInt("summonerId") ) {
                                 nbGamesWithUser[x][1]++;
                                 break;
                             }
@@ -458,10 +458,10 @@ public class CurrentGameDAO {
                     limit = 1;
                     break;
                 case "GOLD":
-                    limit = 2;
+                    limit = 1;
                     break;
                 case "PLATINUM":
-                    limit = 2;
+                    limit = 1;
                     break;
                 case "DIAMOND":
                     limit = 2;
@@ -470,7 +470,7 @@ public class CurrentGameDAO {
                     limit = 3;
                     break;
                 case "CHALLENGER":
-                    limit = 4;
+                    limit = 3;
                     break;
                 default:
                     limit = 1;

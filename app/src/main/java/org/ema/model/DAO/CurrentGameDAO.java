@@ -23,10 +23,15 @@ import java.util.Collections;
 import java.util.Hashtable;
 
 public class CurrentGameDAO {
+
+    public static void loadStatisticsDetailed(ArrayList<Summoner> summoners) {
+        //Load images of mostPlayedChampions
+        loadMostPlayedChampionsImages(summoners);
+    }
+
     public static ArrayList<Summoner> getSummunerListInGameFromCurrentUser(Summoner user) {
         //Get request
         String jsonResult = Utils.getDocumentAndCheck(Constant.API_CURRENT_GAME_URI + user.getId(),2);
-
         try {
             //Not on game
             if(jsonResult == null) {
@@ -121,8 +126,6 @@ public class CurrentGameDAO {
                 calculUserPerformance(current);
             }
 
-            //Load images of mostPlayedChampions
-            loadMostPlayedChampionsImages(summonersList);
 
             Collections.sort(summonersList, new SortSummonerByTeamAndPerf());
 

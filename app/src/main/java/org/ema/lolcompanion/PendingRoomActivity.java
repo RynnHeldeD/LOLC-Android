@@ -27,8 +27,11 @@ import org.ema.model.business.Summoner;
 import org.ema.utils.Constant;
 import org.ema.utils.Region;
 import org.ema.utils.GlobalDataManager;
+import org.ema.utils.Utils;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 
 public class PendingRoomActivity extends Activity {
@@ -76,6 +79,8 @@ public class PendingRoomActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Clear cache
+        Utils.cache.clear();
         // Get the summoner_name from the intent
         Intent intent = getIntent();
         setContentView(R.layout.activity_pending_room);
@@ -149,6 +154,8 @@ public class PendingRoomActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
+        //Clear cache
+        Utils.cache.clear();
         //Launch thread if the user login is good
         if (user != null) {
             GlobalDataManager.add("user", user);

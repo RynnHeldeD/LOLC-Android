@@ -31,8 +31,11 @@ import java.lang.reflect.Constructor;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Hashtable;
 
 public class Utils {
+    //Local cache for applications API.
+    public static Hashtable<String,String> cache = new Hashtable<String,String>();
 
     //Please insert the url by imageView.setTag(yourUrl)
     //To call this async function:
@@ -186,6 +189,12 @@ public class Utils {
 
     //Get document, return null if error or null
     public static String getDocument(String urlToRead) {
+        //Return cache if exist.
+       /* if(cache.get(urlToRead) != null) {
+            Log.v("CACHE",urlToRead);
+            return cache.get(urlToRead);
+        }*/
+
         HttpClient httpclient = new DefaultHttpClient();
         HttpResponse response;
         String responseString = null;
@@ -196,6 +205,7 @@ public class Utils {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 response.getEntity().writeTo(out);
                 responseString = out.toString();
+                cache.put(urlToRead,responseString);
                 out.close();
             } else{
                 //Closes the connection.
@@ -212,6 +222,12 @@ public class Utils {
 
     //Get document, if null, do the request again while the limit exist
     public static String getDocumentAndCheck(String urlToRead, int limit) {
+        //Return cache if exist.
+        /*if(cache.get(urlToRead) != null) {
+            Log.v("CACHE",urlToRead);
+            return cache.get(urlToRead);
+        }*/
+
         HttpClient httpclient = new DefaultHttpClient();
         HttpResponse response;
         String responseString = null;
@@ -222,6 +238,7 @@ public class Utils {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 response.getEntity().writeTo(out);
                 responseString = out.toString();
+                cache.put(urlToRead,responseString);
                 out.close();
             } else{
                 //Closes the connection.

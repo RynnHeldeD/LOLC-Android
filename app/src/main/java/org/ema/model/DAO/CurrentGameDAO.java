@@ -207,7 +207,7 @@ public class CurrentGameDAO {
             }
             Statistic statsUser = new Statistic(kill, death, assist, win, loose, (float) 0, (float) 0, (float) 0, null);
             user.getChampion().setStatistic(statsUser);
-            getCreepChartInfo(user);
+            //getCreepChartInfo(user);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -267,7 +267,7 @@ public class CurrentGameDAO {
             JSONArray jsonMatches = null;
             if(!jsonResult.isNull("matches")) {
                 jsonMatches = jsonResult.getJSONArray("matches");
-
+                getDamageDealtAndDamageTaken(user, jsonMatches);
                 JSONArray jsonParticipants = null;
                 double zeroToTen, tenToTwenty, twentyToThirty, thirtyToEnd;
                 zeroToTen = tenToTwenty = twentyToThirty = thirtyToEnd = 0;
@@ -280,6 +280,7 @@ public class CurrentGameDAO {
                 for (int i = 0; i < jsonMatches.length(); i++) {
                     if(!jsonMatches.getJSONObject(i).isNull("participants")) {
                         jsonParticipants = jsonMatches.getJSONObject(i).getJSONArray("participants");
+
                         matchItemHistory = getUserFavoiteBuild(jsonParticipants);
                         if(i==0)
                         {
@@ -607,5 +608,53 @@ public class CurrentGameDAO {
         }
 
         return value;
+    }
+
+    public static void getDamageDealtAndDamageTaken(Summoner summoner, JSONArray jsonMatches){
+        Log.v("DAO", "Begining damage dealt / taken");
+        int idGame = 0;
+        int teamID = 0;
+        int totalDamageDealtByUserTeamInCurrentGame = 0;
+        int toalDamageDealtByUserInCurrentGame = 0;
+
+        int totalDamageTakenByUserTeamInCurrentGame = 0;
+        int totalDamageTakenByUserInCurrentGame = 0;
+
+        float meanPercentageDamageDealtByUser = 0;
+        float meanPercentageDamageTakenByUser = 0;
+
+        try {
+            for (int i = 0; i < jsonMatches.length(); i++) {
+                JSONObject test = jsonMatches.getJSONObject(i);
+                idGame = jsonMatches.getJSONObject(i).getInt("matchId");
+                teamID = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getInt("teamId");
+                toalDamageDealtByUserInCurrentGame = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getJSONObject("stats").getInt("totalDamageDealtToChampions");
+                totalDamageTakenByUserInCurrentGame = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getJSONObject("stats").getInt("totalDamageTaken");
+                String jsonResult = Utils.getDocument(Constant.API_MATCHS + String.valueOf(idGame));
+                if(jsonResult != null) {
+                    JSONObject gameDetails = new JSONObject(jsonResult);
+                    for (int j = 0; j < gameDetails.getJSONArray("participants").length(); j++) {
+                        if (gameDetails.getJSONArray("participants").getJSONObject(j).getInt("teamId") == teamID) {
+                            totalDamageDealtByUserTeamInCurrentGame += gameDetails.getJSONArray("participants").getJSONObject(j).getJSONObject("stats").getInt("totalDamageDealtToChampions");
+                            totalDamageTakenByUserTeamInCurrentGame += gameDetails.getJSONArray("participants").getJSONObject(j).getJSONObject("stats").getInt("totalDamageTaken");
+                        }
+                    }
+                    meanPercentageDamageDealtByUser += (float) toalDamageDealtByUserInCurrentGame / (float) totalDamageDealtByUserTeamInCurrentGame;
+                    meanPercentageDamageTakenByUser += (float) totalDamageTakenByUserInCurrentGame / (float) totalDamageTakenByUserTeamInCurrentGame;
+                    totalDamageDealtByUserTeamInCurrentGame = 0;
+                    totalDamageTakenByUserTeamInCurrentGame = 0;
+                }
+            }
+            meanPercentageDamageDealtByUser /= jsonMatches.length();
+            meanPercentageDamageTakenByUser /= jsonMatches.length();
+            meanPercentageDamageDealtByUser *= 100;
+            meanPercentageDamageTakenByUser *= 100;
+            summoner.getChampion().getStatistic().setDamageDealtPercentage(meanPercentageDamageDealtByUser);
+            summoner.getChampion().getStatistic().setDamageTakenPercentage(meanPercentageDamageTakenByUser);
+        } catch(Exception e){
+            e.printStackTrace();
+            Log.v("Erreur creep", e.getMessage());
+        }
+        Log.v("DAO", "End damage dealt / taken");
     }
 }

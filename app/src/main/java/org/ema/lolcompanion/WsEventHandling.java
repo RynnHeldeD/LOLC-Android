@@ -61,27 +61,36 @@ public class WsEventHandling {
     }
 
     public static void activateTimer(final String buttonIdGrid,String activationTimestamp){
-        Log.v("Websocket","Timer activation received");
+        Log.v("Websocket", "Timer activation received");
         long delayOfTransfert = 0;
 
-        SimpleDateFormat formatUTC = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ");
-        formatUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
+        SimpleDateFormat formatUTC = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss.SSS Z");
+        //formatUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
         Timestamp tstmp;
         try {
-            tstmp = new Timestamp(formatUTC.parse(formatUTC.format(formatUTC.format(new Date()))).getTime());
+            tstmp = new Timestamp(formatUTC.parse(formatUTC.format(new Date())).getTime());
         } catch (ParseException e) {
             tstmp = new Timestamp(new Date().getTime());
-            Log.v("Websocket","Impossible de parser la date recue via le websocket");
+            Log.v("Websocket","Impossible de parser la current date");
         }
 
-        try{
-            Date parsedDate = formatUTC.parse(activationTimestamp);
-            Timestamp currentTimestamp = new java.sql.Timestamp(parsedDate.getTime());
+        Timestamp currentTimestamp = Timestamp.valueOf(activationTimestamp);
+      /*  try{
+            Date parsedDate = formatUTCC.parse(activationTimestamp);
+            currentTimestamp = new Timestamp(parsedDate.getTime());
+        }catch(ParseException e){
+            Log.v("Websocket","Date to parse:" + activationTimestamp);
+            Log.v("Websocket","Erreur: impossible de parser la date reçue par le ws:" + e.getMessage());
+          //  currentTimestamp = new Timestamp(new Date().getTime());
+        }*/
+
+        try {
+            Log.v("Websocket","CurrentTimeStamp get time :" + currentTimestamp.getTime());
             //on fait la difference entre les deux timestamp, et on a arrondis à la seconde
             delayOfTransfert = tstmp.getTime() - currentTimestamp.getTime();
             Log.v("Websocket","Delay of transfert: " + delayOfTransfert);
-        }catch(ParseException e){
-            Log.v("Websocket","Erreur: impossible de parser la date reçue:" + e.getMessage());
+        } catch (Exception e){
+            Log.v("Websocket","Erreur lors du calcul du delay of transfert");
         }
 
         final long DoT = delayOfTransfert;

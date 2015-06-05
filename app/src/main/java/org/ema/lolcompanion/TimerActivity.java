@@ -219,8 +219,8 @@ public class TimerActivity extends Activity {
         List<String> summonerSpellButtons = Arrays.asList("b13", "b14", "b23","b24","b33","b34","b43","b44","b53","b54");
         List<String> ultimateButtons = Arrays.asList("b12", "b22", "b32", "b42", "b52");
 
-        timerMap.put("b01",(long)300);
-        timerMap.put("b02",(long)500);
+        timerMap.put("b01",(long)600);
+        timerMap.put("b02",(long)700);
 
         int spellIndex = 0;
         int summonerIndex = 0;
@@ -255,17 +255,17 @@ public class TimerActivity extends Activity {
     public void simpleClickTimer(String buttonID,long delayOfTransfert, boolean fromWebSocket){
         TimerButton tbtn = getButtonFromIdString(buttonID);
 
-        SimpleDateFormat formatUTC = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ssZ");
-        formatUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
-        Timestamp tstmp;
-        try {
+        //SimpleDateFormat formatUTC = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss.S Z");
+        //formatUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Timestamp tstmp = new Timestamp(new Date().getTime());
+        /*try {
             tstmp = new Timestamp(formatUTC.parse(formatUTC.format(new Date())).getTime());
         } catch (ParseException e) {
             tstmp = new Timestamp(new Date().getTime());
             Log.v("Websocket","Impossible de parser la date recue via le websocket");
-        }
-	Handler timerHandler = (Handler)GlobalDataManager.get("timerHandler");
+        }*/
 
+	    Handler timerHandler = (Handler)GlobalDataManager.get("timerHandler");
 
         //Name of the clicked button => example : b21
         String IDButton = getResources().getResourceName(tbtn.getId());

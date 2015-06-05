@@ -19,11 +19,12 @@ import org.ema.utils.Constant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Hashtable;
 
 public class CurrentGameDAO {
     public static ArrayList<Summoner> getSummunerListInGameFromCurrentUser(Summoner user) {
         //Get request
-        String jsonResult = Utils.getDocument(Constant.API_CURRENT_GAME_URI + user.getId());
+        String jsonResult = Utils.getDocumentAndCheck(Constant.API_CURRENT_GAME_URI + user.getId(),2);
 
         try {
             //Not on game
@@ -68,8 +69,8 @@ public class CurrentGameDAO {
                 summonersList.add(summoner);
             }
 
-            JSONObject jsonSummonerSpells = new JSONObject(Utils.getDocument(Constant.API_SUMMONER_SPELLS));
-            JSONObject jsonChampions = new JSONObject(Utils.getDocument(Constant.API_CHAMPION_URI));
+            JSONObject jsonSummonerSpells = new JSONObject(Utils.getDocumentAndCheck(Constant.API_SUMMONER_SPELLS,2));
+            JSONObject jsonChampions = new JSONObject(Utils.getDocumentAndCheck(Constant.API_CHAMPION_URI,2));
 
             for(Summoner current : summonersList)
             {
@@ -114,6 +115,7 @@ public class CurrentGameDAO {
 
             for(Summoner current : summonersList) {
                 //current.getChampion().setStatistic(getSummonerHistoryStatistic(current));
+                getPremades(current,summonersList);
                 getStatiscicsAndMostChampionsPlayed(current);
                 calculUserPerformance(current);
             }
@@ -142,7 +144,7 @@ public class CurrentGameDAO {
 
         try {
             String request = Constant.API_LEAGUE_URI + concatIds + "/entry";
-            JSONObject jsonResult = new JSONObject(Utils.getDocument(Constant.API_LEAGUE_URI + concatIds + "/entry"));
+            JSONObject jsonResult = new JSONObject(Utils.getDocumentAndCheck(Constant.API_LEAGUE_URI + concatIds + "/entry",2));
 
             for(Summoner user : summoners) {
                 if(!jsonResult.isNull(String.valueOf(user.getId()))) {
@@ -428,7 +430,7 @@ public class CurrentGameDAO {
     //Load async images
     public static void loadMostPlayedChampionsImages(ArrayList<Summoner> summoners) {
         try {
-            JSONObject jsonChampions = new JSONObject(Utils.getDocument(Constant.API_CHAMPION_URI));
+            JSONObject jsonChampions = new JSONObject(Utils.getDocumentAndCheck(Constant.API_CHAMPION_URI,5));
 
             for(Summoner current : summoners)
             {
@@ -446,6 +448,123 @@ public class CurrentGameDAO {
             e.printStackTrace();
         }
     }
+
+    //Get premades
+    public static void getPremades(Summoner summoner, ArrayList<Summoner> summoners) {
+        try {
+            JSONObject json = new JSONObject(Utils.getDocumentAndCheck(Constant.API_SUMMONER_GAMES + summoner.getId() + "/recent",2));
+
+            int[][] nbGamesWithUser = new int[(summoners.size() / 2) - 1][2];
+
+            int index = 0;
+            for (int i = 0; i < summoners.size(); i++) {
+                if (summoners.get(i).getId() != summoner.getId() && summoners.get(i).getTeamId() == summoner.getTeamId()) {
+                    int[] line = new int[2];
+                    //User id
+                    line[0] = summoners.get(i).getId();
+                    //Nb times saw on games
+                    line[1] = 0;
+                    nbGamesWithUser[index] = line;
+                    index++;
+                }
+            }
+
+            JSONArray jsonArray = (JSONArray)json.get("games");
+
+            //For each games
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonGame = ((JSONObject) jsonArray.get(i));
+
+                if(!jsonGame.isNull("fellowPlayers")) {
+                    JSONArray jsonPlayers = (JSONArray)jsonGame.get("fellowPlayers");
+
+                    for(int j = 0; j < jsonPlayers.length(); j++) {
+                        JSONObject jsonPlayer = ((JSONObject) jsonPlayers.get(j));
+
+                        for(int x = 0; x < nbGamesWithUser.length; x++) {
+                            if(summoner.getTeamId() == jsonPlayer.getInt("teamId") && nbGamesWithUser[x][0] == jsonPlayer.getInt("summonerId") ) {
+                                nbGamesWithUser[x][1]++;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            /*Log.v("TOTO","Team = " + summoner.getTeamId());
+
+            for (int i = 0; i < nbGamesWithUser.length; i++) {
+                Log.v("PREMADES", nbGamesWithUser[i][0] + " " + nbGamesWithUser[i][1]);
+            }*/
+
+            int limit;
+            switch (summoner.getLeague().getDivision().split(" ")[0].toString()) {
+                case "BRONZE":
+                    limit = 1;
+                    break;
+                case "SILVER":
+                    limit = 1;
+                    break;
+                case "GOLD":
+                    limit = 1;
+                    break;
+                case "PLATINUM":
+                    limit = 1;
+                    break;
+                case "DIAMOND":
+                    limit = 2;
+                    break;
+                case "MASTER":
+                    limit = 3;
+                    break;
+                case "CHALLENGER":
+                    limit = 3;
+                    break;
+                default:
+                    limit = 1;
+                    break;
+            }
+
+            for(int i = 0; i < nbGamesWithUser.length; i++) {
+                if(nbGamesWithUser[i][1] >= limit) {
+                    for(Summoner premadeCurrent : summoners) {
+                        if(premadeCurrent.getId() == nbGamesWithUser[i][0]) {
+                            Log.v("PREMADES",summoner.getName() + " and " + premadeCurrent.getName() + " are premade");
+
+                            if(premadeCurrent.getPremade() != 0 && summoner.getPremade() != 0) {
+                                //1 and 2 are friends, need merge
+                                if(premadeCurrent.getPremade() != summoner.getPremade()) {
+                                    for(Summoner summonerPremade : summoners) {
+                                        if(summonerPremade.getPremade() != 0) {
+                                            summonerPremade.setPremade(1);
+                                        }
+                                    }
+                                }
+                            }
+                            //Get the premade to summoner
+                            else if(premadeCurrent.getPremade() != 0){
+                                summoner.setPremade(premadeCurrent.getPremade());
+                            }
+                            //Get the premade to premadeCurrent
+                            else if(summoner.getPremade() != 0) {
+                                premadeCurrent.setPremade(summoner.getPremade());
+                            }
+                            //New premades detected
+                            else {
+                                premadeCurrent.setPremade(getMaxPremades(summoner.getTeamId(), summoners)+1);
+                                summoner.setPremade(premadeCurrent.getPremade());
+                            }
+                        }
+                    }
+                }
+            }
+
+            //Log.v("TOTO", "Limit = " + String.valueOf(limit));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static int[] getUserFavoiteBuild(JSONArray jsonParticipants)
     {
         JSONArray json = jsonParticipants;
@@ -470,5 +589,18 @@ public class CurrentGameDAO {
             Log.v("Erreur creep", e.getMessage());
             return null;
         }
+    }
+
+    //Get the max value of premades
+    private static int getMaxPremades(int team, ArrayList<Summoner> summoners) {
+        int value = 0;
+
+        for(Summoner summoner  : summoners) {
+            if(summoner.getPremade() > value && summoner.getTeamId() == team) {
+                value = summoner.getPremade();
+            }
+        }
+
+        return value;
     }
 }

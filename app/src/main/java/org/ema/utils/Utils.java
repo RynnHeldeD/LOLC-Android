@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.nfc.tech.IsoDep;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -183,6 +184,7 @@ public class Utils {
         }
     }
 
+    //Get document, return null if error or null
     public static String getDocument(String urlToRead) {
         HttpClient httpclient = new DefaultHttpClient();
         HttpResponse response;
@@ -201,9 +203,49 @@ public class Utils {
                 throw new IOException(statusLine.getReasonPhrase());
             }
         } catch (ClientProtocolException e) {
-            //TODO Handle problems..
+            Log.v("REQUEST_FAILED",e.getMessage());
         } catch (IOException e) {
-            //TODO Handle problems..
+            Log.v("REQUEST_FAILED",e.getMessage());
+        }
+        return responseString;
+    }
+
+    //Get document, if null, do the request again while the limit exist
+    public static String getDocumentAndCheck(String urlToRead, int limit) {
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpResponse response;
+        String responseString = null;
+        try {
+            response = httpclient.execute(new HttpGet(urlToRead));
+            StatusLine statusLine = response.getStatusLine();
+            if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                response.getEntity().writeTo(out);
+                responseString = out.toString();
+                out.close();
+            } else{
+                //Closes the connection.
+                response.getEntity().getContent().close();
+                throw new IOException(statusLine.getReasonPhrase());
+            }
+        } catch (ClientProtocolException e) {
+            if(limit != 0) {
+                Log.v("REQUEST_FAILED",limit  + ": Request " + urlToRead);
+                SystemClock.sleep(2000);
+                return getDocumentAndCheck(urlToRead, --limit);
+            }
+            else {
+                Log.v("REQUEST_FAILED",e.getMessage());
+            }
+        } catch (IOException e) {
+            if(limit != 0) {
+                Log.v("REQUEST_FAILED",limit  + ": Request " + urlToRead);
+                SystemClock.sleep(2000);
+                return getDocumentAndCheck(urlToRead, --limit);
+            }
+            else {
+                Log.v("REQUEST_FAILED",e.getMessage());
+            }
         }
         return responseString;
     }

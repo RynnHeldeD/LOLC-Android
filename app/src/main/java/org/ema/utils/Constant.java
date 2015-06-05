@@ -33,6 +33,9 @@ public class Constant {
     public static String API_SUMMONER_SPELLS = CACHE_SERVER_URI + API_STATIC_DNS + "api/lol/static-data/euw/v1.2/summoner-spell?dataById=true&spellData=cooldown,image";
     public static String API_ITEMS = CACHE_SERVER_URI + API_STATIC_DNS + "api/lol/static-data/euw/v1.2/item/";
 
+    //Need to add "/recent" after the summoner id
+    public static String API_SUMMONER_GAMES = CACHE_SERVER_URI + API_DNS + "api/lol/euw/v1.3/game/by-summoner/";
+
     private static Hashtable<Region,String> regionsHashtable = new Hashtable<Region,String>();
     static {
         regionsHashtable.put(Region.BR,"br");
@@ -87,7 +90,8 @@ public class Constant {
         API_STATS_URI = setRequestRegion(API_STATS_URI,region);
         API_SUMMONER_INFO_URI = setRequestRegion(API_SUMMONER_INFO_URI,region);
         API_SUMMONER_SPELLS = setRequestRegion(API_SUMMONER_SPELLS,region);
-        
+        API_SUMMONER_GAMES = setRequestRegion(API_SUMMONER_GAMES,region);
+
         localRegion = region;
     }
 }

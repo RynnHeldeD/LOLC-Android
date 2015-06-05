@@ -98,8 +98,13 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         GlobalDataManager.add("timerHandler", timerHandler);
     }
 
+    public void cleanChannelSummary(){
+        LinearLayout channelSummary = (LinearLayout) findViewById(R.id.channel_summary);
+        channelSummary.removeAllViews();
+    }
+
     //This functions adds dynamically a player icon in the channel summary so user can know who is connected
-    protected void appendPlayerIconToChannelSummary(Bitmap playerIcon){
+    public void appendPlayerIconToChannelSummary(Bitmap playerIcon){
         LinearLayout channelSummary = (LinearLayout) findViewById(R.id.channel_summary);
         RoundedImageView riv = new RoundedImageView(this);
         riv.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -113,7 +118,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         riv.setTileModeY(Shader.TileMode.CLAMP);
 
         //adding a icon to the channel summary
-        channelSummary.addView(riv, 25, 25);
+        channelSummary.addView(riv, 50, 50);
     }
 
     public void secureAppSharing(View v){
@@ -124,7 +129,13 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String passphrase) {
         // Websocket - secure channel
-        TimerActivity.settingsManager.set(this, "passphrase", passphrase);
+        String oldChannel = TimerActivity.settingsManager.get(this,"passphrase");
+
+        //Si la nouvelle passphrase est differente de l'ancienne
+        if (!oldChannel.equals(passphrase)) {
+            TimerActivity.settingsManager.set(this, "passphrase", passphrase);
+            WsEventHandling.switchChannel(passphrase);
+        }
     }
 
     @Override
@@ -286,11 +297,11 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         startActivity(intent);
     }
 
- public void timerCancel(View tbt){
-        TimerButton tbtn = (TimerButton) tbt;
-        String IDButton = getResources().getResourceName(tbtn.getId());
-        String buttonID = IDButton.substring(IDButton.lastIndexOf("/") + 1);
-}
+     public void timerCancel(View tbt){
+            TimerButton tbtn = (TimerButton) tbt;
+            String IDButton = getResources().getResourceName(tbtn.getId());
+            String buttonID = IDButton.substring(IDButton.lastIndexOf("/") + 1);
+     }
 
     //Fonctions pour les évènements WS
     public void simpleClickTimer(String buttonID,long delayOfTransfert, boolean fromWebSocket){

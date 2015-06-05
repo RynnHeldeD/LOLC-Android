@@ -175,7 +175,11 @@ public class TimerButton extends RoundedImageView {
     }
 
     public void timerDelay(long delayToRetrench){
-        long currentTimestamp = Long.parseLong(this.getTimer().getTimerTextView().getText().toString()) * 1000;
+        Log.v("Websocket","ATTTEENNNNNTIONNNNN");
+        String test = this.getTimer().getTimerTextView().getText().toString();
+        Log.v("Websocket","Et voici une chaine vide:" + test);
+        long currentTimestamp = Long.parseLong(test) * 1000;
+        Log.v("Websocket","TU NE VERRA JAMAIS CE LOG");
 
         if (currentTimestamp != 0) {
             if(this.getTimer() != null) {

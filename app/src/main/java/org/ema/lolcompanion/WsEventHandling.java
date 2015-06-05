@@ -1,8 +1,11 @@
 package org.ema.lolcompanion;
 
+import android.graphics.Bitmap;
 import android.os.SystemClock;
 import android.util.Log;
 
+import org.ema.model.business.Summoner;
+import org.ema.utils.GlobalDataManager;
 import org.ema.utils.WebSocket;
 import org.java_websocket.client.WebSocketClient;
 import org.json.JSONArray;
@@ -44,7 +47,7 @@ public class WsEventHandling {
                         activateTimer(obj.getString("idSortGrille"), obj.getString("timestampDeclenchement"));
                         break;
                     case "playerList":
-                        WsEventHandling.switchChannel("toto");
+                         updateChannelPlayers(obj.getJSONArray("allies"));
                         break;
                     case "timerDelay":
                         delayTimer(obj.getString("idSortGrille"));
@@ -139,14 +142,52 @@ public class WsEventHandling {
     }
 
     public static void updateChannelPlayers(JSONArray playersInChannelJson) {
+        Summoner user = (Summoner)GlobalDataManager.get("user");
+        ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
 
-        //on recréer la liste des joueurs du channel
-        ArrayList<String> playersInChannel = new ArrayList<String>();
+        //on clean les joueurs deja affichés
+        class TimerCleanPlayerList implements Runnable {
+            public void run(){
+                TimerActivity.instance.cleanChannelSummary();
+            }
+        }
+        new Thread(){
+            public void run(){
+                TimerActivity.instance.runOnUiThread(new TimerCleanPlayerList());
+            }
+        }.start();
 
         try {
             //on ajoute chaque joueur
             for(int i = 0; i<playersInChannelJson.length();i++) {
-                playersInChannel.add(i, playersInChannelJson.getString(i));
+                String iconeSummonerName = playersInChannelJson.getString(i);
+                //On ajoute pas l'image du user qui utilie l'appli
+                for(Summoner s : summonersList) {
+                    //On passe dans la boucle si ce n'est pas le joueur courant et que c'est un allié
+                    if (!s.getName().equals(user.getName()) && s.getTeamId() ==  user.getTeamId() && s.getChampion().getIconName().equals(iconeSummonerName)) {
+                        Log.v("Websocket", "On ajoute l'icone du joueur:" + s.getName());
+                        final Bitmap summonerIconName = s.getChampion().getIcon();
+
+                        class TimerUpdatePlayerList implements Runnable {
+                            public Bitmap iconeName;
+
+                            public TimerUpdatePlayerList(Bitmap iconeName){
+                                this.iconeName = iconeName;
+                            }
+
+                            public void run(){
+                                TimerActivity.instance.appendPlayerIconToChannelSummary(iconeName);
+                            }
+                        }
+
+                        new Thread(){
+                            public void run(){
+                                TimerActivity.instance.runOnUiThread(new TimerUpdatePlayerList(summonerIconName));
+                            }
+                        }.start();
+                        break;
+                    }
+                }
             }
         } catch (JSONException e) {
             Log.v("Websocket","Error during message parsing in updateChannelPlayers: " +e.getMessage());

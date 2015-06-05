@@ -16,6 +16,7 @@ public class Summoner implements Parcelable {
     private Champion champion;
     private League league;
     private int teamId;
+    private int gameId;
     //0 not, 1 or 2 == premade
     private int premade;
     private int level;
@@ -96,6 +97,8 @@ public class Summoner implements Parcelable {
         this.wins = wins;
     }
 
+
+
     public Champion[] getMostChampionsPlayed() {
         return mostChampionsPlayed;
     }
@@ -112,12 +115,18 @@ public class Summoner implements Parcelable {
         this.looses = looses;
     }
 
+    public int getGameId() {
+        return gameId;
+    }
 
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
+    }
 
     public Summoner() {
     }
 
-    public Summoner(int id, String name,int level, Spell[] spells, Champion champion, League league, int teamId, int premade, float wins, float looses,Champion[] mostChampionsPlayed) {
+    public Summoner(int id, String name,int level, Spell[] spells, Champion champion, League league, int teamId, int premade, float wins, float looses,Champion[] mostChampionsPlayed,int gameId) {
         this.id = id;
         this.name = name;
         this.level = level;
@@ -125,6 +134,7 @@ public class Summoner implements Parcelable {
         this.champion = champion;
         this.league = league;
         this.teamId = teamId;
+        this.gameId = gameId;
         this.premade = premade;
         this.wins = wins;
         this.looses = looses;

@@ -34,6 +34,8 @@ public class CurrentGameDAO {
 
             JSONObject json = new JSONObject(jsonResult);
             JSONArray jsonArray = (JSONArray)json.get("participants");
+            int gameId = json.getInt("gameId");
+
             ArrayList<Summoner> summonersList = new ArrayList<Summoner>();
 
             //For each participant
@@ -46,6 +48,7 @@ public class CurrentGameDAO {
                 summoner.setName(jsonParticipant.get("summonerName").toString());
                 summoner.setId((int) (jsonParticipant.get("summonerId")));
                 summoner.setTeamId((int) jsonParticipant.get("teamId"));
+                summoner.setGameId(gameId);
                 //TODO: Launch async task to set more info about summoner
 
                 //Set summoner championId

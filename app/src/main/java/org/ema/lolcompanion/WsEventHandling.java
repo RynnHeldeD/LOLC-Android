@@ -86,7 +86,7 @@ public class WsEventHandling {
             }
 
             public void run(){
-                TimerActivity.instance.simpleClickTimer(this.buttonIdGrid, this.delayOfTransfert, true);
+                TimerActivity.instance.simpleClickTimer(this.buttonIdGrid, this.delayOfTransfert, true, true);
             }
         }
 
@@ -109,7 +109,7 @@ public class WsEventHandling {
             }
 
             public void run(){
-                TimerActivity.instance.simpleClickTimer(buttonIdGrid, 0, true);
+                TimerActivity.instance.simpleClickTimer(buttonIdGrid, 0, true, false);
             }
         }
 

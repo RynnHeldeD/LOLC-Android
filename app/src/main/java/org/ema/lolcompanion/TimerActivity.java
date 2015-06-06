@@ -168,7 +168,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
 
                 public void run(){
                     if (this.tbtn.isTriggered()) {
-                        simpleClickTimer(buttonID, 0, false);
+                        simpleClickTimer(buttonID, 0, false, true);
                         this.tbtn.setTriggered(false);
                     }
                 }
@@ -244,8 +244,8 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         List<String> summonerSpellButtons = Arrays.asList("b13", "b14", "b23","b24","b33","b34","b43","b44","b53","b54");
         List<String> ultimateButtons = Arrays.asList("b12", "b22", "b32", "b42", "b52");
 
-        timerMap.put("b01",(long)420);
-        timerMap.put("b02",(long)360);
+        timerMap.put("b01",(long)700);
+        timerMap.put("b02",(long)600);
 
         int spellIndex = 0;
         int summonerIndex = 0;
@@ -311,7 +311,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
 
 
     //Fonctions pour les évènements WS
-    public void simpleClickTimer(String buttonID,long delayOfTransfert, boolean fromWebSocket){
+    public void simpleClickTimer(String buttonID,long delayOfTransfert, boolean fromWebSocket, boolean doTimerActivation){
 
         if (timerMap.get(buttonID) * 1000 > delayOfTransfert) {
             TimerButton tbtn = getButtonFromIdString(buttonID);
@@ -338,7 +338,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
                 tbtn.setTimer(new Timer((timerMap.get(buttonID) * 1000) - delayOfTransfert, 1000, tbtn.getTimer().getTimerTextView(), tbtn));
                 tbtn.getTimer().start();
                 tbtn.getTimer().setVisible(true);
-            } else {
+            } else if (tbtn.getTimer() != null && doTimerActivation != true) {
                 //On transmet le message
                 if (!fromWebSocket) {
                     WsEventHandling.timerDelay(buttonID);
@@ -360,7 +360,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
             }
             //On fait l'action sur le timerbutton
             tbtn.getTimer().onFinish();
-            simpleClickTimer(buttonID, timestamp, true);
+            simpleClickTimer(buttonID, timestamp, true, false);
         }
     }
 

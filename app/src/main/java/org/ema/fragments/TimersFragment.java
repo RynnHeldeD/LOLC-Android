@@ -1,33 +1,29 @@
-package org.ema.lolcompanion;
+package org.ema.fragments;
 
-import android.app.Activity;
-import android.app.DialogFragment;
-import android.content.Intent;
+import android.support.v4.app.DialogFragment;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Shader;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 
-import org.ema.model.DAO.CurrentGameDAO;
-import org.ema.model.DAO.SummonerDAO;
+import org.ema.lolcompanion.CompanionActivity;
+import org.ema.lolcompanion.R;
+import org.ema.lolcompanion.WsEventHandling;
 import org.ema.model.business.Summoner;
-import org.ema.utils.ChampionTipDialogFragment;
 import org.ema.utils.GlobalDataManager;
+import org.ema.utils.LoLStatActivity;
 import org.ema.utils.SecureDialogFragment;
 import org.ema.utils.SettingsManager;
 import org.ema.utils.Timer;
@@ -35,46 +31,41 @@ import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TimeZone;
-import java.util.TimerTask;
 
-
-public class TimerActivity extends Activity implements SecureDialogFragment.NoticeDialogListener{
+public class TimersFragment extends LoLStatActivity implements SecureDialogFragment.NoticeDialogListener {
 
     public HashMap<String,Long> timerMap;
     public static SettingsManager settingsManager = null;
-    public static TimerActivity instance = null;	
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate the layout resource that'll be returned
+        View rootView = inflater.inflate(R.layout.activity_timer, container, false);
         timerMap = new HashMap<String,Long>();
-        setContentView(R.layout.activity_timer);
-        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/lol.ttf");
-        TextView timers = (TextView) findViewById(R.id.timers);
+        Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
+        TextView timers = (TextView) rootView.findViewById(R.id.timers);
         timers.setTypeface(font);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        TimerActivity.settingsManager = new SettingsManager();
-        PreferenceManager.getDefaultSharedPreferences(this);
+        TimersFragment.settingsManager = new SettingsManager();
+        PreferenceManager.getDefaultSharedPreferences(this.getActivity().getApplicationContext());
         ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
 
         WebSocket.connectWebSocket();
+        return rootView;
     }
 
+    //THREAD METHODS
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
 
-        Summoner user = (Summoner)GlobalDataManager.get("user");
+        Summoner user = (Summoner) GlobalDataManager.get("user");
         ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
 
         // Recuperation et tri des summoners de l'equipe du joueur
@@ -98,8 +89,8 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
 
     //This functions adds dynamically a player icon in the channel summary so user can know who is connected
     protected void appendPlayerIconToChannelSummary(Bitmap playerIcon){
-        LinearLayout channelSummary = (LinearLayout) findViewById(R.id.channel_summary);
-        RoundedImageView riv = new RoundedImageView(this);
+        LinearLayout channelSummary = (LinearLayout) getActivity().findViewById(R.id.channel_summary);
+        RoundedImageView riv = new RoundedImageView(getActivity());
         riv.setScaleType(ImageView.ScaleType.CENTER_CROP);
         riv.setCornerRadius((float) 25);
         riv.setBorderWidth((float) 1);
@@ -122,7 +113,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String passphrase) {
         // Websocket - secure channel
-        TimerActivity.settingsManager.set(this, "passphrase", passphrase);
+        this.settingsManager.set(getActivity(), "passphrase", passphrase);
     }
 
     @Override
@@ -130,98 +121,51 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         // User touched the dialog's negative button
 
     }
-//On créer une deuxième fonction avec un paramètre en plus car on ne peut pas passer de paramètres depuis la vue
-    public void timerListener(View tbt){
-        timerListener(tbt, false, 0);
-    }
 
-
-    //This function handle the onclick (short) events for all buttons on the timer view
-    public void timerListener(View tbt, boolean fromWebSocket, long delayOfTransfert){
-        TimerButton tbtn = (TimerButton) tbt;
-        //Name of the clicked button => example : b21
-        String IDButton = getResources().getResourceName(tbtn.getId());
-        //button ID formated like "b12"
-        String buttonID = IDButton.substring(IDButton.lastIndexOf("/") + 1);
-
-        java.util.Date date= new java.util.Date();
-        long now = date.getTime();
-        long btnTimestp = tbtn.getClickedTimestamp();
-        tbtn.setClickedTimestamp(now);
-
-        if(!tbtn.isTriggered()){
-            tbtn.setTriggered(true);
-
-            class PostponedClick implements Runnable {
-                public TimerButton tbtn;
-                public String buttonID;
-
-                public PostponedClick(TimerButton tbtn, String buttonID){
-                    this.tbtn = tbtn;
-                    this.buttonID = buttonID;
-                }
-
-                public void run(){
-                    if (this.tbtn.isTriggered()) {
-                        Log.v("DAO", this.buttonID + " simple click postponed");
-                        simpleClickTimer(buttonID,0,false);
-                        this.tbtn.setTriggered(false);
-                    }
-                }
-            }
-            tbtn.postDelayed(new PostponedClick(tbtn, buttonID), 200);
-        } else {
-            if((now <= btnTimestp + TimerButton.DELAY)){
-                Log.v("DAO", buttonID + " double click");
-            }
-            tbtn.setTriggered(false);
-        }
-    }
-
-    private void setTimerButtonsImage(ArrayList<Summoner> teamSummonersList){
+    public void setTimerButtonsImage(ArrayList<Summoner> teamSummonersList){
         this.setChampionTimerButtonsImage(teamSummonersList);
         this.setUltimateTimerButtonsImage(teamSummonersList);
         this.setSpellsTimerButtonsImage(teamSummonersList);
     }
 
-    private void setChampionTimerButtonsImage(ArrayList<Summoner> summonersList){
+    public void setChampionTimerButtonsImage(ArrayList<Summoner> summonersList){
         List<String> ids = Arrays.asList("b11", "b21", "b31", "b41", "b51");
         RoundedImageView tb;
         int IDRessource;
 
         int i = 0;
         for (String s : ids){
-            IDRessource = getResources().getIdentifier(s, "id", getBaseContext().getPackageName());
-            tb = (RoundedImageView) findViewById(IDRessource);
+            IDRessource = getResources().getIdentifier(s, "id", getActivity().getBaseContext().getPackageName());
+            tb = (RoundedImageView) getActivity().findViewById(IDRessource);
             Bitmap bm = summonersList.get(i).getChampion().getIcon();
             tb.setImageBitmap(bm);
             i++;
         }
     }
 
-    private void setUltimateTimerButtonsImage(ArrayList<Summoner> summonersList){
+    public void setUltimateTimerButtonsImage(ArrayList<Summoner> summonersList){
         List<String> ids = Arrays.asList("b12", "b22", "b32", "b42", "b52");
         TimerButton tb;
         int IDRessource;
 
         int i = 0;
         for (String s : ids){
-            IDRessource = getResources().getIdentifier(s, "id", getBaseContext().getPackageName());
-            tb = (TimerButton) findViewById(IDRessource);
+            IDRessource = getResources().getIdentifier(s, "id",  getActivity().getBaseContext().getPackageName());
+            tb = (TimerButton)  getActivity().findViewById(IDRessource);
             tb.setImageBitmap(summonersList.get(i).getChampion().getSpell().getIcon());
             i++;
         }
     }
 
-    private void setSpellsTimerButtonsImage(ArrayList<Summoner> summonersList){
+    public void setSpellsTimerButtonsImage(ArrayList<Summoner> summonersList){
         List<String> ids = Arrays.asList("b13", "b23", "b33", "b43", "b53");
         TimerButton tb;
         int IDRessource;
 
         int i = 0;
         for (String s : ids){
-            IDRessource = getResources().getIdentifier(s, "id", getBaseContext().getPackageName());
-            tb = (TimerButton) findViewById(IDRessource);
+            IDRessource = getResources().getIdentifier(s, "id",  getActivity().getBaseContext().getPackageName());
+            tb = (TimerButton)  getActivity().findViewById(IDRessource);
             tb.setImageBitmap(summonersList.get(i).getSpells()[0].getIcon());
             i++;
         }
@@ -229,15 +173,15 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         ids = Arrays.asList("b14", "b24", "b34", "b44", "b54");
         i = 0;
         for (String s : ids){
-            IDRessource = getResources().getIdentifier(s, "id", getBaseContext().getPackageName());
-            tb = (TimerButton) findViewById(IDRessource);
+            IDRessource = getResources().getIdentifier(s, "id",  getActivity().getBaseContext().getPackageName());
+            tb = (TimerButton)  getActivity().findViewById(IDRessource);
             tb.setImageBitmap(summonersList.get(i).getSpells()[1].getIcon());
             i++;
         }
     }
 
-    private void buildTimerTable(ArrayList<Summoner> teamSummonersList){
-        List<String> summonerSpellButtons = Arrays.asList("b13", "b14", "b23","b24","b33","b34","b43","b44","b53","b54");
+    public void buildTimerTable(ArrayList<Summoner> teamSummonersList){
+        List<String> summonerSpellButtons = Arrays.asList("b13", "b14", "b23", "b24", "b33", "b34", "b43", "b44", "b53", "b54");
         List<String> ultimateButtons = Arrays.asList("b12", "b22", "b32", "b42", "b52");
 
         timerMap.put("b01",(long)420);
@@ -267,28 +211,13 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
 
 
         Log.v("DAO", "Timer des tableau chargement termine");
-	}
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            launchMainActivity();
-            return true;
-        }
-
-        return super.onKeyDown(keyCode, event);
     }
 
-    public void launchMainActivity(){
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
- public void timerCancel(View tbt){
+    public void timerCancel(View tbt){
         TimerButton tbtn = (TimerButton) tbt;
         String IDButton = getResources().getResourceName(tbtn.getId());
         String buttonID = IDButton.substring(IDButton.lastIndexOf("/") + 1);
-}
+    }
 
     //Fonctions pour les évènements WS
     public void simpleClickTimer(String buttonID,long delayOfTransfert, boolean fromWebSocket){
@@ -304,19 +233,19 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
             Log.v("Websocket","Impossible de parser la date recue via le websocket");
         }*/
 
-	    Handler timerHandler = (Handler)GlobalDataManager.get("timerHandler");
+        Handler timerHandler = (Handler)GlobalDataManager.get("timerHandler");
 
         //Name of the clicked button => example : b21
         String IDButton = getResources().getResourceName(tbtn.getId());
         //loading the league of legend equiv fonts
-        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/lol.ttf");
+        Typeface font = Typeface.createFromAsset(this.getActivity().getAssets(), "fonts/lol.ttf");
 
         //Timer is null and has never been instancied
         if(tbtn.getTimer() == null){
             //Setting the TextView so the timer update the countdown in FO
-            int timerTextViewID = getResources().getIdentifier(IDButton.concat("t"), "id", getBaseContext().getPackageName());
+            int timerTextViewID = getResources().getIdentifier(IDButton.concat("t"), "id", getActivity().getBaseContext().getPackageName());
             //settings the textView with the font
-            TextView txtv = (TextView) findViewById(timerTextViewID);
+            TextView txtv = (TextView) getActivity().findViewById(timerTextViewID);
             txtv.setTypeface(font);
             tbtn.setTimer(new Timer(0, 0, txtv, tbtn));
 
@@ -365,24 +294,8 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         }
     }
 
-
-
-
     public TimerButton getButtonFromIdString(String buttonID){
-        return (TimerButton) findViewById(getResources().getIdentifier(buttonID, "id", getPackageName()));
+        return (TimerButton) getActivity().findViewById(getResources().getIdentifier(buttonID, "id", getActivity().getPackageName()));
     }
 
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        instance = this;
-    }
-
-    @Override
-    public void onPause()
-    {
-        super.onPause();
-        instance = null;
-    }
 }

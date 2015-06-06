@@ -1,15 +1,17 @@
 package org.ema.utils;
 
-import android.app.Activity;
+import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.ema.lolcompanion.R;
@@ -18,34 +20,27 @@ import org.ema.model.business.Summoner;
 import java.util.Arrays;
 import java.util.List;
 
-public class LoLStatActivity extends FragmentActivity {
+public class LoLStatActivity extends Fragment {
 
 
     //Ressources (name) of all summoners Views
-    protected List<String> textRessourcesSummoner1 = Arrays.asList("s1name", "s1K", "s1Kv", "s1D", "s1Dv", "s1A", "s1Av", "s1DmDv", "s1DmRv", "s1Wins", "s1Defs", "s1LP");
-    protected List<String> imageRessourcesSummoner1 = Arrays.asList("s1Img", "s1Perf", "s1Main", "s1Team", "s1Rank");
-    protected List<String> textRessourcesSummoner2 = Arrays.asList("s2name", "s2K", "s2Kv", "s2D", "s2Dv", "s2A", "s2Av", "s2DmDv", "s2DmRv", "s2Wins", "s2Defs", "s2LP");
-    protected List<String> imageRessourcesSummoner2 = Arrays.asList("s2Img", "s2Perf", "s2Main", "s2Team", "s2Rank");
-    protected List<String> textRessourcesSummoner3 = Arrays.asList("s3name", "s3K", "s3Kv", "s3D", "s3Dv", "s3A", "s3Av", "s3DmDv", "s3DmRv", "s3Wins", "s3Defs", "s3LP");
-    protected List<String> imageRessourcesSummoner3 = Arrays.asList("s3Img", "s3Perf", "s3Main", "s3Team", "s3Rank");
-    protected List<String> textRessourcesSummoner4 = Arrays.asList("s4name", "s4K", "s4Kv", "s4D", "s4Dv", "s4A", "s4Av", "s4DmDv", "s4DmRv", "s4Wins", "s4Defs", "s4LP");
-    protected List<String> imageRessourcesSummoner4 = Arrays.asList("s4Img", "s4Perf", "s4Main", "s4Team", "s4Rank");
-    protected List<String> textRessourcesSummoner5 = Arrays.asList("s5name", "s5K", "s5Kv", "s5D", "s5Dv", "s5A", "s5Av", "s5DmDv", "s5DmRv", "s5Wins", "s5Defs", "s5LP");
-    protected List<String> imageRessourcesSummoner5 = Arrays.asList("s5Img", "s5Perf", "s5Main", "s5Team", "s5Rank");
+    protected List<String> textRessourcesSummoner = Arrays.asList("s1name", "s1K", "s1Kv", "s1D", "s1Dv", "s1A", "s1Av", "s1DmDv", "s1DmRv", "s1Wins", "s1Defs", "s1LP");
+    protected List<String> imageRessourcesSummoner = Arrays.asList("s1tips", "s1Img", "s1Perf", "s1Main", "s1Team", "s1Rank");
 
     //This function will fill the statistics of one summoner - has to be called in the foreach using the summoner list retrieve by DAO
-    protected void fillSummonerInformations(List<String> textRessources, List<String> imgRessources, Summoner summoner, int minPerformance, int maxPerformance) {
+    protected void fillSummonerInformations(LinearLayout containerView, int idForLine, Summoner summoner, int minPerformance, int maxPerformance) {
 
-        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/lol.ttf");
-
+        Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
+        View rootview = getActivity().getLayoutInflater().inflate(R.layout.line_champion, containerView, false);
         //setting the fonts for the ressources
-        for (String s : textRessources) {
-            int IDRessource = getResources().getIdentifier(s, "id", getBaseContext().getPackageName());
-            TextView ressource = (TextView) findViewById(IDRessource);
+        for (String s : textRessourcesSummoner) {
+            int IDRessource = getResources().getIdentifier(s, "id", getActivity().getBaseContext().getPackageName());
+            TextView ressource = (TextView) rootview.findViewById(IDRessource);
             ressource.setTypeface(font);
 
             if (s.contains("name")) {
-                ressource.setText(summoner.getChampion().getName());
+                ressource.setText(summoner.getName());
+                ressource.setId(idForLine);
             }
             //if Statistics object is set
             if (summoner.getChampion().getStatistic() != null) {
@@ -66,25 +61,29 @@ public class LoLStatActivity extends FragmentActivity {
                 }
             } else {
                 //we hide everything
-                View layoutToHide1 = findViewById(getResources().getIdentifier(s.substring(0, 2) + "WnD", "id", getBaseContext().getPackageName()));
-                View layoutToHide2 = findViewById(getResources().getIdentifier(s.substring(0, 2) + "KDA_Damages", "id", getBaseContext().getPackageName()));
+                View layoutToHide1 = rootview.findViewById(getResources().getIdentifier(s.substring(0, 2) + "WnD", "id", rootview.getContext().getPackageName()));
+                View layoutToHide2 = rootview.findViewById(getResources().getIdentifier(s.substring(0, 2) + "KDA_Damages", "id", rootview.getContext().getPackageName()));
                 layoutToHide1.setVisibility(View.INVISIBLE);
                 layoutToHide2.setVisibility(View.INVISIBLE);
             }
 
             if (s.contains("LP")) {
                 if (summoner.getLeague().getDivision().toLowerCase().contains("unrancked"))
-                    ressource.setText(R.string.unrancked);
+                    ressource.setText(summoner.getLevel());
                 else
                     ressource.setText(summoner.getLeague().getDivision().toUpperCase() + " " + String.valueOf(summoner.getLeague().getLeaguePoints()) + " LP");
             }
         }
 
-        for (String s : imgRessources) {
-            int IDRessource = getResources().getIdentifier(s, "id", getBaseContext().getPackageName());
+        for (String s : imageRessourcesSummoner) {
+            int IDRessource = getResources().getIdentifier(s, "id", rootview.getContext().getPackageName());
 
             if (!s.contains("Perf")) {
-                ImageView ressource = (ImageView) findViewById(IDRessource);
+                ImageView ressource = (ImageView) rootview.findViewById(IDRessource);
+
+                if (s.contains("tips")) {
+                    ressource.setId(idForLine);
+                }
 
                 if (s.contains("Img")) {
                     Bitmap bitmap = summoner.getChampion().getIcon();
@@ -135,7 +134,7 @@ public class LoLStatActivity extends FragmentActivity {
                     }
                 }
             } else {
-                VerticalProgressBar summonerPerf = (VerticalProgressBar) findViewById(IDRessource);
+                VerticalProgressBar summonerPerf = (VerticalProgressBar) rootview.findViewById(IDRessource);
                 summonerPerf.setMax(maxPerformance);
                 int performance;
                 if (summoner.getChampion().getStatistic() != null) {
@@ -162,5 +161,8 @@ public class LoLStatActivity extends FragmentActivity {
                 }
             }
         }
+
+        //add the line to the rootview
+        containerView.addView(rootview);
     }
 }

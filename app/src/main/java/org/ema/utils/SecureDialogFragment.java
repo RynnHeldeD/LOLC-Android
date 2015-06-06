@@ -3,20 +3,19 @@ package org.ema.utils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.ema.lolcompanion.MainActivity;
+import org.ema.fragments.TimersFragment;
 import org.ema.lolcompanion.R;
-import org.ema.lolcompanion.TimerActivity;
+import org.ema.lolcompanion.CompanionActivity;
 import org.ema.model.business.Summoner;
 
 public class SecureDialogFragment extends DialogFragment {
@@ -75,13 +74,12 @@ public class SecureDialogFragment extends DialogFragment {
         et.setId(R.id.secure_channel_edit);
 
         PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-        if(!TimerActivity.settingsManager.get(this.getActivity(), "passphrase").equals("")) {
-            et.setText(TimerActivity.settingsManager.get(this.getActivity(), "passphrase"));
+        if(!TimersFragment.settingsManager.get(this.getActivity(), "passphrase").equals("")) {
+            et.setText(TimersFragment.settingsManager.get(this.getActivity(), "passphrase"));
         }
-        else et.setText(R.string.secure_timers_edit);
-
-        et.setPadding(10, 5, 10, 5);
-        et.setTextSize(16);
+        else et.setHint(R.string.secure_timers_edit);
+        tv.setPadding(10,5,10,5);
+        tv.setTextSize(getResources().getDimension(R.dimen.tips_champion_font));
         et.setTextColor(getResources().getColor(R.color.grey_font));
         layout.addView(et, tvParams);
 

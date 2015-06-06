@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/companion_pager"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.view.PagerTabStrip xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/companion_title_strip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_black_transparent"
+        android:textColor="@color/light_font"
+        android:visibility="gone"/>
+</android.support.v4.view.ViewPager>
+

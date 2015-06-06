@@ -104,13 +104,13 @@ public class WsEventHandling {
             }
 
             public void run(){
-                TimerActivity.instance.simpleClickTimer(this.buttonIdGrid, this.delayOfTransfert, true);
+                CompanionActivity.instance.simpleClickTimer(this.buttonIdGrid, this.delayOfTransfert, true);
             }
         }
 
         new Thread(){
             public void run(){
-                TimerActivity.instance.runOnUiThread(new WebSocketAction(buttonIdGrid, DoT));
+                CompanionActivity.instanceCompanion.runOnUiThread(new WebSocketAction(buttonIdGrid, DoT));
             }
         }.start();
     }
@@ -127,13 +127,13 @@ public class WsEventHandling {
             }
 
             public void run(){
-                TimerActivity.instance.simpleClickTimer(buttonIdGrid, 0, true);
+                CompanionActivity.instance.simpleClickTimer(buttonIdGrid, 0, true);
             }
         }
 
         new Thread(){
             public void run(){
-                TimerActivity.instance.runOnUiThread(new WebSocketAction(buttonIdGrid));
+                CompanionActivity.instanceCompanion.runOnUiThread(new WebSocketAction(buttonIdGrid));
             }
         }.start();
     }

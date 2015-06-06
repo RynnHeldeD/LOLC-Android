@@ -1,6 +1,5 @@
 package org.ema.fragments;
 
-import android.support.v4.app.DialogFragment;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Shader;
@@ -8,6 +7,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +21,7 @@ import com.makeramen.roundedimageview.RoundedImageView;
 import org.ema.lolcompanion.R;
 import org.ema.lolcompanion.WsEventHandling;
 import org.ema.model.business.Summoner;
+import org.ema.utils.GameTimestamp;
 import org.ema.utils.GlobalDataManager;
 import org.ema.utils.LoLStatActivity;
 import org.ema.utils.SecureDialogFragment;
@@ -30,11 +31,9 @@ import org.ema.utils.Timer;
 import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -89,8 +88,13 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
         GlobalDataManager.add("timerHandler", timerHandler);
     }
 
+    public void cleanChannelSummary(){
+        LinearLayout channelSummary = (LinearLayout) getActivity().findViewById(R.id.channel_summary);
+        channelSummary.removeAllViewsInLayout();
+    }
+
     //This functions adds dynamically a player icon in the channel summary so user can know who is connected
-    protected void appendPlayerIconToChannelSummary(Bitmap playerIcon){
+    public void appendPlayerIconToChannelSummary(Bitmap playerIcon){
         LinearLayout channelSummary = (LinearLayout) getActivity().findViewById(R.id.channel_summary);
         RoundedImageView riv = new RoundedImageView(getActivity());
         riv.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -104,7 +108,7 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
         riv.setTileModeY(Shader.TileMode.CLAMP);
 
         //adding a icon to the channel summary
-        channelSummary.addView(riv, 25, 25);
+        channelSummary.addView(riv, 50, 50);
     }
 
     public void secureAppSharing(View v){
@@ -115,7 +119,13 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String passphrase) {
         // Websocket - secure channel
-        this.settingsManager.set(getActivity(), "passphrase", passphrase);
+        String oldChannel = this.settingsManager.get(this.getActivity(),"passphrase");
+
+        //Si la nouvelle passphrase est differente de l'ancienne
+        if (!oldChannel.equals(passphrase)) {
+            this.settingsManager.set(this.getActivity(), "passphrase", passphrase);
+            WsEventHandling.switchChannel(passphrase);
+        }
     }
 
     @Override
@@ -186,8 +196,8 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
         List<String> summonerSpellButtons = Arrays.asList("b13", "b14", "b23", "b24", "b33", "b34", "b43", "b44", "b53", "b54");
         List<String> ultimateButtons = Arrays.asList("b12", "b22", "b32", "b42", "b52");
 
-        timerMap.put("b01",(long)420);
-        timerMap.put("b02",(long)360);
+        timerMap.put("b01",(long)700);
+        timerMap.put("b02",(long)600);
 
         int spellIndex = 0;
         int summonerIndex = 0;
@@ -215,71 +225,58 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
         Log.v("DAO", "Timer des tableau chargement termine");
     }
 
-    public void timerCancel(View tbt){
-        TimerButton tbtn = (TimerButton) tbt;
-        String IDButton = getResources().getResourceName(tbtn.getId());
-        String buttonID = IDButton.substring(IDButton.lastIndexOf("/") + 1);
-    }
-
     //Fonctions pour les évènements WS
-    public void simpleClickTimer(String buttonID,long delayOfTransfert, boolean fromWebSocket){
-        TimerButton tbtn = getButtonFromIdString(buttonID);
+    public void simpleClickTimer(String buttonID,long delayOfTransfert, boolean fromWebSocket, boolean doTimerActivation){
 
-        //SimpleDateFormat formatUTC = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss.S Z");
-        //formatUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
-        Timestamp tstmp = new Timestamp(new Date().getTime());
-        /*try {
-            tstmp = new Timestamp(formatUTC.parse(formatUTC.format(new Date())).getTime());
-        } catch (ParseException e) {
-            tstmp = new Timestamp(new Date().getTime());
-            Log.v("Websocket","Impossible de parser la date recue via le websocket");
-        }*/
+        if (timerMap.get(buttonID) * 1000 > delayOfTransfert) {
+            TimerButton tbtn = getButtonFromIdString(buttonID);
 
-        Handler timerHandler = (Handler)GlobalDataManager.get("timerHandler");
+            //Name of the clicked button => example : b21
+            String IDButton = getResources().getResourceName(tbtn.getId());
+            //loading the league of legend equiv fonts
+            Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
 
-        //Name of the clicked button => example : b21
-        String IDButton = getResources().getResourceName(tbtn.getId());
-        //loading the league of legend equiv fonts
-        Typeface font = Typeface.createFromAsset(this.getActivity().getAssets(), "fonts/lol.ttf");
+            //Timer is null and has never been instancied
+            if (tbtn.getTimer() == null) {
+                //Setting the TextView so the timer update the countdown in FO
+                int timerTextViewID = getResources().getIdentifier(IDButton.concat("t"), "id", getActivity().getBaseContext().getPackageName());
+                //settings the textView with the font
+                TextView txtv = (TextView) getActivity().findViewById(timerTextViewID);
+                txtv.setTypeface(font);
+                tbtn.setTimer(new Timer(0, 0, txtv, tbtn));
 
-        //Timer is null and has never been instancied
-        if(tbtn.getTimer() == null){
-            //Setting the TextView so the timer update the countdown in FO
-            int timerTextViewID = getResources().getIdentifier(IDButton.concat("t"), "id", getActivity().getBaseContext().getPackageName());
-            //settings the textView with the font
-            TextView txtv = (TextView) getActivity().findViewById(timerTextViewID);
-            txtv.setTypeface(font);
-            tbtn.setTimer(new Timer(0, 0, txtv, tbtn));
-
-            if(!fromWebSocket){
-                WsEventHandling.timerActivation(buttonID, tstmp.toString());
+                if (!fromWebSocket) {
+                    WsEventHandling.timerActivation(buttonID, Long.toString(GameTimestamp.getServerTimestamp()));
+                }
+                //On active le time
+                //Si on a des cooldown a 0 ou inférieur au temps de transfert, on met pas de timer
+                tbtn.setTimer(new Timer((timerMap.get(buttonID) * 1000) - delayOfTransfert, 1000, tbtn.getTimer().getTimerTextView(), tbtn));
+                tbtn.getTimer().start();
+                tbtn.getTimer().setVisible(true);
+            } else if (tbtn.getTimer() != null && doTimerActivation != true) {
+                //On transmet le message
+                if (!fromWebSocket) {
+                    WsEventHandling.timerDelay(buttonID);
+                }
+                //On fait l'action sur le timerbutton
+                tbtn.timerDelay(5000);
             }
-            //On active le timer
-            long timeToCount = timerMap.get(buttonID) * 1000 - delayOfTransfert;
-            tbtn.setTimer(new Timer(timeToCount,1000,tbtn.getTimer().getTimerTextView(), tbtn));
-            tbtn.getTimer().start();
-            tbtn.getTimer().setVisible(true);
-        } else {
-            //On transmet le message
-            if(!fromWebSocket){
-                WsEventHandling.timerDelay(buttonID);
-            }
-            //On fait l'action sur le timerbutton
-            tbtn.timerDelay(5000);
         }
     }
 
-    public void resetTimer(String buttonID, boolean fromWebSocket){
-        TimerButton tbtn = getButtonFromIdString(buttonID);
+    public void restartTimer(String buttonID, long timestamp, boolean fromWebSocket) {
+        /*TimerButton tbtn = getButtonFromIdString(buttonID);
+        Timestamp tstmp = new Timestamp(new Date().getTime());
 
         if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
             //On transmet le message
-            if(!fromWebSocket){
-                WsEventHandling.resetTimer(buttonID);
+            if (!fromWebSocket) {
+                WsEventHandling.restartTimer(buttonID, tstmp.toString());
             }
             //On fait l'action sur le timerbutton
-            tbtn.getTimer().cancel();
-        }
+            tbtn.getTimer().onFinish();
+            simpleClickTimer(buttonID, timestamp, true, false);
+        }*/
     }
 
     public void stopTimer(String buttonID, boolean fromWebSocket){
@@ -291,8 +288,7 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
                 WsEventHandling.stopTimer(buttonID);
             }
             //On fait l'action sur le timerbutton
-            tbtn.getTimer().cancel();
-            simpleClickTimer(buttonID,0,true);
+            tbtn.getTimer().onFinish();
         }
     }
 

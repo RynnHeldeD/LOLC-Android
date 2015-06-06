@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Toast;
 
 import org.ema.fragments.AlliesFragment;
 import org.ema.fragments.EnnemiesFragment;
@@ -49,7 +51,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         mPager.setAdapter(cpAdapter);
         tab_strp=(PagerTabStrip)findViewById(R.id.companion_title_strip);
         tab_strp.setTextColor(Color.WHITE);
-
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     //Permet de Switcher entre les fragments
@@ -82,7 +84,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         }
     }
 
-    //On créer une deuxième fonction avec un paramètre en plus car on ne peut pas passer de paramètres depuis la vue
+    //On crï¿½er une deuxiï¿½me fonction avec un paramï¿½tre en plus car on ne peut pas passer de paramï¿½tres depuis la vue
     public void timerListener(View tbt){
         timerListener(tbt, false, 0);
     }
@@ -116,7 +118,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                 public void run(){
                     if (this.tbtn.isTriggered()) {
                         Log.v("DAO", this.buttonID + " simple click postponed");
-                        timerFragment.simpleClickTimer(buttonID, 0, false);
+                        timerFragment.simpleClickTimer(buttonID, 0, false,false);
                         this.tbtn.setTriggered(false);
                     }
                 }
@@ -124,7 +126,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
             tbtn.postDelayed(new PostponedClick(tbtn, buttonID), 200);
         } else {
             if((now <= btnTimestp + TimerButton.DELAY)){
-                Log.v("DAO", buttonID + " double click");
+                //TODO : nettoyer le double clic
             }
             tbtn.setTriggered(false);
         }
@@ -143,6 +145,10 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
             case 2 : alliesFragment.showChampionTips(v);
                 break;
         }
+    }
+
+    public void stopTimer(View v){
+        timerFragment.stopTimer(v);
     }
 
     @Override
@@ -174,11 +180,30 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            Thread disconnectThread = new Thread(new Runnable() {
+                public void run() {
+                    WsEventHandling.disconnect();
+                }
+            });
+
+            disconnectThread.start();
             launchMainActivity();
             return true;
         }
 
         return super.onKeyDown(keyCode, event);
+    }
+
+    public void handleDisconnection(){
+        this.runOnUiThread( new Runnable() {
+                                @Override
+                                public void run() {
+                Toast.makeText(CompanionActivity.this, "Disconnected from server", Toast.LENGTH_SHORT).show();
+            }
+        }
+        );
+        launchMainActivity();
     }
 
     public void launchMainActivity(){

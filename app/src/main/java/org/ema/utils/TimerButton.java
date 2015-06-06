@@ -2,12 +2,9 @@ package org.ema.utils;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.CountDownTimer;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 
@@ -15,7 +12,6 @@ import org.ema.lolcompanion.R;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.security.Timestamp;
 
 public class TimerButton extends RoundedImageView {
     public static final int DELAY = 200;
@@ -60,7 +56,10 @@ public class TimerButton extends RoundedImageView {
                                 boolean result = false;
                                 if (mHandler == null) {
                                     try {
-                                        mHandler = getContext().getClass().getMethod(handlerName, View.class);
+                                        Class[] args = new Class[2];
+                                        args[0] = String.class;
+                                        args[1] = boolean.class;
+                                        mHandler = getContext().getClass().getMethod(handlerName, args);
                                     } catch (NoSuchMethodException e) {
                                         int id = getId();
                                         String idText = id == NO_ID ? "" : " with id '"
@@ -74,7 +73,11 @@ public class TimerButton extends RoundedImageView {
                                 }
 
                                 try {
-                                    mHandler.invoke(getContext(), TimerButton.this);
+                                    Object[] params = new Object[2];
+                                    int id = getId();
+                                    params[0] = getContext().getResources().getResourceEntryName(id);
+                                    params[1] = false;
+                                    mHandler.invoke(getContext(), params);
                                     result = true;
                                 } catch (IllegalAccessException e) {
                                     throw new IllegalStateException("Could not execute non "
@@ -175,7 +178,11 @@ public class TimerButton extends RoundedImageView {
     }
 
     public void timerDelay(long delayToRetrench){
-        long currentTimestamp = Long.parseLong(this.getTimer().getTimerTextView().getText().toString()) * 1000;
+        Log.v("Websocket","ATTTEENNNNNTIONNNNN");
+        String test = this.getTimer().getTimerTextView().getText().toString();
+        Log.v("Websocket","Et voici une chaine vide:" + test);
+        long currentTimestamp = Long.parseLong(test) * 1000;
+        Log.v("Websocket","TU NE VERRA JAMAIS CE LOG");
 
         if (currentTimestamp != 0) {
             if(this.getTimer() != null) {

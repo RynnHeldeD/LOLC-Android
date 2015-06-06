@@ -6,21 +6,16 @@ import org.ema.model.business.League;
 import org.ema.model.business.Spell;
 import org.ema.model.business.Statistic;
 import org.ema.model.business.Summoner;
-import org.ema.model.business.Item;
-import org.ema.utils.CallbackMatcher;
+import org.ema.utils.Constant;
 import org.ema.utils.SortChampionsArrayList;
 import org.ema.utils.SortIntegerTabArrayList;
-
 import org.ema.utils.SortSummonerByTeamAndPerf;
 import org.ema.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.ema.utils.Constant;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Hashtable;
 
 public class CurrentGameDAO {
 
@@ -40,6 +35,8 @@ public class CurrentGameDAO {
 
             JSONObject json = new JSONObject(jsonResult);
             JSONArray jsonArray = (JSONArray)json.get("participants");
+            int gameId = json.getInt("gameId");
+
             ArrayList<Summoner> summonersList = new ArrayList<Summoner>();
 
             //For each participant
@@ -52,6 +49,7 @@ public class CurrentGameDAO {
                 summoner.setName(jsonParticipant.get("summonerName").toString());
                 summoner.setId((int) (jsonParticipant.get("summonerId")));
                 summoner.setTeamId((int) jsonParticipant.get("teamId"));
+                summoner.setGameId(gameId);
                 //TODO: Launch async task to set more info about summoner
 
                 //Set summoner championId

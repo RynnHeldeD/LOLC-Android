@@ -1,10 +1,12 @@
 package org.ema.lolcompanion;
 
-import android.os.SystemClock;
+import android.graphics.Bitmap;
 import android.util.Log;
 
+import org.ema.model.business.Summoner;
+import org.ema.utils.GameTimestamp;
+import org.ema.utils.GlobalDataManager;
 import org.ema.utils.WebSocket;
-import org.java_websocket.client.WebSocketClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,9 +16,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by Constantin on 19/05/2015.
@@ -41,15 +40,24 @@ public class WsEventHandling {
 
                 switch (action){
                     case "timer":
-                        activateTimer(obj.getString("idSortGrille"), obj.getString("timestampDeclenchement"));
+                        activateTimer(obj.getString("idSortGrille"), obj.getLong("timestampDeclenchement"));
                         break;
                     case "playerList":
-                        WsEventHandling.switchChannel("toto");
+                        startGameTimestamp(obj.getLong("timestamp"));
+                        updateChannelPlayers(obj.getJSONArray("allies"));
+                        break;
+                    case "playerList_toNewAllies":
+                    case "playerList_toOldAllies":
+                        updateChannelPlayers(obj.getJSONArray("allies"));
                         break;
                     case "timerDelay":
                         delayTimer(obj.getString("idSortGrille"));
                         break;
                     case "razTimer":
+                        doRestartTimer(obj.getString("idSortGrille"), obj.getString("timestampDeclenchement"));
+                        break;
+                    case "stopTimer":
+                        doStopTimer(obj.getString("idSortGrille"));
                         break;
                     default:
                         break;
@@ -60,38 +68,12 @@ public class WsEventHandling {
         }
     }
 
-    public static void activateTimer(final String buttonIdGrid,String activationTimestamp){
+    public static void activateTimer(final String buttonIdGrid, Long activationTimestamp){
         Log.v("Websocket", "Timer activation received");
         long delayOfTransfert = 0;
 
-        SimpleDateFormat formatUTC = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss.SSS Z");
-        //formatUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
-        Timestamp tstmp;
-        try {
-            tstmp = new Timestamp(formatUTC.parse(formatUTC.format(new Date())).getTime());
-        } catch (ParseException e) {
-            tstmp = new Timestamp(new Date().getTime());
-            Log.v("Websocket","Impossible de parser la current date");
-        }
-
-        Timestamp currentTimestamp = Timestamp.valueOf(activationTimestamp);
-      /*  try{
-            Date parsedDate = formatUTCC.parse(activationTimestamp);
-            currentTimestamp = new Timestamp(parsedDate.getTime());
-        }catch(ParseException e){
-            Log.v("Websocket","Date to parse:" + activationTimestamp);
-            Log.v("Websocket","Erreur: impossible de parser la date reçue par le ws:" + e.getMessage());
-          //  currentTimestamp = new Timestamp(new Date().getTime());
-        }*/
-
-        try {
-            Log.v("Websocket","CurrentTimeStamp get time :" + currentTimestamp.getTime());
-            //on fait la difference entre les deux timestamp, et on a arrondis à la seconde
-            delayOfTransfert = tstmp.getTime() - currentTimestamp.getTime();
-            Log.v("Websocket","Delay of transfert: " + delayOfTransfert);
-        } catch (Exception e){
-            Log.v("Websocket","Erreur lors du calcul du delay of transfert");
-        }
+        delayOfTransfert = GameTimestamp.transfertDelay(activationTimestamp);
+        Log.v("Websocket","Delay of transfert: " + delayOfTransfert);
 
         final long DoT = delayOfTransfert;
         class WebSocketAction implements Runnable {
@@ -104,7 +86,7 @@ public class WsEventHandling {
             }
 
             public void run(){
-                CompanionActivity.instance.simpleClickTimer(this.buttonIdGrid, this.delayOfTransfert, true);
+                CompanionActivity.instance.simpleClickTimer(this.buttonIdGrid, this.delayOfTransfert, true, true);
             }
         }
 
@@ -127,7 +109,86 @@ public class WsEventHandling {
             }
 
             public void run(){
-                CompanionActivity.instance.simpleClickTimer(buttonIdGrid, 0, true);
+                CompanionActivity.instance.simpleClickTimer(buttonIdGrid, 0, true, false);
+            }
+        }
+
+        new Thread(){
+            public void run(){
+                CompanionActivity.instanceCompanion.runOnUiThread(new WebSocketAction(buttonIdGrid));
+            }
+        }.start();
+    }
+
+    public static void doRestartTimer(final String buttonIdGrid, final String activationTimestamp){
+        class WebSocketAction implements Runnable {
+            public String buttonIdGrid;
+            public String activationTimestamp;
+
+            public WebSocketAction(String buttonIdGrid, String activationTimestamp){
+                this.buttonIdGrid = buttonIdGrid;
+                this.activationTimestamp = activationTimestamp;
+            }
+
+            public void run() {
+                SimpleDateFormat formatUTC = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss.SSS Z");
+                Timestamp tstmp;
+                try {
+                    tstmp = new Timestamp(formatUTC.parse(formatUTC.format(new Date())).getTime());
+                } catch (ParseException e) {
+                    tstmp = new Timestamp(new Date().getTime());
+                    Log.v("Websocket", "Impossible de parser la current date");
+                }
+
+                Timestamp currentTimestamp = Timestamp.valueOf(activationTimestamp);
+
+                try {
+                    Log.v("Websocket", "CurrentTimeStamp get time :" + currentTimestamp.getTime());
+                    final long delayOfTransfert = tstmp.getTime() - currentTimestamp.getTime();
+                    CompanionActivity.instance.restartTimer(buttonIdGrid, delayOfTransfert, true);
+                } catch (Exception e) {
+                    Log.v("Websocket", "Erreur lors du calcul du delay of transfert");
+                }
+            }
+        }
+
+        new Thread(){
+            public void run(){
+                CompanionActivity.instanceCompanion.runOnUiThread(new WebSocketAction(buttonIdGrid, activationTimestamp));
+            }
+        }.start();
+    }
+
+    public static void doStopTimer(final String buttonIdGrid){
+        class WebSocketAction implements Runnable {
+            public String buttonIdGrid;
+
+            public WebSocketAction(String buttonIdGrid){
+                this.buttonIdGrid = buttonIdGrid;
+            }
+
+            public void run() {
+                CompanionActivity.instance.stopTimer(this.buttonIdGrid, true);
+            }
+        }
+
+        new Thread(){
+            public void run(){
+                CompanionActivity.instanceCompanion.runOnUiThread(new WebSocketAction(buttonIdGrid));
+            }
+        }.start();
+    }
+
+    public static void cancelTimer(final String buttonIdGrid){
+        class WebSocketAction implements Runnable {
+            public String buttonIdGrid;
+
+            public WebSocketAction(String buttonIdGrid){
+                this.buttonIdGrid = buttonIdGrid;
+            }
+
+            public void run(){
+                CompanionActivity.instance.stopTimer(buttonIdGrid, true);
             }
         }
 
@@ -139,25 +200,62 @@ public class WsEventHandling {
     }
 
     public static void updateChannelPlayers(JSONArray playersInChannelJson) {
+        Summoner user = (Summoner)GlobalDataManager.get("user");
+        ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
 
-        //on recréer la liste des joueurs du channel
-        ArrayList<String> playersInChannel = new ArrayList<String>();
+        //on clean les joueurs deja affichés
+        class TimerCleanPlayerList implements Runnable {
+            public void run(){
+                CompanionActivity.instance.cleanChannelSummary();
+            }
+        }
+        new Thread(){
+            public void run(){
+                CompanionActivity.instanceCompanion.runOnUiThread(new TimerCleanPlayerList());
+            }
+        }.start();
 
         try {
             //on ajoute chaque joueur
             for(int i = 0; i<playersInChannelJson.length();i++) {
-                playersInChannel.add(i, playersInChannelJson.getString(i));
+                String iconeSummonerName = playersInChannelJson.getString(i);
+                //On ajoute pas l'image du user qui utilie l'appli
+                for(Summoner s : summonersList) {
+                    //On passe dans la boucle si ce n'est pas le joueur courant et que c'est un allié
+                    if (!s.getName().equals(user.getName()) && s.getTeamId() ==  user.getTeamId() && s.getChampion().getIconName().equals(iconeSummonerName)) {
+                        Log.v("Websocket", "On ajoute l'icone du joueur:" + s.getName());
+                        final Bitmap summonerIconName = s.getChampion().getIcon();
+
+                        class TimerUpdatePlayerList implements Runnable {
+                            public Bitmap iconeName;
+
+                            public TimerUpdatePlayerList(Bitmap iconeName){
+                                this.iconeName = iconeName;
+                            }
+
+                            public void run(){
+                                CompanionActivity.instance.appendPlayerIconToChannelSummary(iconeName);
+                            }
+                        }
+
+                        new Thread(){
+                            public void run(){
+                                CompanionActivity.instanceCompanion.runOnUiThread(new TimerUpdatePlayerList(summonerIconName));
+                            }
+                        }.start();
+                        break;
+                    }
+                }
             }
         } catch (JSONException e) {
             Log.v("Websocket","Error during message parsing in updateChannelPlayers: " +e.getMessage());
         }
     }
 
-   /* class TimerGetTimeStamp extends TimerTask {
-        public void run() {
-            System.out.println("Timer task executed.");
-        }
-    }*/
+    public static void startGameTimestamp(long serverTimestamp) {
+        GameTimestamp.setGameTimestamp(serverTimestamp);
+    }
+
 
     public static void getErrorFromJson(JSONObject obj) {
         try {
@@ -177,7 +275,7 @@ public class WsEventHandling {
     }
 
     public static void switchChannel(String newChannel) {
-        sendMessage("{\"action\":\"switchChannel\",\"channel\":\""+ newChannel +"\"}");
+        sendMessage("{\"action\":\"switchChannel\",\"channel\":\"" + newChannel + "\"}");
     }
 
     public static void timerActivation(String gridSpellId, String timestampOfTrigger) {
@@ -188,14 +286,16 @@ public class WsEventHandling {
         sendMessage("{\"action\":\"timerDelay\",\"idSortGrille\":\""+ gridSpellId +"\"}");
     }
 
-    public static void resetTimer(String gridSpellId) {
-        sendMessage("{\"action\":\"razTimer\",\"idSortGrille\":\""+ gridSpellId +"\"}");
+    public static void restartTimer(String gridSpellId, String timestampOfTrigger) {
+        sendMessage("{\"action\":\"razTimer\",\"idSortGrille\":\""+ gridSpellId +"\",\"timestampDeclenchement\":\""+ timestampOfTrigger +"\"}");
     }
 
     public static void stopTimer(String gridSpellId) {
-      //TODO:
-        Log.v("Websocket", "STOP TIMER");
-      //  sendMessage("{\"action\":\"razTimer\",\"idSortGrille\":\""+ gridSpellId +"\"}");
+        sendMessage("{\"action\":\"stopTimer\",\"idSortGrille\":\"" + gridSpellId + "\"}");
+    }
+
+    public static void disconnect() {
+        WebSocket.mWebSocketClient.close();
     }
 
 

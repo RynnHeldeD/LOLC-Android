@@ -1,7 +1,6 @@
 package org.ema.utils;
 
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 

@@ -3,7 +3,6 @@ package org.ema.model.business;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -16,6 +15,7 @@ public class Summoner implements Parcelable {
     private Champion champion;
     private League league;
     private int teamId;
+    private int gameId;
     //0 not, 1 or 2 == premade
     private int premade;
     private int level;
@@ -113,11 +113,18 @@ public class Summoner implements Parcelable {
     }
 
 
+    public int getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
+    }
 
     public Summoner() {
     }
 
-    public Summoner(int id, String name,int level, Spell[] spells, Champion champion, League league, int teamId, int premade, float wins, float looses,Champion[] mostChampionsPlayed) {
+    public Summoner(int id, String name, int level, Spell[] spells, Champion champion, League league, int teamId, int premade, float wins, float looses, Champion[] mostChampionsPlayed,int gameId) {
         this.id = id;
         this.name = name;
         this.level = level;
@@ -131,13 +138,13 @@ public class Summoner implements Parcelable {
         this.mostChampionsPlayed = mostChampionsPlayed;
     }
 
-    public Summoner(Summoner s){
+    public Summoner(Summoner s) {
         this.id = s.id;
         this.name = s.name;
         this.level = s.level;
         Spell[] spells = new Spell[2];
         int i = 0;
-        for(Spell sp : s.spells){
+        for (Spell sp : s.spells) {
             spells[i] = new Spell(sp);
             i++;
         }
@@ -167,7 +174,7 @@ public class Summoner implements Parcelable {
     }
 
     // Parcelling part
-    public Summoner(Parcel in){
+    public Summoner(Parcel in) {
 
         this.id = in.readInt();
         this.name = in.readString();
@@ -181,7 +188,7 @@ public class Summoner implements Parcelable {
         this.looses = in.readFloat();
     }
 
-    public int describeContents(){
+    public int describeContents() {
         return 0;
     }
 
@@ -209,10 +216,10 @@ public class Summoner implements Parcelable {
         }
     };
 
-    public boolean areImagesLoaded(){
+    public boolean areImagesLoaded() {
         boolean areImagesLoaded = false;
 
-        if(this.getChampion().areImagesLoaded() && this.getSpells()[0].isImageLoaded() && this.getSpells()[1].isImageLoaded()){
+        if (this.getChampion().areImagesLoaded() && this.getSpells()[0].isImageLoaded() && this.getSpells()[1].isImageLoaded()) {
             areImagesLoaded = true;
         }
 

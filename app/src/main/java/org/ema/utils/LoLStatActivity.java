@@ -45,7 +45,7 @@ public class LoLStatActivity extends FragmentActivity {
             ressource.setTypeface(font);
 
             if (s.contains("name")) {
-                ressource.setText(summoner.getChampion().getName());
+                ressource.setText(summoner.getName().substring(0, Math.min(summoner.getName().length(),12)));
             }
             //if Statistics object is set
             if (summoner.getChampion().getStatistic() != null) {

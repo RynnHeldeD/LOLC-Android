@@ -28,17 +28,15 @@ public class LoLStatActivity extends Fragment {
     protected List<String> imageRessourcesSummoner = Arrays.asList("s1tips", "s1Img", "s1Perf", "s1Main", "s1Team", "s1Rank");
 
     //This function will fill the statistics of one summoner - has to be called in the foreach using the summoner list retrieve by DAO
-    protected void fillSummonerInformations(LinearLayout containerView, ViewGroup inflate_container, int idForLine, Summoner summoner, int minPerformance, int maxPerformance) {
+    protected void fillSummonerInformations(LinearLayout containerView, int idForLine, Summoner summoner, int minPerformance, int maxPerformance) {
 
         Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
-        View rootview = getActivity().getLayoutInflater().inflate(R.layout.line_champion, null, false);
+        View rootview = getActivity().getLayoutInflater().inflate(R.layout.line_champion, null);
         //setting the fonts for the ressources
         for (String s : textRessourcesSummoner) {
             int IDRessource = getResources().getIdentifier(s, "id", getActivity().getBaseContext().getPackageName());
             TextView ressource = (TextView) rootview.findViewById(IDRessource);
             ressource.setTypeface(font);
-
-            //ImageView tips = (ImageView) rootview.findViewById(R.id.s1tips);
 
             if (s.contains("name")) {
                 ressource.setText(summoner.getChampion().getName());

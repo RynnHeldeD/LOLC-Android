@@ -46,7 +46,7 @@ public class AlliesFragment extends LoLStatActivity implements ChampionTipDialog
         LinearLayout allies_container = (LinearLayout) rootView.findViewById(R.id.root_allies);
 
         for(int idForLine = 0; idForLine < summonersAlliesList.size(); idForLine++) {
-            fillSummonerInformations(allies_container, container, idForLine, summonersAlliesList.get(idForLine), 0, 100);
+            fillSummonerInformations(allies_container, idForLine, summonersAlliesList.get(idForLine), 0, 100);
         }
 
         return rootView;
@@ -58,31 +58,6 @@ public class AlliesFragment extends LoLStatActivity implements ChampionTipDialog
         args.putString("name", summonersAlliesList.get(v.getId()).getChampion().getName());
         args.putString("tips", summonersAlliesList.get(v.getId()).getChampion().getAllyTips());
         args.putInt("next", v.getId()+1);
-        /*if(getResources().getResourceName(v.getId()).contains("1")){
-            args.putString("name", summonersAlliesList.get(0).getChampion().getName());
-            args.putString("tips", summonersAlliesList.get(0).getChampion().getAllyTips());
-            args.putInt("next", 1);
-        }
-        else if(getResources().getResourceName(v.getId()).contains("2")){
-            args.putString("name", summonersAlliesList.get(1).getChampion().getName());
-            args.putString("tips", summonersAlliesList.get(1).getChampion().getAllyTips());
-            args.putInt("next", 2);
-        }
-        else if(getResources().getResourceName(v.getId()).contains("3")){
-            args.putString("name", summonersAlliesList.get(2).getChampion().getName());
-            args.putString("tips", summonersAlliesList.get(2).getChampion().getAllyTips());
-            args.putInt("next", 3);
-        }
-        else if(getResources().getResourceName(v.getId()).contains("4")){
-            args.putString("name", summonersAlliesList.get(3).getChampion().getName());
-            args.putString("tips", summonersAlliesList.get(3).getChampion().getAllyTips());
-            args.putInt("next", 4);
-        }
-        else if(getResources().getResourceName(v.getId()).contains("5")){
-            args.putString("name", summonersAlliesList.get(4).getChampion().getName());
-            args.putString("tips", summonersAlliesList.get(4).getChampion().getAllyTips());
-            args.putInt("next", 0);
-        }*/
         dialog.setArguments(args);
         dialog.show(getFragmentManager(), "tips");
     }
@@ -97,7 +72,7 @@ public class AlliesFragment extends LoLStatActivity implements ChampionTipDialog
         Bundle args = new Bundle();
         args.putString("name", summonersAlliesList.get(next).getChampion().getName());
         args.putString("tips", summonersAlliesList.get(next).getChampion().getAllyTips());
-        args.putInt("next", next == 4 ? 0 : next+1);
+        args.putInt("next", next == summonersAlliesList.size()-1 ? 0 : next+1);
         dialog_next.setArguments(args);
         dialog_next.show(getFragmentManager(), "tips");
     }

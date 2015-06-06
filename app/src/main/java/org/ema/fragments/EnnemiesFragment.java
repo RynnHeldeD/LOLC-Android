@@ -32,21 +32,21 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
         TextView ennemies = (TextView) rootView.findViewById(R.id.ennemies);
         ennemies.setTypeface(font);
 
-        //parsing summoners list to retrieve only allies
+        //parsing summoners list to retrieve only ennemies
         ArrayList<Summoner> summonersList = (ArrayList<Summoner>) GlobalDataManager.get("summonersList");
         Summoner current = (Summoner)GlobalDataManager.get("user");
 
         summonersOpponentsList = new ArrayList<Summoner>();
         for(Summoner summoner : summonersList){
-            if(summoner.getTeamId() != current.getTeamId()){
+            //if(summoner.getTeamId() != current.getTeamId()){
                 summonersOpponentsList.add(summoner);
-            }
+            //}
         }
 
         //We get the container where we are going to add all the champion lines
-        LinearLayout allies_container = (LinearLayout) rootView.findViewById(R.id.root_ennemies);
+        LinearLayout ennemies_container = (LinearLayout) rootView.findViewById(R.id.root_ennemies);
         for(int idForLine = 0; idForLine < summonersOpponentsList.size(); idForLine++) {
-            fillSummonerInformations(allies_container, container,  idForLine, summonersOpponentsList.get(idForLine), 0, 100);
+            fillSummonerInformations(ennemies_container,  idForLine, summonersOpponentsList.get(idForLine), 0, 100);
         }
 
         return rootView;
@@ -58,31 +58,6 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
         args.putString("name", summonersOpponentsList.get(v.getId()).getChampion().getName());
         args.putString("tips", summonersOpponentsList.get(v.getId()).getChampion().getAllyTips());
         args.putInt("next", v.getId()+1);
-        /*if(getResources().getResourceName(v.getId()).contains("1")){
-            args.putString("name", summonersOpponentsList.get(0).getChampion().getName());
-            args.putString("tips", summonersOpponentsList.get(0).getChampion().getAllyTips());
-            args.putInt("next", 1);
-        }
-        else if(getResources().getResourceName(v.getId()).contains("2")){
-            args.putString("name", summonersOpponentsList.get(1).getChampion().getName());
-            args.putString("tips", summonersOpponentsList.get(1).getChampion().getAllyTips());
-            args.putInt("next", 2);
-        }
-        else if(getResources().getResourceName(v.getId()).contains("3")){
-            args.putString("name", summonersOpponentsList.get(2).getChampion().getName());
-            args.putString("tips", summonersOpponentsList.get(2).getChampion().getAllyTips());
-            args.putInt("next", 3);
-        }
-        else if(getResources().getResourceName(v.getId()).contains("4")){
-            args.putString("name", summonersOpponentsList.get(3).getChampion().getName());
-            args.putString("tips", summonersOpponentsList.get(3).getChampion().getAllyTips());
-            args.putInt("next", 4);
-        }
-        else if(getResources().getResourceName(v.getId()).contains("5")){
-            args.putString("name", summonersOpponentsList.get(4).getChampion().getName());
-            args.putString("tips", summonersOpponentsList.get(4).getChampion().getAllyTips());
-            args.putInt("next", 0);
-        }*/
         dialog.setArguments(args);
         dialog.show(getFragmentManager(), "tips");
     }

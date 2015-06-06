@@ -45,11 +45,9 @@ public class AlliesFragment extends LoLStatActivity implements ChampionTipDialog
         //We get the container where we are going to add all the champion lines
         LinearLayout allies_container = (LinearLayout) rootView.findViewById(R.id.root_allies);
 
-        fillSummonerInformations(rootView, textRessourcesSummoner1,imageRessourcesSummoner1, summonersAlliesList.get(0), 0, 100);
-        fillSummonerInformations(rootView, textRessourcesSummoner2,imageRessourcesSummoner2, summonersAlliesList.get(1), 0, 100);
-        fillSummonerInformations(rootView, textRessourcesSummoner3,imageRessourcesSummoner3, summonersAlliesList.get(2), 0, 100);
-        fillSummonerInformations(rootView, textRessourcesSummoner4,imageRessourcesSummoner4, summonersAlliesList.get(3), 0, 100);
-        fillSummonerInformations(rootView, textRessourcesSummoner5,imageRessourcesSummoner5, summonersAlliesList.get(4), 0, 100);
+        for(int idForLine = 0; idForLine < summonersAlliesList.size(); idForLine++) {
+            fillSummonerInformations(allies_container, container, idForLine, summonersAlliesList.get(idForLine), 0, 100);
+        }
 
         return rootView;
     }
@@ -57,7 +55,10 @@ public class AlliesFragment extends LoLStatActivity implements ChampionTipDialog
     public void showChampionTips(View v) {
         DialogFragment dialog = new ChampionTipDialogFragment();
         Bundle args = new Bundle();
-        if(getResources().getResourceName(v.getId()).contains("1")){
+        args.putString("name", summonersAlliesList.get(v.getId()).getChampion().getName());
+        args.putString("tips", summonersAlliesList.get(v.getId()).getChampion().getAllyTips());
+        args.putInt("next", v.getId()+1);
+        /*if(getResources().getResourceName(v.getId()).contains("1")){
             args.putString("name", summonersAlliesList.get(0).getChampion().getName());
             args.putString("tips", summonersAlliesList.get(0).getChampion().getAllyTips());
             args.putInt("next", 1);
@@ -81,7 +82,7 @@ public class AlliesFragment extends LoLStatActivity implements ChampionTipDialog
             args.putString("name", summonersAlliesList.get(4).getChampion().getName());
             args.putString("tips", summonersAlliesList.get(4).getChampion().getAllyTips());
             args.putInt("next", 0);
-        }
+        }*/
         dialog.setArguments(args);
         dialog.show(getFragmentManager(), "tips");
     }

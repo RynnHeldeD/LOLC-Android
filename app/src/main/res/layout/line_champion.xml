@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="@dimen/stats_line_container_size"
     android:layout_marginBottom="@dimen/activity_vertical_margin"
@@ -52,7 +52,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_margin="@dimen/activity_vertical_low_margin"
                 android:src="@drawable/ismainchamp"
-                android:visibility="invisible"/>
+                android:visibility="invisible" />
         </RelativeLayout>
     </LinearLayout>
 
@@ -71,35 +71,42 @@
             android:layout_marginLeft="@dimen/activity_horizontal_low_margin"
             android:layout_marginRight="@dimen/activity_horizontal_low_margin"
             android:orientation="horizontal"
-            android:clickable="true"
-            android:onClick="showChampionTips"
             tools:context="org.ema.lolcompanion.AlliesActivity">
 
-            <ImageView
-                android:id="@+id/s1tips"
-                android:layout_width="@dimen/stats_tips_size"
-                android:layout_height="@dimen/stats_tips_size"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="@dimen/activity_horizontal_low_margin"
-                android:src="@drawable/tip" />
-
-            <TextView
-                android:id="@+id/s1name"
+            <LinearLayout xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/stats_tips_size"
-                android:layout_gravity="center_horizontal"
-                android:layout_toEndOf="@+id/s1Team"
-                android:layout_toLeftOf="@+id/s1Team"
-                android:layout_toRightOf="@+id/s1tips"
-                android:layout_toStartOf="@+id/s1tips"
-                android:gravity="start"
-                android:shadowColor="#000000"
-                android:shadowDx="3"
-                android:shadowDy="3"
-                android:shadowRadius="8"
-                android:text="VEIGAR"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/black_font" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                tools:context="org.ema.lolcompanion.AlliesActivity">
+
+
+                <ImageView
+                    android:id="@+id/s1tips"
+                    android:layout_width="@dimen/stats_tips_size"
+                    android:layout_height="@dimen/stats_tips_size"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="@dimen/activity_horizontal_low_margin"
+                    android:clickable="true"
+                    android:onClick="showChampionTips"
+                    android:src="@drawable/tip" />
+
+                <TextView
+                    android:id="@+id/s1name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/stats_tips_size"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="start"
+                    android:shadowColor="#000000"
+                    android:shadowDx="3"
+                    android:shadowDy="3"
+                    android:shadowRadius="8"
+                    android:clickable="true"
+                    android:onClick="showChampionTips"
+                    android:text="VEIGAR"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/black_font" />
+
+            </LinearLayout>
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/s1Team"
@@ -107,13 +114,13 @@
                 android:layout_height="@dimen/stats_teamicon_size"
                 android:layout_alignParentRight="true"
                 android:src="@drawable/team_icon_1"
+                android:visibility="invisible"
                 app:riv_border_color="#FFFFFF"
                 app:riv_border_width="2dip"
                 app:riv_corner_radius="0dip"
                 app:riv_mutate_background="true"
                 app:riv_oval="true"
-                app:riv_tile_mode="clamp"
-                android:visibility="invisible"/>
+                app:riv_tile_mode="clamp" />
 
         </RelativeLayout>
 
@@ -319,8 +326,8 @@
                     android:id="@+id/s1Rank"
                     android:layout_width="@dimen/stats_rank_icon_size"
                     android:layout_height="@dimen/stats_rank_icon_size"
-                    android:layout_marginBottom="3dp"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="3dp"
                     android:layout_marginRight="@dimen/activity_horizontal_low_margin"
                     android:src="@drawable/rank_gold" />
 

@@ -155,9 +155,9 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
 
     public void showChampionTips(View v) {
         switch (mPager.getCurrentItem()){
-            case 0 : alliesFragment.showChampionTips(v);
+            case 0 : ennemiesFragment.showChampionTips(v);
                 break;
-            case 2 : ennemiesFragment.showChampionTips(v);
+            case 2 : alliesFragment.showChampionTips(v);
                 break;
         }
     }
@@ -165,9 +165,9 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
     @Override
     public void onDialogNeutralClick(DialogFragment dialog, int idRessource) {
         switch (mPager.getCurrentItem()){
-            case 0 : alliesFragment.onDialogNeutralClick(dialog, idRessource);
+            case 0 : ennemiesFragment.onDialogNeutralClick(dialog, idRessource);
                 break;
-            case 2 : ennemiesFragment.onDialogNeutralClick(dialog, idRessource);
+            case 2 : alliesFragment.onDialogNeutralClick(dialog, idRessource);
                 break;
         }
     }
@@ -180,9 +180,9 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         switch (mPager.getCurrentItem()){
-            case 0 : alliesFragment.onDialogNegativeClick(dialog);
+            case 0 : ennemiesFragment.onDialogNegativeClick(dialog);
                 break;
-            case 2 : ennemiesFragment.onDialogNegativeClick(dialog);
+            case 2 : alliesFragment.onDialogNegativeClick(dialog);
                 break;
         }
     }

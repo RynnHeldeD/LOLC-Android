@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.ema.lolcompanion.MainActivity;
@@ -42,11 +43,11 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
             }
         }
 
-        fillSummonerInformations(rootView, textRessourcesSummoner1,imageRessourcesSummoner1, summonersOpponentsList.get(0), 0, 100);
-        fillSummonerInformations(rootView, textRessourcesSummoner2,imageRessourcesSummoner2, summonersOpponentsList.get(1), 0, 100);
-        fillSummonerInformations(rootView, textRessourcesSummoner3,imageRessourcesSummoner3, summonersOpponentsList.get(2), 0, 100);
-        fillSummonerInformations(rootView, textRessourcesSummoner4,imageRessourcesSummoner4, summonersOpponentsList.get(3), 0, 100);
-        fillSummonerInformations(rootView, textRessourcesSummoner5,imageRessourcesSummoner5, summonersOpponentsList.get(4), 0, 100);
+        //We get the container where we are going to add all the champion lines
+        LinearLayout allies_container = (LinearLayout) rootView.findViewById(R.id.root_ennemies);
+        for(int idForLine = 0; idForLine < summonersOpponentsList.size(); idForLine++) {
+            fillSummonerInformations(allies_container, container,  idForLine, summonersOpponentsList.get(idForLine), 0, 100);
+        }
 
         return rootView;
     }
@@ -54,7 +55,10 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
     public void showChampionTips(View v) {
         DialogFragment dialog = new ChampionTipDialogFragment();
         Bundle args = new Bundle();
-        if(getResources().getResourceName(v.getId()).contains("1")){
+        args.putString("name", summonersOpponentsList.get(v.getId()).getChampion().getName());
+        args.putString("tips", summonersOpponentsList.get(v.getId()).getChampion().getAllyTips());
+        args.putInt("next", v.getId()+1);
+        /*if(getResources().getResourceName(v.getId()).contains("1")){
             args.putString("name", summonersOpponentsList.get(0).getChampion().getName());
             args.putString("tips", summonersOpponentsList.get(0).getChampion().getAllyTips());
             args.putInt("next", 1);
@@ -78,7 +82,7 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
             args.putString("name", summonersOpponentsList.get(4).getChampion().getName());
             args.putString("tips", summonersOpponentsList.get(4).getChampion().getAllyTips());
             args.putInt("next", 0);
-        }
+        }*/
         dialog.setArguments(args);
         dialog.show(getFragmentManager(), "tips");
     }
@@ -93,7 +97,7 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
         Bundle args = new Bundle();
         args.putString("name", summonersOpponentsList.get(next).getChampion().getName());
         args.putString("tips", summonersOpponentsList.get(next).getChampion().getAllyTips());
-        args.putInt("next", next == 4 ? 0 : next+1);
+        args.putInt("next", next == (summonersOpponentsList.size()-1) ? 0 : next+1);
         dialog_next.setArguments(args);
         dialog_next.show(getFragmentManager(), "tips");
     }

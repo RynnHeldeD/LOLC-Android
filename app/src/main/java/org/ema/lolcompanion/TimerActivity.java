@@ -31,11 +31,9 @@ import org.ema.utils.Timer;
 import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -168,7 +166,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
 
                 public void run(){
                     if (this.tbtn.isTriggered()) {
-                        simpleClickTimer(buttonID, 0, false, true);
+                        simpleClickTimer(buttonID, 0, false, false);
                         this.tbtn.setTriggered(false);
                     }
                 }
@@ -308,8 +306,6 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
         launchMainActivity();
     }
 
-
-
     //Fonctions pour les évènements WS
     public void simpleClickTimer(String buttonID,long delayOfTransfert, boolean fromWebSocket, boolean doTimerActivation){
 
@@ -350,7 +346,7 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
     }
 
     public void restartTimer(String buttonID, long timestamp, boolean fromWebSocket) {
-        TimerButton tbtn = getButtonFromIdString(buttonID);
+        /*TimerButton tbtn = getButtonFromIdString(buttonID);
         Timestamp tstmp = new Timestamp(new Date().getTime());
 
         if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
@@ -361,7 +357,8 @@ public class TimerActivity extends Activity implements SecureDialogFragment.Noti
             //On fait l'action sur le timerbutton
             tbtn.getTimer().onFinish();
             simpleClickTimer(buttonID, timestamp, true, false);
-        }
+        }*/
+
     }
 
     public void stopTimer(String buttonID, boolean fromWebSocket){

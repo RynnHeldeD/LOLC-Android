@@ -8,15 +8,17 @@ import org.ema.utils.Utils;
 import org.json.JSONObject;
 import org.ema.utils.Constant;
 
+import java.net.URLEncoder;
+
 /**
  * Created by romain on 08/05/2015.
  */
 public class SummonerDAO {
     public static Summoner getSummoner(String name){
-        //Get request
-        String jsonResult = Utils.getDocument(Constant.API_SUMMONER_INFO_URI + name.replaceAll(" ","%20"));
-
         try {
+            //Get request
+            String jsonResult = Utils.getDocument(Constant.API_SUMMONER_INFO_URI + URLEncoder.encode(name,"UTF-8"));
+
             //Player not exist
             if(jsonResult == null) {
                 return null;

@@ -93,37 +93,31 @@ public class MainActivity extends Activity {
         LayoutInflater inflater = getLayoutInflater();
         View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
         TextView text = (TextView) layout.findViewById(R.id.text);
-        text.setText("entering pending room...");
         Toast toast = new Toast(getApplicationContext());
         toast.setGravity(Gravity.BOTTOM, 0, 40);
         toast.setDuration(Toast.LENGTH_SHORT);
         toast.setView(layout);
-        toast.show();
 
         Intent intent = new Intent(this, PendingRoomActivity.class);
         EditText summoner_name = (EditText) findViewById(R.id.summoner_name);
         String message = summoner_name.getText().toString();
         Spinner spinner = (Spinner) findViewById(R.id.region_spinner);
         int position = spinner.getSelectedItemPosition();
-        if (!message.matches("([a-zA-Z0-9 ]){3,20}")) {
-            //TODO pop up erreur
-            Log.v("DAO", "Erreur dans le pseudo: " + message);
-        } else {
-            Constant.setRegion(Constant.regionsFromViewHashtable.get(spinner.getSelectedItem().toString()));
-            text.setText("logging ...");
+
+        Constant.setRegion(Constant.regionsFromViewHashtable.get(spinner.getSelectedItem().toString()));
+        text.setText("logging ...");
+        toast.show();
+        user = SummonerDAO.getSummoner(message);
+        if(user != null){
+            intent.putExtra(SUMMONER_NAME, message);
+            intent.putExtra("USER",user);
+            MainActivity.settingsManager.set(this, "summonerName", message);
+            MainActivity.settingsManager.set(this, "summonerRegion", String.valueOf(position));
+            startActivity(intent);
+        }
+        else {
+            text.setText("Player not found on " + spinner.getSelectedItem().toString().split(" ")[0]);
             toast.show();
-            user = SummonerDAO.getSummoner(message);
-            if(user != null){
-                intent.putExtra(SUMMONER_NAME, message);
-                intent.putExtra("USER",user);
-                MainActivity.settingsManager.set(this, "summonerName", message);
-                MainActivity.settingsManager.set(this, "summonerRegion", String.valueOf(position));
-                startActivity(intent);
-            }
-            else {
-                text.setText("Player not found on " + spinner.getSelectedItem().toString().split(" ")[0]);
-                toast.show();
-            }
         }
     }
 

@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 
-import org.ema.lolcompanion.CompanionActivity;
 import org.ema.lolcompanion.R;
 import org.ema.lolcompanion.WsEventHandling;
 import org.ema.model.business.Summoner;
@@ -26,6 +25,7 @@ import org.ema.utils.GlobalDataManager;
 import org.ema.utils.LoLStatActivity;
 import org.ema.utils.SecureDialogFragment;
 import org.ema.utils.SettingsManager;
+import org.ema.utils.SortSummonerId;
 import org.ema.utils.Timer;
 import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
@@ -75,6 +75,8 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
                 teamSummonersList.add(s);
             }
         }
+
+        Collections.sort(teamSummonersList, new SortSummonerId());
 
         // Changement des bitmap
         this.setTimerButtonsImage(teamSummonersList);

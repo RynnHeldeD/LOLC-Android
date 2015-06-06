@@ -1,13 +1,12 @@
 package org.ema.lolcompanion;
 
 import android.graphics.Bitmap;
-import android.os.SystemClock;
 import android.util.Log;
 
 import org.ema.model.business.Summoner;
+import org.ema.utils.GameTimestamp;
 import org.ema.utils.GlobalDataManager;
 import org.ema.utils.WebSocket;
-import org.java_websocket.client.WebSocketClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,9 +16,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by Constantin on 19/05/2015.
@@ -44,11 +40,16 @@ public class WsEventHandling {
 
                 switch (action){
                     case "timer":
-                        activateTimer(obj.getString("idSortGrille"), obj.getString("timestampDeclenchement"));
+                        activateTimer(obj.getString("idSortGrille"), obj.getLong("timestampDeclenchement"));
                         break;
                     case "playerList":
-                         updateChannelPlayers(obj.getJSONArray("allies"));
+                        startGameTimestamp(obj.getLong("timestamp"));
+                        updateChannelPlayers(obj.getJSONArray("allies"));
                         break;
+                    case "playerList_toNewAllies":
+                    case "playerList_toOldAllies":
+                         updateChannelPlayers(obj.getJSONArray("allies"));
+                         break;
                     case "timerDelay":
                         delayTimer(obj.getString("idSortGrille"));
                         break;
@@ -67,38 +68,12 @@ public class WsEventHandling {
         }
     }
 
-    public static void activateTimer(final String buttonIdGrid, String activationTimestamp){
+    public static void activateTimer(final String buttonIdGrid, Long activationTimestamp){
         Log.v("Websocket", "Timer activation received");
         long delayOfTransfert = 0;
 
-        SimpleDateFormat formatUTC = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss.SSS Z");
-        //formatUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
-        Timestamp tstmp;
-        try {
-            tstmp = new Timestamp(formatUTC.parse(formatUTC.format(new Date())).getTime());
-        } catch (ParseException e) {
-            tstmp = new Timestamp(new Date().getTime());
-            Log.v("Websocket","Impossible de parser la current date");
-        }
-
-        Timestamp currentTimestamp = Timestamp.valueOf(activationTimestamp);
-      /*  try{
-            Date parsedDate = formatUTCC.parse(activationTimestamp);
-            currentTimestamp = new Timestamp(parsedDate.getTime());
-        }catch(ParseException e){
-            Log.v("Websocket","Date to parse:" + activationTimestamp);
-            Log.v("Websocket","Erreur: impossible de parser la date reçue par le ws:" + e.getMessage());
-          //  currentTimestamp = new Timestamp(new Date().getTime());
-        }*/
-
-        try {
-            Log.v("Websocket","CurrentTimeStamp get time :" + currentTimestamp.getTime());
-            //on fait la difference entre les deux timestamp, et on a arrondis à la seconde
-            delayOfTransfert = tstmp.getTime() - currentTimestamp.getTime();
-            Log.v("Websocket","Delay of transfert: " + delayOfTransfert);
-        } catch (Exception e){
-            Log.v("Websocket","Erreur lors du calcul du delay of transfert");
-        }
+        delayOfTransfert = GameTimestamp.transfertDelay(activationTimestamp);
+        Log.v("Websocket","Delay of transfert: " + delayOfTransfert);
 
         final long DoT = delayOfTransfert;
         class WebSocketAction implements Runnable {
@@ -277,11 +252,10 @@ public class WsEventHandling {
         }
     }
 
-   /* class TimerGetTimeStamp extends TimerTask {
-        public void run() {
-            System.out.println("Timer task executed.");
-        }
-    }*/
+    public static void startGameTimestamp(long serverTimestamp) {
+        GameTimestamp.setGameTimestamp(serverTimestamp);
+    }
+
 
     public static void getErrorFromJson(JSONObject obj) {
         try {

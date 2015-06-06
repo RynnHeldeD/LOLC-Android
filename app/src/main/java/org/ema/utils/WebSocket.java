@@ -1,7 +1,5 @@
 package org.ema.utils;
 
-import android.os.Build;
-import android.os.SystemClock;
 import android.util.Log;
 
 import org.ema.lolcompanion.TimerActivity;
@@ -10,7 +8,6 @@ import org.ema.model.business.Summoner;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -18,6 +15,8 @@ import java.util.ArrayList;
 public class WebSocket {
 
     public static WebSocketClient mWebSocketClient;
+
+
 
     public static void connectWebSocket() {
         URI uri;
@@ -52,6 +51,8 @@ public class WebSocket {
                 }
                 GlobalDataManager.add("user",user);
 
+               //mWebSocketClient.send("{\"action\":\"pickedChampion\",\"gameId\":\"0\",\"teamId\":\"0\",\"championIconId\":\"0\",\"passphrase\":\""+ passphrase +"\"}");
+
                 mWebSocketClient.send("{\"action\":\"pickedChampion\",\"gameId\":\""+ user.getGameId() +"\",\"teamId\":\"" + user.getTeamId() + "\",\"championIconId\":\""+ user.getChampion().getIconName() +"\",\"passphrase\":\""+ passphrase +"\"}");
                 Log.v("Websocket","{\"action\":\"pickedChampion\",\"gameId\":\""+ user.getGameId() +"\",\"teamId\":\"" + user.getTeamId() + "\",\"championIconId\":\""+ user.getChampion().getIconName() +"\",\"passphrase\":\""+ passphrase +"\"}");
             }
@@ -64,12 +65,13 @@ public class WebSocket {
             @Override
             public void onClose(int i, String s, boolean b) {
                 Log.v("Websocket", "Closed :" + s);
-                System.exit(0);
+                TimerActivity.instance.handleDisconnection();
             }
 
             @Override
-            public void onError(Exception e) {
+            public void onError(Exception e)  {
                 Log.v("Websocket", "Error :" + e.getMessage());
+                this.onClose(0,"",true);
             }
 
         };

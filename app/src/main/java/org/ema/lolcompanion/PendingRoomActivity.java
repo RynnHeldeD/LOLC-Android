@@ -3,31 +3,27 @@ package org.ema.lolcompanion;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
-
-import android.util.Log;
 import android.widget.Toast;
 
 import org.ema.model.DAO.CurrentGameDAO;
 import org.ema.model.DAO.SummonerDAO;
 import org.ema.model.business.Summoner;
 import org.ema.utils.Constant;
-import org.ema.utils.Region;
 import org.ema.utils.GlobalDataManager;
-import java.lang.reflect.Array;
+import org.ema.utils.Region;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 

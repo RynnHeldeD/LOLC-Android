@@ -147,9 +147,6 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         }
     }
 
-    public void stopTimer(View v){
-        timerFragment.stopTimer(v);
-    }
 
     @Override
     public void onDialogNeutralClick(DialogFragment dialog, int idRessource) {

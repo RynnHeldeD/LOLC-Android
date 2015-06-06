@@ -73,10 +73,11 @@ public class LoLStatActivity extends FragmentActivity {
             }
 
             if (s.contains("LP")) {
-                if (summoner.getLeague().getDivision().toLowerCase().contains("unrancked"))
-                    ressource.setText(R.string.unrancked);
-                else
+                if (summoner.getLeague().getDivision().toLowerCase().contains("unranked"))
+                    ressource.setText("LEVEL " + summoner.getLevel());
+                else {
                     ressource.setText(summoner.getLeague().getDivision().toUpperCase() + " " + String.valueOf(summoner.getLeague().getLeaguePoints()) + " LP");
+                }
             }
         }
 

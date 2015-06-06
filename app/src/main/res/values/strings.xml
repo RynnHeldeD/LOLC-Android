@@ -43,7 +43,7 @@
     <string name="hello_world">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam placerat magna sit amet elit malesuada, et maximus odio gravida. Vivamus sit amet dictum nulla, fringilla consectetur nibh. In vitae pulvinar neque, vitae congue enim. Nullam ultricies erat quis lectus tristique, in finibus nibh laoreet. Nunc egestas consectetur orci vitae finibus. Curabitur molestie accumsan tempor. Aenean eget mauris sed arcu lacinia molestie vel et augue. Sed elementum pulvinar dignissim. Vivamus pha
     </string>
-    <string name="unrancked">UNRANCKED</string>
+    <string name="unranked">UNRANKED</string>
 
     <!-- Ennemies screen -->
     <string name="title_activity_ennemies">EnnemiesActivity</string>

@@ -26,7 +26,7 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout resource that'll be returned
-        View rootView = inflater.inflate(R.layout.activity_ennemies, container, false);
+        View rootView = inflater.inflate(R.layout.activity_ennemies, null, false);
         //setting the font for title
         Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
         TextView ennemies = (TextView) rootView.findViewById(R.id.ennemies);
@@ -38,9 +38,9 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
 
         summonersOpponentsList = new ArrayList<Summoner>();
         for(Summoner summoner : summonersList){
-            //if(summoner.getTeamId() != current.getTeamId()){
+            if(summoner.getTeamId() != current.getTeamId()){
                 summonersOpponentsList.add(summoner);
-            //}
+            }
         }
 
         //We get the container where we are going to add all the champion lines

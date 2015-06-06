@@ -31,7 +31,7 @@ public class LoLStatActivity extends Fragment {
     protected void fillSummonerInformations(LinearLayout containerView, int idForLine, Summoner summoner, int minPerformance, int maxPerformance) {
 
         Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
-        View rootview = getActivity().getLayoutInflater().inflate(R.layout.line_champion, null);
+        View rootview = getActivity().getLayoutInflater().inflate(R.layout.line_champion, containerView, false);
         //setting the fonts for the ressources
         for (String s : textRessourcesSummoner) {
             int IDRessource = getResources().getIdentifier(s, "id", getActivity().getBaseContext().getPackageName());
@@ -39,7 +39,7 @@ public class LoLStatActivity extends Fragment {
             ressource.setTypeface(font);
 
             if (s.contains("name")) {
-                ressource.setText(summoner.getChampion().getName());
+                ressource.setText(summoner.getName());
                 ressource.setId(idForLine);
             }
             //if Statistics object is set
@@ -69,7 +69,7 @@ public class LoLStatActivity extends Fragment {
 
             if (s.contains("LP")) {
                 if (summoner.getLeague().getDivision().toLowerCase().contains("unrancked"))
-                    ressource.setText(R.string.unrancked);
+                    ressource.setText(summoner.getLevel());
                 else
                     ressource.setText(summoner.getLeague().getDivision().toUpperCase() + " " + String.valueOf(summoner.getLeague().getLeaguePoints()) + " LP");
             }

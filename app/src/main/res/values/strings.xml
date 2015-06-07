@@ -27,8 +27,6 @@
     <string name="title_activity_pending_room">PendingRoomActivity</string>
     <string name="pending">Pending Room</string>
     <string name="pending_description">The application will start automatically with your online game</string>
-    <string name="pending_initial_state">Waiting for game signal...</string>
-    <string name="pending_loading_state">Loading your data...</string>
 
     <!-- Timer room -->
     <string name="title_activity_timer">TimerActivity</string>
@@ -60,5 +58,11 @@
     <string name="confirm_dialog">OK</string>
     <string name="title_activity_companion">CompanionActivity</string>
     <string name="title_activity_test">TestActivity</string>
+
+    <!-- TOASTS -->
+    <string name="pending_logging">logging&#8230;</string>
+    <string name="pending_waiting_signal">waiting for game signal&#8230;</string>
+    <string name="pending_loading_game">loading game data&#8230;</string>
+    <string name="disconnected_from_ws">disconnected from server</string>
 
 </resources>

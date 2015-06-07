@@ -20,17 +20,14 @@
             style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:max="100"
             android:maxHeight="@dimen/stats_summoner_size"
             android:maxWidth="4dip"
             android:minHeight="@dimen/stats_summoner_size"
-            android:minWidth="4dip"
-            android:progress="50" />
+            android:minWidth="4dip" />
 
         <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="@dimen/stats_summoner_size"
-            android:layout_height="@dimen/stats_summoner_size"
-            android:layout_centerVertical="true">
+            android:layout_height="@dimen/stats_summoner_size">
 
             <ImageView
                 android:id="@+id/s1Img"

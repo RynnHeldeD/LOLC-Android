@@ -1,4 +1,4 @@
-package org.ema.utils;
+package org.ema.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import org.ema.fragments.TimersFragment;
 import org.ema.lolcompanion.R;
-import org.ema.lolcompanion.CompanionActivity;
 import org.ema.model.business.Summoner;
 
 public class SecureDialogFragment extends DialogFragment {
@@ -56,16 +55,16 @@ public class SecureDialogFragment extends DialogFragment {
 
         //Building the Dialog
         Typeface font = Typeface.createFromAsset(this.getActivity().getAssets(), "fonts/lol.ttf");
-        TextView advice_title = (TextView) dialogLayout.findViewById(R.id.dialog_advice_title);
+        TextView advice_title = (TextView) dialogLayout.findViewById(R.id.dialog_title);
         advice_title.setText(R.string.secure_timers);
         advice_title.setTypeface(font);
 
-        LinearLayout layout = (LinearLayout) dialogLayout.findViewById(R.id.dialog_advices);
+        LinearLayout layout = (LinearLayout) dialogLayout.findViewById(R.id.dialog_container);
         layout.setPadding(15,0,15,0);
         LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         TextView tv = new TextView(this.getActivity());
         tv.setText(R.string.secure_timers_text);
-        tv.setPadding(10, 5, 10, 5);
+        tv.setPadding(5, 10, 5, 10);
         tv.setTextSize(getResources().getDimension(R.dimen.tips_champion_font));
         tv.setTextColor(getResources().getColor(R.color.black_font));
         layout.addView(tv, tvParams);
@@ -78,7 +77,7 @@ public class SecureDialogFragment extends DialogFragment {
             et.setText(TimersFragment.settingsManager.get(this.getActivity(), "passphrase"));
         }
         else et.setHint(R.string.secure_timers_edit);
-        tv.setPadding(10,5,10,5);
+        tv.setPadding(5, 10, 5, 10);
         tv.setTextSize(getResources().getDimension(R.dimen.tips_champion_font));
         et.setTextColor(getResources().getColor(R.color.grey_font));
         layout.addView(et, tvParams);

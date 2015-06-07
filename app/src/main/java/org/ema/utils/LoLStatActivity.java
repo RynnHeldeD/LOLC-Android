@@ -177,6 +177,8 @@ public class LoLStatActivity extends Fragment {
                     summonerPerf.setProgressDrawable(getResources().getDrawable(R.drawable.progress_red));
                     //summonerPerf.getProgressDrawable().setColorFilter(getResources().getColor(R.color.performance_bar_danger), PorterDuff.Mode.DST);
                 }
+                //We set a new ID so the progressBar is Unique for each summoner and don't reset
+                summonerPerf.setId(idForLine+100);
             }
         }
 

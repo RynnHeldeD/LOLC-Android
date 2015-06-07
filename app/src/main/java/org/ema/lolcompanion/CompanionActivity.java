@@ -17,16 +17,17 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import org.ema.dialogs.CooldownTimersDialogFragment;
 import org.ema.fragments.AlliesFragment;
 import org.ema.fragments.EnnemiesFragment;
 import org.ema.fragments.TimersFragment;
-import org.ema.utils.ChampionTipDialogFragment;
-import org.ema.utils.SecureDialogFragment;
+import org.ema.dialogs.ChampionTipDialogFragment;
+import org.ema.dialogs.SecureDialogFragment;
 import org.ema.utils.TimerButton;
 
 
 
-public class CompanionActivity extends FragmentActivity implements ChampionTipDialogFragment.NoticeDialogListener, SecureDialogFragment.NoticeDialogListener {
+public class CompanionActivity extends FragmentActivity implements ChampionTipDialogFragment.NoticeDialogListener, SecureDialogFragment.NoticeDialogListener, CooldownTimersDialogFragment.NoticeDialogListener {
 
     static final int NUMBER_OF_TABS = 3;
     private String[] tabs = { "Ennemies", "Timers", "Allies" };
@@ -147,6 +148,33 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         }
     }
 
+    public void showCooldownReducers(View v) {
+        Bundle args = new Bundle();
+        switch (v.getId()) {
+            case R.id.b11:
+                args.putString("name", ennemiesFragment.getSummonersOpponentsList().get(0).getChampion().getName());
+                args.putString("ennemy", "b11");
+                break;
+            case R.id.b21:
+                args.putString("name", ennemiesFragment.getSummonersOpponentsList().get(1).getChampion().getName());
+                args.putString("ennemy", "b21");
+                break;
+            case R.id.b31:
+                args.putString("name", ennemiesFragment.getSummonersOpponentsList().get(2).getChampion().getName());
+                args.putString("ennemy", "b31");
+                break;
+            case R.id.b41:
+                args.putString("name", ennemiesFragment.getSummonersOpponentsList().get(3).getChampion().getName());
+                args.putString("ennemy", "b41");
+                break;
+            case R.id.b51:
+                args.putString("name", ennemiesFragment.getSummonersOpponentsList().get(4).getChampion().getName());
+                args.putString("ennemy", "b51");
+                break;
+        }
+        timerFragment.showCooldownReducers(v, args);
+    }
+
 
     @Override
     public void onDialogNeutralClick(DialogFragment dialog, int idRessource) {
@@ -160,7 +188,12 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String passphrase) {
-        timerFragment.onDialogPositiveClick(dialog,passphrase);
+        timerFragment.onDialogPositiveClick(dialog, passphrase);
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, int cooldown, String ennemy_button_id) {
+        timerFragment.onDialogPositiveClick(dialog, cooldown, ennemy_button_id);
     }
 
     @Override
@@ -196,7 +229,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         this.runOnUiThread( new Runnable() {
                                 @Override
                                 public void run() {
-                Toast.makeText(CompanionActivity.this, "Disconnected from server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CompanionActivity.this, getResources().getString(R.string.disconnected_from_ws), Toast.LENGTH_SHORT).show();
             }
         }
         );

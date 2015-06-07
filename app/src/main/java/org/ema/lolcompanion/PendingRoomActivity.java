@@ -56,14 +56,11 @@ public class PendingRoomActivity extends Activity {
             toast.setDuration(Toast.LENGTH_SHORT);
             switch(msg.arg1) {
                 case 2:
-                    text.setText("waiting for game signal...");
+                    text.setText(getResources().getString(R.string.pending_waiting_signal));
                     break;
                 case 3:
                     toast.setDuration(Toast.LENGTH_LONG);
-                    text.setText("loading game data...");
-                    break;
-                case 4:
-                    text.setText("loading game icons...");
+                    text.setText(getResources().getString(R.string.pending_loading_game));
                     break;
             }
             toast.setGravity(Gravity.BOTTOM, 0, 40);

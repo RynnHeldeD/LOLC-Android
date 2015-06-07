@@ -18,13 +18,14 @@ import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 
+import org.ema.dialogs.CooldownTimersDialogFragment;
 import org.ema.lolcompanion.R;
 import org.ema.lolcompanion.WsEventHandling;
 import org.ema.model.business.Summoner;
 import org.ema.utils.GameTimestamp;
 import org.ema.utils.GlobalDataManager;
 import org.ema.utils.LoLStatActivity;
-import org.ema.utils.SecureDialogFragment;
+import org.ema.dialogs.SecureDialogFragment;
 import org.ema.utils.SettingsManager;
 import org.ema.utils.SortSummonerId;
 import org.ema.utils.Timer;
@@ -37,7 +38,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class TimersFragment extends LoLStatActivity implements SecureDialogFragment.NoticeDialogListener {
+public class TimersFragment extends LoLStatActivity implements SecureDialogFragment.NoticeDialogListener, CooldownTimersDialogFragment.NoticeDialogListener {
 
     public HashMap<String,Long> timerMap;
     public static SettingsManager settingsManager = null;
@@ -108,7 +109,9 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
         riv.setTileModeY(Shader.TileMode.CLAMP);
 
         //adding a icon to the channel summary
-        channelSummary.addView(riv, 50, 50);
+        channelSummary.addView(riv,
+                Math.round(getResources().getDimension(R.dimen.timers_summoner_channel_icon_size)),
+                Math.round(getResources().getDimension(R.dimen.timers_summoner_channel_icon_size)));
     }
 
     public void secureAppSharing(View v){
@@ -116,6 +119,13 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
         dialog.show(getFragmentManager(), "tips");
     }
 
+    public void showCooldownReducers(View v, Bundle args){
+        DialogFragment dialog = new CooldownTimersDialogFragment();
+        dialog.show(getFragmentManager(), "cooldowns");
+        dialog.setArguments(args);
+    }
+
+    //Function that handles passphrase dialog returned vars
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String passphrase) {
         // Websocket - secure channel
@@ -126,6 +136,13 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
             this.settingsManager.set(this.getActivity(), "passphrase", passphrase);
             WsEventHandling.switchChannel(passphrase);
         }
+    }
+
+    //function that handles cooldown dialod
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, int cooldown, String ennemy_button_id) {
+        // Websocket - secure channel
+        Log.v("MIC", "Cooldown For " + ennemy_button_id + " reduced by " + cooldown + "%");
     }
 
     @Override

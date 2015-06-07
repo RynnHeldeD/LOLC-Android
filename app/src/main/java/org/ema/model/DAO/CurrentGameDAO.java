@@ -22,9 +22,9 @@ import java.util.Collections;
 
 public class CurrentGameDAO {
 
-    public static void loadStatisticsDetailed(ArrayList<Summoner> summoners) {
+    public static void loadStatisticsDetailed(Summoner summoner) {
         //Load images of mostPlayedChampions
-        loadMostPlayedChampionsImages(summoners);
+        loadMostPlayedChampionsImages(summoner);
     }
 
     public static ArrayList<Summoner> getSummunerListInGameFromCurrentUser(Summoner user) {
@@ -262,7 +262,7 @@ public class CurrentGameDAO {
 
         //Coefficient values / 10
         //Set a ratio between 0 and 1
-        summoner.getChampion().getStatistic().setPerformance((winRateWithChampion*(float)2.5+nbGamesWithChampion*(float)2.5+5*rank)/10);
+        summoner.getChampion().getStatistic().setPerformance((winRateWithChampion * (float) 2.5 + nbGamesWithChampion * (float) 2.5 + 5 * rank) / 10);
      }
 
     public static void getCreepChartInfo(Summoner user) {
@@ -443,19 +443,16 @@ public class CurrentGameDAO {
     }
 
     //Load async images
-    public static void loadMostPlayedChampionsImages(ArrayList<Summoner> summoners) {
+    public static void loadMostPlayedChampionsImages(Summoner summoner) {
         try {
             JSONObject jsonChampions = new JSONObject(Utils.getDocumentAndCheck(Constant.API_CHAMPION_URI,5));
 
-            for(Summoner current : summoners)
-            {
-                if(current.getMostChampionsPlayed() != null) {
-                    for(int i = 0; i < current.getMostChampionsPlayed().length; i++) {
-                        //set champion
-                        JSONObject championJson = (JSONObject) ((JSONObject)jsonChampions.get("data")).get(((Integer)current.getMostChampionsPlayed()[i].getId()).toString());
-                        current.getMostChampionsPlayed()[i].setName(championJson.get("name").toString());
-                        current.getMostChampionsPlayed()[i].setIconName(((JSONObject) championJson.get("image")).get("full").toString());
-                    }
+            if(summoner.getMostChampionsPlayed() != null) {
+                for(int i = 0; i < summoner.getMostChampionsPlayed().length; i++) {
+                    //set champion
+                    JSONObject championJson = (JSONObject) ((JSONObject)jsonChampions.get("data")).get(((Integer)summoner.getMostChampionsPlayed()[i].getId()).toString());
+                    summoner.getMostChampionsPlayed()[i].setName(championJson.get("name").toString());
+                    summoner.getMostChampionsPlayed()[i].setIconName(((JSONObject) championJson.get("image")).get("full").toString());
                 }
             }
         }

@@ -32,7 +32,7 @@ public class CurrentGameDAO {
         JSONArray matchHistory = getMatchHistory(summoner, numberOfGamesAnalyzed);
         if(matchHistory != null ) {
             getSummonerFavoriteBuild(summoner, matchHistory);
-            //getCreepChartInfo(summoner, matchHistory);
+            getCreepChartInfo(summoner, matchHistory);
         }
 
         while(!summoner.areImagesMostPlayedChampionsLoaded() || !summoner.getChampion().areImagesBuildLoaded()){
@@ -227,9 +227,14 @@ public class CurrentGameDAO {
                     death/= (win + loose);
                 }
             }
+
             Statistic statsUser = new Statistic(kill, death, assist, win, loose, (float) 0, (float) 0, (float) 0, null);
             user.getChampion().setStatistic(statsUser);
-            //getCreepChartInfo(user);
+            int numberOfGamesAnalyzed = 3;
+            JSONArray matchHistory = getMatchHistory(user, numberOfGamesAnalyzed);
+            if(matchHistory != null ) {
+                getDamageDealtAndDamageTaken(user, matchHistory);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

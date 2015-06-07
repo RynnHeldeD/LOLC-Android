@@ -26,11 +26,11 @@ import java.util.Iterator;
 
 public class CurrentGameDAO {
 
+    public static int numberOfGamesAnalyzed = 3;
     public static void loadStatisticsDetailed(Summoner summoner) {
         //Load images of mostPlayedChampions
         loadMostPlayedChampionsImages(summoner);
 
-        int numberOfGamesAnalyzed = 3;
         JSONArray matchHistory = getMatchHistory(summoner, numberOfGamesAnalyzed);
         if(matchHistory != null ) {
             getSummonerFavoriteBuild(summoner, matchHistory);
@@ -237,7 +237,6 @@ public class CurrentGameDAO {
 
             Statistic statsUser = new Statistic(kill, death, assist, win, loose, (float) 0, (float) 0, (float) 0, null);
             user.getChampion().setStatistic(statsUser);
-            int numberOfGamesAnalyzed = 3;
             JSONArray matchHistory = getMatchHistory(user, numberOfGamesAnalyzed);
             if(matchHistory != null ) {
                 getDamageDealtAndDamageTaken(user, matchHistory);

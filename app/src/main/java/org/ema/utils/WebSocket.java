@@ -65,7 +65,13 @@ public class WebSocket {
             @Override
             public void onClose(int i, String s, boolean b) {
                 Log.v("Websocket", "Closed :" + s);
-                CompanionActivity.instanceCompanion.handleDisconnection();
+                try {
+                    CompanionActivity.instanceCompanion.handleDisconnection();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
 
             @Override

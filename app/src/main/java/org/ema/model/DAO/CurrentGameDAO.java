@@ -25,6 +25,12 @@ public class CurrentGameDAO {
     public static void loadStatisticsDetailed(Summoner summoner) {
         //Load images of mostPlayedChampions
         loadMostPlayedChampionsImages(summoner);
+        int numberOfGamesAnalyzed = 3;
+        JSONArray matchHistory = getMatchHistory(summoner, numberOfGamesAnalyzed);
+        if(matchHistory != null ) {
+            getSummonerFavoriteBuild(summoner, matchHistory);
+            getCreepChartInfo(summoner, matchHistory);
+        }
     }
 
     public static ArrayList<Summoner> getSummunerListInGameFromCurrentUser(Summoner user) {
@@ -216,7 +222,7 @@ public class CurrentGameDAO {
             }
             Statistic statsUser = new Statistic(kill, death, assist, win, loose, (float) 0, (float) 0, (float) 0, null);
             user.getChampion().setStatistic(statsUser);
-            getCreepChartInfo(user);
+            //getCreepChartInfo(user);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -265,7 +271,7 @@ public class CurrentGameDAO {
         summoner.getChampion().getStatistic().setPerformance((winRateWithChampion * (float) 2.5 + nbGamesWithChampion * (float) 2.5 + 5 * rank) / 10);
      }
 
-    public static void getCreepChartInfo(Summoner user) {
+    public static void getCreepChartInfo(Summoner user, JSONArray matchHistory) {
         JSONObject jsonResult;
         int numberOfGamesAnalyzed = 3;
         try {
@@ -283,9 +289,9 @@ public class CurrentGameDAO {
                 zeroToTen = tenToTwenty = twentyToThirty = thirtyToEnd = 0;
                 int numberOfValueZeroToTen, numberOfValueTenToTwenty, numberOfValueTwentyToThirsty, numberOfValueThirtyToEnd;
                 numberOfValueZeroToTen = numberOfValueTenToTwenty = numberOfValueTwentyToThirsty = numberOfValueThirtyToEnd = 0;
-                ArrayList<int[]> itemHistoy = new ArrayList<>();
+                /*ArrayList<int[]> itemHistoy = new ArrayList<>();
                 int[] test = new int[2];
-                int[] matchItemHistory = new int[7];
+                int[] matchItemHistory = new int[7];*/
 
                 for (int i = 0; i < jsonMatches.length(); i++) {
                     if(!jsonMatches.getJSONObject(i).isNull("participants")) {
@@ -351,8 +357,8 @@ public class CurrentGameDAO {
                     }
                 }
 
-                Collections.sort(itemHistoy, new SortIntegerTabArrayList());
-                /*Item[] Build = new Item[7];
+                /*Collections.sort(itemHistoy, new SortIntegerTabArrayList());
+                Item[] Build = new Item[7];
                 for(int i=0;i<7;i++)
                 {
                     Build[i] = new Item(String.valueOf(itemHistoy.get(i)[0]) + ".png", null);
@@ -700,6 +706,83 @@ public class CurrentGameDAO {
         } catch(Exception e){
             e.printStackTrace();
             Log.v("Erreur creep", e.getMessage());
+        }
+    }
+
+    public static void getSummonerFavoriteBuild(Summoner summoner, JSONArray matchHistory) {
+
+        ArrayList<int[]> itemHistoy = new ArrayList<>();
+        int[] matchItemHistory = new int[7];
+        JSONArray jsonParticipants = null;
+        try {
+            for (int i = 0; i < matchHistory.length(); i++) {
+                if (!matchHistory.getJSONObject(i).isNull("participants")) {
+                    jsonParticipants = matchHistory.getJSONObject(i).getJSONArray("participants");
+                    matchItemHistory = getUserFavoiteBuild(jsonParticipants);
+                    if (i == 0) {
+                        matchItemHistory = getUserFavoiteBuild(jsonParticipants);
+                        for (int j = 0; j < 7; j++) {
+                            int[] item = new int[2];
+                            item[0] = matchItemHistory[j];
+                            item[1] = 0;
+                            itemHistoy.add(item);
+                        }
+                    } else for (int j = 0; j < 7; j++) {
+
+                        boolean found = false;
+                        for (int k = 0; k < itemHistoy.size(); k++) {
+                            if (itemHistoy.get(k)[0] == matchItemHistory[j]) {
+                                itemHistoy.get(k)[1]++;
+                                found = true;
+                            }
+                        }
+                        if (!found) {
+                            //Log.v("DAO", "Item into, user : " + user.getName());
+                            int itemID = matchItemHistory[j];
+                            if (itemID != 0) {
+                                String jsonItems = Utils.getDocument(Constant.API_ITEMS + itemID + "?itemData=into");
+                                JSONObject result = new JSONObject(jsonItems);
+                                if (result.isNull("into")) {
+                                    int[] newItem = new int[2];
+                                    newItem[0] = itemID;
+                                    newItem[1] = 0;
+                                    itemHistoy.add(newItem);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Collections.sort(itemHistoy, new SortIntegerTabArrayList());
+        Item[] Build = new Item[7];
+        for(int i=0;i<7;i++)
+        {
+            Build[i] = new Item(String.valueOf(itemHistoy.get(i)[0]) + ".png", null);
+        }
+        summoner.getChampion().setBuild(Build);
+        } catch (Exception e){
+            e.printStackTrace();
+            Log.v("Erreur creep", e.getMessage());
+        }
+    }
+
+    public static JSONArray getMatchHistory(Summoner summoner, int numberOfGamesAnalyzed){
+        JSONObject jsonResult;
+        try {
+            jsonResult = new JSONObject(Utils.getDocument(Constant.API_MATCH_HISTORY_URI +
+                    summoner.getId() +
+                    "?championIds=" +
+                    summoner.getChampion().getId() +
+                    "&rankedQueus=RANKED_SOLO_5x5&beginIndex=" + 0 + "&endIndex=" + numberOfGamesAnalyzed));
+            JSONArray jsonMatches = null;
+            if(!jsonResult.isNull("matches")) {
+                jsonMatches = jsonResult.getJSONArray("matches");
+            }
+            return jsonMatches;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.v("Erreur creep", e.getMessage());
+            return null;
         }
     }
 }

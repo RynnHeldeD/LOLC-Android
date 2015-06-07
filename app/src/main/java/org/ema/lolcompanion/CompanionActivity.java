@@ -23,13 +23,13 @@ import org.ema.fragments.TimersFragment;
 import org.ema.utils.ChampionTipDialogFragment;
 import org.ema.utils.SecureDialogFragment;
 import org.ema.utils.TimerButton;
-
+import org.ema.utils.WebSocket;
 
 
 public class CompanionActivity extends FragmentActivity implements ChampionTipDialogFragment.NoticeDialogListener, SecureDialogFragment.NoticeDialogListener {
 
     static final int NUMBER_OF_TABS = 3;
-    private String[] tabs = { "Ennemies", "Timers", "Allies" };
+    private String[] tabs = {"Ennemies", "Timers", "Allies"};
     CompanionAdapter cpAdapter;
     ViewPager mPager;
     PagerTabStrip tab_strp;
@@ -49,7 +49,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         cpAdapter = new CompanionAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.companion_pager);
         mPager.setAdapter(cpAdapter);
-        tab_strp=(PagerTabStrip)findViewById(R.id.companion_title_strip);
+        tab_strp = (PagerTabStrip) findViewById(R.id.companion_title_strip);
         tab_strp.setTextColor(Color.WHITE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
@@ -74,58 +74,59 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                     return timerFragment;
                 case 2:
                     return alliesFragment;
-                default: return ennemiesFragment;
+                default:
+                    return ennemiesFragment;
             }
         }
 
         @Override
-        public CharSequence getPageTitle(int position){
+        public CharSequence getPageTitle(int position) {
             return tabs[position];
         }
     }
 
     //On cr�er une deuxi�me fonction avec un param�tre en plus car on ne peut pas passer de param�tres depuis la vue
-    public void timerListener(View tbt){
+    public void timerListener(View tbt) {
         timerListener(tbt, false, 0);
     }
 
 
     //This function handle the onclick (short) events for all buttons on the timer view
-    public void timerListener(View tbt, boolean fromWebSocket, long delayOfTransfert){
+    public void timerListener(View tbt, boolean fromWebSocket, long delayOfTransfert) {
         TimerButton tbtn = (TimerButton) tbt;
         //Name of the clicked button => example : b21
         String IDButton = getResources().getResourceName(tbtn.getId());
         //button ID formated like "b12"
         String buttonID = IDButton.substring(IDButton.lastIndexOf("/") + 1);
 
-        java.util.Date date= new java.util.Date();
+        java.util.Date date = new java.util.Date();
         long now = date.getTime();
         long btnTimestp = tbtn.getClickedTimestamp();
         tbtn.setClickedTimestamp(now);
 
-        if(!tbtn.isTriggered()){
+        if (!tbtn.isTriggered()) {
             tbtn.setTriggered(true);
 
             class PostponedClick implements Runnable {
                 public TimerButton tbtn;
                 public String buttonID;
 
-                public PostponedClick(TimerButton tbtn, String buttonID){
+                public PostponedClick(TimerButton tbtn, String buttonID) {
                     this.tbtn = tbtn;
                     this.buttonID = buttonID;
                 }
 
-                public void run(){
+                public void run() {
                     if (this.tbtn.isTriggered()) {
                         Log.v("DAO", this.buttonID + " simple click postponed");
-                        timerFragment.simpleClickTimer(buttonID, 0, false,false);
+                        timerFragment.simpleClickTimer(buttonID, 0, false, false);
                         this.tbtn.setTriggered(false);
                     }
                 }
             }
             tbtn.postDelayed(new PostponedClick(tbtn, buttonID), 200);
         } else {
-            if((now <= btnTimestp + TimerButton.DELAY)){
+            if ((now <= btnTimestp + TimerButton.DELAY)) {
                 //TODO : nettoyer le double clic
             }
             tbtn.setTriggered(false);
@@ -134,15 +135,17 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
 
 
     // DIALOG HANDLERS FOR ALL FRAGMENTS
-    public void secureAppSharing(View v){
+    public void secureAppSharing(View v) {
         timerFragment.secureAppSharing(v);
     }
 
     public void showChampionTips(View v) {
-        switch (mPager.getCurrentItem()){
-            case 0 : ennemiesFragment.showChampionTips(v);
+        switch (mPager.getCurrentItem()) {
+            case 0:
+                ennemiesFragment.showChampionTips(v);
                 break;
-            case 2 : alliesFragment.showChampionTips(v);
+            case 2:
+                alliesFragment.showChampionTips(v);
                 break;
         }
     }
@@ -150,25 +153,29 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
 
     @Override
     public void onDialogNeutralClick(DialogFragment dialog, int idRessource) {
-        switch (mPager.getCurrentItem()){
-            case 0 : ennemiesFragment.onDialogNeutralClick(dialog, idRessource);
+        switch (mPager.getCurrentItem()) {
+            case 0:
+                ennemiesFragment.onDialogNeutralClick(dialog, idRessource);
                 break;
-            case 2 : alliesFragment.onDialogNeutralClick(dialog, idRessource);
+            case 2:
+                alliesFragment.onDialogNeutralClick(dialog, idRessource);
                 break;
         }
     }
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String passphrase) {
-        timerFragment.onDialogPositiveClick(dialog,passphrase);
+        timerFragment.onDialogPositiveClick(dialog, passphrase);
     }
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
-        switch (mPager.getCurrentItem()){
-            case 0 : ennemiesFragment.onDialogNegativeClick(dialog);
+        switch (mPager.getCurrentItem()) {
+            case 0:
+                ennemiesFragment.onDialogNegativeClick(dialog);
                 break;
-            case 2 : alliesFragment.onDialogNegativeClick(dialog);
+            case 2:
+                alliesFragment.onDialogNegativeClick(dialog);
                 break;
         }
     }
@@ -192,33 +199,46 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         return super.onKeyDown(keyCode, event);
     }
 
-    public void handleDisconnection(){
-        this.runOnUiThread( new Runnable() {
-                                @Override
-                                public void run() {
-                Toast.makeText(CompanionActivity.this, "Disconnected from server", Toast.LENGTH_SHORT).show();
-            }
-        }
+    public void handleDisconnection() {
+        this.runOnUiThread(new Runnable() {
+                               @Override
+                               public void run() {
+                                   if (!WebSocket.alreadyDisconnected) {
+                                       Toast.makeText(CompanionActivity.this, "Disconnected from server", Toast.LENGTH_SHORT).show();
+                                   }
+                                   CompanionActivity.instance.cleanChannelSummary();
+                                   //On dis au websocket que maintenant ça ne sert plus a rien d'afficher des messages d'erreur car l'utilisteur sais qu'il est déconnecté
+                                   WebSocket.alreadyDisconnected = true;
+                               }
+                           }
         );
-        //launchMainActivity();
     }
 
-    public void launchMainActivity(){
+    public void reconnectionNotification() {
+        this.runOnUiThread(new Runnable() {
+                               @Override
+                               public void run() {
+                                   Toast.makeText(CompanionActivity.this, "You've been reconnected", Toast.LENGTH_SHORT).show();
+                                   WebSocket.alreadyDisconnected = false;
+                               }
+                           }
+        );
+    }
+
+    public void launchMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         instance = timerFragment;
         instanceCompanion = this;
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         instance = null;
         instanceCompanion = null;

@@ -6,6 +6,7 @@ import org.ema.model.business.League;
 import org.ema.model.business.Spell;
 import org.ema.model.business.Statistic;
 import org.ema.model.business.Summoner;
+import org.ema.model.business.Item;
 import org.ema.utils.Constant;
 import org.ema.utils.SortChampionsArrayList;
 import org.ema.utils.SortIntegerTabArrayList;
@@ -215,7 +216,7 @@ public class CurrentGameDAO {
             }
             Statistic statsUser = new Statistic(kill, death, assist, win, loose, (float) 0, (float) 0, (float) 0, null);
             user.getChampion().setStatistic(statsUser);
-            //getCreepChartInfo(user);
+            getCreepChartInfo(user);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -266,16 +267,17 @@ public class CurrentGameDAO {
 
     public static void getCreepChartInfo(Summoner user) {
         JSONObject jsonResult;
+        int numberOfGamesAnalyzed = 3;
         try {
             jsonResult = new JSONObject(Utils.getDocument(Constant.API_MATCH_HISTORY_URI +
                     user.getId() +
                     "?championIds=" +
                     user.getChampion().getId() +
-                    "&rankedQueus=RANKED_SOLO_5x5&beginIndex=" + 0 + "&endIndex=" + 10));
+                    "&rankedQueus=RANKED_SOLO_5x5&beginIndex=" + 0 + "&endIndex=" + numberOfGamesAnalyzed));
             JSONArray jsonMatches = null;
             if(!jsonResult.isNull("matches")) {
                 jsonMatches = jsonResult.getJSONArray("matches");
-
+                getDamageDealtAndDamageTaken(user, jsonMatches);
                 JSONArray jsonParticipants = null;
                 double zeroToTen, tenToTwenty, twentyToThirty, thirtyToEnd;
                 zeroToTen = tenToTwenty = twentyToThirty = thirtyToEnd = 0;
@@ -288,6 +290,7 @@ public class CurrentGameDAO {
                 for (int i = 0; i < jsonMatches.length(); i++) {
                     if(!jsonMatches.getJSONObject(i).isNull("participants")) {
                         jsonParticipants = jsonMatches.getJSONObject(i).getJSONArray("participants");
+/*
                         matchItemHistory = getUserFavoiteBuild(jsonParticipants);
                         if(i==0)
                         {
@@ -323,8 +326,7 @@ public class CurrentGameDAO {
                                     }
                                 }
                             }
-
-                        }
+                        }*/
                         if(!jsonParticipants.getJSONObject(0).isNull("timeline")) {
                             if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").isNull("creepsPerMinDeltas")) {
                                 if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("zeroToTen")) {
@@ -353,7 +355,7 @@ public class CurrentGameDAO {
                 /*Item[] Build = new Item[7];
                 for(int i=0;i<7;i++)
                 {
-                    Build[i] = new Item(itemHistoy.get(i)[0], ;
+                    Build[i] = new Item(String.valueOf(itemHistoy.get(i)[0]) + ".png", null);
                 }
                 user.getChampion().setBuild(Build);*/
                 if (numberOfValueZeroToTen != 0) {
@@ -646,16 +648,61 @@ public class CurrentGameDAO {
         String result = "";
 
         try {
-            for(Summoner summoner : summoners) {
-                result += URLEncoder.encode(summoner.getName(),"UTF-8") + ",";
+            for (Summoner summoner : summoners) {
+                result += URLEncoder.encode(summoner.getName(), "UTF-8") + ",";
             }
 
             result = result.substring(0, result.length() - 1);
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
-        return  result;
+        return result;
+    }
+
+    public static void getDamageDealtAndDamageTaken(Summoner summoner, JSONArray jsonMatches){
+        int idGame = 0;
+        int teamID = 0;
+        int totalDamageDealtByUserTeamInCurrentGame = 0;
+        int toalDamageDealtByUserInCurrentGame = 0;
+
+        int totalDamageTakenByUserTeamInCurrentGame = 0;
+        int totalDamageTakenByUserInCurrentGame = 0;
+
+        float meanPercentageDamageDealtByUser = 0;
+        float meanPercentageDamageTakenByUser = 0;
+
+        try {
+            for (int i = 0; i < jsonMatches.length(); i++) {
+                JSONObject test = jsonMatches.getJSONObject(i);
+                idGame = jsonMatches.getJSONObject(i).getInt("matchId");
+                teamID = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getInt("teamId");
+                toalDamageDealtByUserInCurrentGame = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getJSONObject("stats").getInt("totalDamageDealtToChampions");
+                totalDamageTakenByUserInCurrentGame = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getJSONObject("stats").getInt("totalDamageTaken");
+                String jsonResult = Utils.getDocument(Constant.API_MATCHS + String.valueOf(idGame));
+                if(jsonResult != null) {
+                    JSONObject gameDetails = new JSONObject(jsonResult);
+                    for (int j = 0; j < gameDetails.getJSONArray("participants").length(); j++) {
+                        if (gameDetails.getJSONArray("participants").getJSONObject(j).getInt("teamId") == teamID) {
+                            totalDamageDealtByUserTeamInCurrentGame += gameDetails.getJSONArray("participants").getJSONObject(j).getJSONObject("stats").getInt("totalDamageDealtToChampions");
+                            totalDamageTakenByUserTeamInCurrentGame += gameDetails.getJSONArray("participants").getJSONObject(j).getJSONObject("stats").getInt("totalDamageTaken");
+                        }
+                    }
+                    meanPercentageDamageDealtByUser += (float) toalDamageDealtByUserInCurrentGame / (float) totalDamageDealtByUserTeamInCurrentGame;
+                    meanPercentageDamageTakenByUser += (float) totalDamageTakenByUserInCurrentGame / (float) totalDamageTakenByUserTeamInCurrentGame;
+                    totalDamageDealtByUserTeamInCurrentGame = 0;
+                    totalDamageTakenByUserTeamInCurrentGame = 0;
+                }
+            }
+            meanPercentageDamageDealtByUser /= jsonMatches.length();
+            meanPercentageDamageTakenByUser /= jsonMatches.length();
+            meanPercentageDamageDealtByUser *= 100;
+            meanPercentageDamageTakenByUser *= 100;
+            summoner.getChampion().getStatistic().setDamageDealtPercentage(meanPercentageDamageDealtByUser);
+            summoner.getChampion().getStatistic().setDamageTakenPercentage(meanPercentageDamageTakenByUser);
+        } catch(Exception e){
+            e.printStackTrace();
+            Log.v("Erreur creep", e.getMessage());
+        }
     }
 }

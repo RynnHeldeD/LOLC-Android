@@ -1,4 +1,6 @@
 package org.ema.model.DAO;
+import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.util.Log;
 
 import org.ema.model.business.Champion;
@@ -11,6 +13,7 @@ import org.ema.utils.Constant;
 import org.ema.utils.SortChampionsArrayList;
 import org.ema.utils.SortIntegerTabArrayList;
 import org.ema.utils.SortSummonerByTeamAndPerf;
+import org.ema.utils.SummonerList;
 import org.ema.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,12 +22,24 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 
 public class CurrentGameDAO {
 
-    public static void loadStatisticsDetailed(ArrayList<Summoner> summoners) {
+    public static int numberOfGamesAnalyzed = 3;
+    public static void loadStatisticsDetailed(Summoner summoner) {
         //Load images of mostPlayedChampions
-        loadMostPlayedChampionsImages(summoners);
+        loadMostPlayedChampionsImages(summoner);
+
+        JSONArray matchHistory = getMatchHistory(summoner, numberOfGamesAnalyzed);
+        if(matchHistory != null ) {
+            getSummonerFavoriteBuild(summoner, matchHistory);
+            getCreepChartInfo(summoner, matchHistory);
+        }
+
+        while(!summoner.areImagesMostPlayedChampionsLoaded() || !summoner.getChampion().areImagesBuildLoaded()){
+            SystemClock.sleep(500);
+        }
     }
 
     public static ArrayList<Summoner> getSummunerListInGameFromCurrentUser(Summoner user) {
@@ -89,7 +104,7 @@ public class CurrentGameDAO {
                 float spellCouldown[] = new float[1];
                 spellCouldown[0] = Float.valueOf(jsonSpell1.get("cooldown").toString().replaceAll("\\[", "").replaceAll("\\]",""));
                 current.getSpells()[0].setCooldown(spellCouldown);
-                new Utils.SetObjectIcon().execute(current.getSpells()[0]);
+                new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current.getSpells()[0]);
 
                 //Set spell2
                 JSONObject jsonSpell2 = (JSONObject)((JSONObject)jsonSummonerSpells.get("data")).get(((Integer)current.getSpells()[1].getId()).toString());
@@ -97,7 +112,7 @@ public class CurrentGameDAO {
                 float spellCouldown2[] = new float[1];
                 spellCouldown2[0] = Float.valueOf(jsonSpell2.get("cooldown").toString().replaceAll("\\[", "").replaceAll("\\]",""));
                 current.getSpells()[1].setCooldown(spellCouldown2);
-                new Utils.SetObjectIcon().execute(current.getSpells()[1]);
+                new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current.getSpells()[1]);
 
                 //set champion
                 JSONObject championJson = (JSONObject)((JSONObject)jsonChampions.get("data")).get(((Integer)current.getChampion().getId()).toString());
@@ -105,7 +120,7 @@ public class CurrentGameDAO {
                 current.getChampion().setAllyTips(championJson.get("allytips").toString().replaceAll("\\[", "").replaceAll("\\]", ""));
                 current.getChampion().setEnemyTips(championJson.get("enemytips").toString().replaceAll("\\[", "").replaceAll("\\]", ""));
                 current.getChampion().setIconName(((JSONObject) championJson.get("image")).get("full").toString());
-                new Utils.SetObjectIcon().execute(current.getChampion());
+                new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current.getChampion());
 
                 JSONObject jsonUltimateSpell = (JSONObject)((JSONArray) championJson.get("spells")).get(3);
                 Spell ultimate = new Spell();
@@ -117,18 +132,23 @@ public class CurrentGameDAO {
                 }
                 ultimate.setCooldown(cooldowns);
                 current.getChampion().setSpell(ultimate);
-                new Utils.SetObjectIcon().execute(ultimate);
+                new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ultimate);
 	        }
 
             getSummonersRank(summonersList);
 
             for(Summoner current : summonersList) {
-                //current.getChampion().setStatistic(getSummonerHistoryStatistic(current));
-                getPremades(current,summonersList);
-                getStatiscicsAndMostChampionsPlayed(current);
-                calculUserPerformance(current);
+                new Utils.getPremades().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current, summonersList);
+                new Utils.getStats().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current);
             }
 
+            while(!SummonerList.areSummenersPremadesLoaded(summonersList) || !SummonerList.areSummenersStatsLoaded(summonersList)){
+                SystemClock.sleep(500);
+            }
+
+            for(Summoner current : summonersList) {
+                calculUserPerformance(current);
+            }
 
             Collections.sort(summonersList, new SortSummonerByTeamAndPerf());
 
@@ -214,9 +234,13 @@ public class CurrentGameDAO {
                     death/= (win + loose);
                 }
             }
+
             Statistic statsUser = new Statistic(kill, death, assist, win, loose, (float) 0, (float) 0, (float) 0, null);
             user.getChampion().setStatistic(statsUser);
-            getCreepChartInfo(user);
+            JSONArray matchHistory = getMatchHistory(user, numberOfGamesAnalyzed);
+            if(matchHistory != null ) {
+                getDamageDealtAndDamageTaken(user, matchHistory);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -262,130 +286,70 @@ public class CurrentGameDAO {
 
         //Coefficient values / 10
         //Set a ratio between 0 and 1
-        summoner.getChampion().getStatistic().setPerformance((winRateWithChampion*(float)2.5+nbGamesWithChampion*(float)2.5+5*rank)/10);
+        summoner.getChampion().getStatistic().setPerformance((winRateWithChampion * (float) 2.5 + nbGamesWithChampion * (float) 2.5 + 5 * rank) / 10);
      }
 
-    public static void getCreepChartInfo(Summoner user) {
-        JSONObject jsonResult;
-        int numberOfGamesAnalyzed = 3;
+    public static void getCreepChartInfo(Summoner user, JSONArray matchHistory) {
+        double zeroToTen, tenToTwenty, twentyToThirty, thirtyToEnd;
+        zeroToTen = tenToTwenty = twentyToThirty = thirtyToEnd = 0;
+        int numberOfValueZeroToTen, numberOfValueTenToTwenty, numberOfValueTwentyToThirsty, numberOfValueThirtyToEnd;
+        numberOfValueZeroToTen = numberOfValueTenToTwenty = numberOfValueTwentyToThirsty = numberOfValueThirtyToEnd = 0;
+        JSONArray jsonParticipants = null;
+
         try {
-            jsonResult = new JSONObject(Utils.getDocument(Constant.API_MATCH_HISTORY_URI +
-                    user.getId() +
-                    "?championIds=" +
-                    user.getChampion().getId() +
-                    "&rankedQueus=RANKED_SOLO_5x5&beginIndex=" + 0 + "&endIndex=" + numberOfGamesAnalyzed));
-            JSONArray jsonMatches = null;
-            if(!jsonResult.isNull("matches")) {
-                jsonMatches = jsonResult.getJSONArray("matches");
-                getDamageDealtAndDamageTaken(user, jsonMatches);
-                JSONArray jsonParticipants = null;
-                double zeroToTen, tenToTwenty, twentyToThirty, thirtyToEnd;
-                zeroToTen = tenToTwenty = twentyToThirty = thirtyToEnd = 0;
-                int numberOfValueZeroToTen, numberOfValueTenToTwenty, numberOfValueTwentyToThirsty, numberOfValueThirtyToEnd;
-                numberOfValueZeroToTen = numberOfValueTenToTwenty = numberOfValueTwentyToThirsty = numberOfValueThirtyToEnd = 0;
-                ArrayList<int[]> itemHistoy = new ArrayList<>();
-                int[] test = new int[2];
-                int[] matchItemHistory = new int[7];
-
-                for (int i = 0; i < jsonMatches.length(); i++) {
-                    if(!jsonMatches.getJSONObject(i).isNull("participants")) {
-                        jsonParticipants = jsonMatches.getJSONObject(i).getJSONArray("participants");
-/*
-                        matchItemHistory = getUserFavoiteBuild(jsonParticipants);
-                        if(i==0)
-                        {
-                            matchItemHistory = getUserFavoiteBuild(jsonParticipants);
-                            for(int j=0;j<7;j++)
-                            {
-                                int[] item = new int[2];
-                                item[0] = matchItemHistory[j];
-                                item[1] = 0;
-                                itemHistoy.add(item);
+            for (int i = 0; i < matchHistory.length(); i++) {
+                if (!matchHistory.getJSONObject(i).isNull("participants")) {
+                    jsonParticipants = matchHistory.getJSONObject(i).getJSONArray("participants");
+                    if (!jsonParticipants.getJSONObject(0).isNull("timeline")) {
+                        if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").isNull("creepsPerMinDeltas")) {
+                            if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("zeroToTen")) {
+                                zeroToTen += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("zeroToTen");
+                                numberOfValueZeroToTen++;
                             }
-                        }
-                        else for (int j = 0; j < 7; j++) {
-
-                            boolean found = false;
-                            for (int k = 0; k < itemHistoy.size(); k++) {
-                                if (itemHistoy.get(k)[0] == matchItemHistory[j]) {
-                                    itemHistoy.get(k)[1]++;
-                                    found = true;
-                                }
+                            if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("tenToTwenty")) {
+                                tenToTwenty += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("tenToTwenty");
+                                numberOfValueTenToTwenty++;
                             }
-                            if (!found) {
-                                //Log.v("DAO", "Item into, user : " + user.getName());
-                                int itemID = matchItemHistory[j];
-                                if(itemID != 0) {
-                                    String jsonItems = Utils.getDocument(Constant.API_ITEMS + itemID + "?itemData=into");
-                                    JSONObject result = new JSONObject(jsonItems);
-                                    if (result.isNull("into")) {
-                                        int[] newItem = new int[2];
-                                        newItem[0] = itemID;
-                                        newItem[1] = 0;
-                                        itemHistoy.add(newItem);
-                                    }
-                                }
-                            }
-                        }*/
-                        if(!jsonParticipants.getJSONObject(0).isNull("timeline")) {
-                            if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").isNull("creepsPerMinDeltas")) {
-                                if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("zeroToTen")) {
-                                    zeroToTen += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("zeroToTen");
-                                    numberOfValueZeroToTen++;
-                                }
-                                if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("tenToTwenty")) {
-                                    tenToTwenty += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("tenToTwenty");
-                                    numberOfValueTenToTwenty++;
-                                }
-                                if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("twentyToThirty")) {
-                                    twentyToThirty += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("twentyToThirty");
-                                    numberOfValueTwentyToThirsty++;
+                            if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("twentyToThirty")) {
+                                twentyToThirty += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("twentyToThirty");
+                                numberOfValueTwentyToThirsty++;
 
-                                }
-                                if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("thirtyToEnd")) {
-                                    thirtyToEnd += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("thirtyToEnd");
-                                    numberOfValueThirtyToEnd++;
-                                }
+                            }
+                            if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("thirtyToEnd")) {
+                                thirtyToEnd += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("thirtyToEnd");
+                                numberOfValueThirtyToEnd++;
                             }
                         }
                     }
                 }
-
-                Collections.sort(itemHistoy, new SortIntegerTabArrayList());
-                /*Item[] Build = new Item[7];
-                for(int i=0;i<7;i++)
-                {
-                    Build[i] = new Item(String.valueOf(itemHistoy.get(i)[0]) + ".png", null);
-                }
-                user.getChampion().setBuild(Build);*/
-                if (numberOfValueZeroToTen != 0) {
-                    zeroToTen /= numberOfValueZeroToTen;
-                }
-                if (numberOfValueTenToTwenty != 0) {
-                    tenToTwenty /= numberOfValueTenToTwenty;
-                }
-                if (numberOfValueTwentyToThirsty != 0) {
-                    twentyToThirty /= numberOfValueTwentyToThirsty;
-                }
-                if (numberOfValueThirtyToEnd != 0) {
-                    thirtyToEnd /= numberOfValueThirtyToEnd;
-                }
-                double[][] creepChartInfo = new double[2][4];
-                for (int i = 0; i < 2; i++) {
-                    creepChartInfo[i] = new double[4];
-                }
-                creepChartInfo[0][0] = zeroToTen * 10;
-                creepChartInfo[0][1] = tenToTwenty * 10;
-                creepChartInfo[0][2] = twentyToThirty * 10;
-                creepChartInfo[0][3] = thirtyToEnd * 10;
-                for (int i = 1; i < 2; i++) {
-                    for (int j = 0; j < 4; j++) {
-                        creepChartInfo[i][j] = 100 - creepChartInfo[i - 1][j];
-                    }
-                }
-                user.getChampion().getStatistic().setCreepChartInfo(creepChartInfo);
             }
-        } catch (Exception e) {
+            if (numberOfValueZeroToTen != 0) {
+                zeroToTen /= numberOfValueZeroToTen;
+            }
+            if (numberOfValueTenToTwenty != 0) {
+                tenToTwenty /= numberOfValueTenToTwenty;
+            }
+            if (numberOfValueTwentyToThirsty != 0) {
+                twentyToThirty /= numberOfValueTwentyToThirsty;
+            }
+            if (numberOfValueThirtyToEnd != 0) {
+                thirtyToEnd /= numberOfValueThirtyToEnd;
+            }
+            double[][] creepChartInfo = new double[2][4];
+            for (int i = 0; i < 2; i++) {
+                creepChartInfo[i] = new double[4];
+            }
+            creepChartInfo[0][0] = zeroToTen * 10;
+            creepChartInfo[0][1] = tenToTwenty * 10;
+            creepChartInfo[0][2] = twentyToThirty * 10;
+            creepChartInfo[0][3] = thirtyToEnd * 10;
+            for (int i = 1; i < 2; i++) {
+                for (int j = 0; j < 4; j++) {
+                    creepChartInfo[i][j] = 100 - creepChartInfo[i - 1][j];
+                }
+            }
+            user.getChampion().getStatistic().setCreepChartInfo(creepChartInfo);
+    } catch (Exception e) {
             e.printStackTrace();
             Log.v("Erreur creep", e.getMessage());
         }
@@ -398,6 +362,7 @@ public class CurrentGameDAO {
         try {
             //Not on game
             if (jsonResult == null) {
+                summoner.getDataProcessed().setStats(true);
                 return;
             }
 
@@ -435,27 +400,28 @@ public class CurrentGameDAO {
             if(mostChampionsPlayed.length != 0 && mostChampionsPlayed[0].getId() == summoner.getChampion().getId()) {
                 summoner.getChampion().setMain(true);
             }
-
+            summoner.getDataProcessed().setStats(true);
         } catch (Exception e) {
+            summoner.getDataProcessed().setStats(true);
             e.printStackTrace();
             return;
         }
+
+
     }
 
     //Load async images
-    public static void loadMostPlayedChampionsImages(ArrayList<Summoner> summoners) {
+    public static void loadMostPlayedChampionsImages(Summoner summoner) {
         try {
             JSONObject jsonChampions = new JSONObject(Utils.getDocumentAndCheck(Constant.API_CHAMPION_URI,5));
 
-            for(Summoner current : summoners)
-            {
-                if(current.getMostChampionsPlayed() != null) {
-                    for(int i = 0; i < current.getMostChampionsPlayed().length; i++) {
-                        //set champion
-                        JSONObject championJson = (JSONObject) ((JSONObject)jsonChampions.get("data")).get(((Integer)current.getMostChampionsPlayed()[i].getId()).toString());
-                        current.getMostChampionsPlayed()[i].setName(championJson.get("name").toString());
-                        current.getMostChampionsPlayed()[i].setIconName(((JSONObject) championJson.get("image")).get("full").toString());
-                    }
+            if(summoner.getMostChampionsPlayed() != null) {
+                for(int i = 0; i < summoner.getMostChampionsPlayed().length; i++) {
+                    //set champion
+                    JSONObject championJson = (JSONObject) ((JSONObject)jsonChampions.get("data")).get(((Integer)summoner.getMostChampionsPlayed()[i].getId()).toString());
+                    summoner.getMostChampionsPlayed()[i].setName(championJson.get("name").toString());
+                    summoner.getMostChampionsPlayed()[i].setIconName(((JSONObject) championJson.get("image")).get("full").toString());
+                    new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, summoner.getMostChampionsPlayed()[i]);
                 }
             }
         }
@@ -573,14 +539,15 @@ public class CurrentGameDAO {
                     }
                 }
             }
-
+            summoner.getDataProcessed().setPremades(true);
             //Log.v("TOTO", "Limit = " + String.valueOf(limit));
         } catch (Exception e) {
+            summoner.getDataProcessed().setPremades(true);
             e.printStackTrace();
         }
     }
 
-    public static int[] getUserFavoiteBuild(JSONArray jsonParticipants)
+    public static int[] getUserBuild(JSONArray jsonParticipants)
     {
         JSONArray json = jsonParticipants;
 
@@ -672,37 +639,133 @@ public class CurrentGameDAO {
         float meanPercentageDamageDealtByUser = 0;
         float meanPercentageDamageTakenByUser = 0;
 
+        int numberOfGames = jsonMatches.length();
+        if(summoner.getChampion().getId() == 238)
+        {
+            Log.v("DAO", "HERE");
+        }
+
         try {
-            for (int i = 0; i < jsonMatches.length(); i++) {
-                JSONObject test = jsonMatches.getJSONObject(i);
-                idGame = jsonMatches.getJSONObject(i).getInt("matchId");
-                teamID = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getInt("teamId");
-                toalDamageDealtByUserInCurrentGame = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getJSONObject("stats").getInt("totalDamageDealtToChampions");
-                totalDamageTakenByUserInCurrentGame = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getJSONObject("stats").getInt("totalDamageTaken");
-                String jsonResult = Utils.getDocument(Constant.API_MATCHS + String.valueOf(idGame));
-                if(jsonResult != null) {
-                    JSONObject gameDetails = new JSONObject(jsonResult);
-                    for (int j = 0; j < gameDetails.getJSONArray("participants").length(); j++) {
-                        if (gameDetails.getJSONArray("participants").getJSONObject(j).getInt("teamId") == teamID) {
-                            totalDamageDealtByUserTeamInCurrentGame += gameDetails.getJSONArray("participants").getJSONObject(j).getJSONObject("stats").getInt("totalDamageDealtToChampions");
-                            totalDamageTakenByUserTeamInCurrentGame += gameDetails.getJSONArray("participants").getJSONObject(j).getJSONObject("stats").getInt("totalDamageTaken");
+            for (int i = 0; i < Math.min(3, jsonMatches.length()); i++) {
+                if (!jsonMatches.getJSONObject(i).isNull("season") && jsonMatches.getJSONObject(i).getString("season").equals("SEASON2015")) {
+                    JSONObject test = jsonMatches.getJSONObject(i);
+                    idGame = jsonMatches.getJSONObject(i).getInt("matchId");
+                    teamID = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getInt("teamId");
+                    toalDamageDealtByUserInCurrentGame = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getJSONObject("stats").getInt("totalDamageDealtToChampions");
+                    totalDamageTakenByUserInCurrentGame = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getJSONObject("stats").getInt("totalDamageTaken");
+                    String jsonResult = Utils.getDocument(Constant.API_MATCHS + String.valueOf(idGame));
+                    if (jsonResult != null) {
+                        JSONObject gameDetails = new JSONObject(jsonResult);
+                        for (int j = 0; j < gameDetails.getJSONArray("participants").length(); j++) {
+                            if (gameDetails.getJSONArray("participants").getJSONObject(j).getInt("teamId") == teamID) {
+                                totalDamageDealtByUserTeamInCurrentGame += gameDetails.getJSONArray("participants").getJSONObject(j).getJSONObject("stats").getInt("totalDamageDealtToChampions");
+                                totalDamageTakenByUserTeamInCurrentGame += gameDetails.getJSONArray("participants").getJSONObject(j).getJSONObject("stats").getInt("totalDamageTaken");
+                            }
                         }
+                        meanPercentageDamageDealtByUser += (float) toalDamageDealtByUserInCurrentGame / (float) totalDamageDealtByUserTeamInCurrentGame;
+                        meanPercentageDamageTakenByUser += (float) totalDamageTakenByUserInCurrentGame / (float) totalDamageTakenByUserTeamInCurrentGame;
+                        totalDamageDealtByUserTeamInCurrentGame = 0;
+                        totalDamageTakenByUserTeamInCurrentGame = 0;
                     }
-                    meanPercentageDamageDealtByUser += (float) toalDamageDealtByUserInCurrentGame / (float) totalDamageDealtByUserTeamInCurrentGame;
-                    meanPercentageDamageTakenByUser += (float) totalDamageTakenByUserInCurrentGame / (float) totalDamageTakenByUserTeamInCurrentGame;
-                    totalDamageDealtByUserTeamInCurrentGame = 0;
-                    totalDamageTakenByUserTeamInCurrentGame = 0;
+                }
+                else{
+                    numberOfGames--;
                 }
             }
-            meanPercentageDamageDealtByUser /= jsonMatches.length();
-            meanPercentageDamageTakenByUser /= jsonMatches.length();
-            meanPercentageDamageDealtByUser *= 100;
-            meanPercentageDamageTakenByUser *= 100;
+            if(numberOfGames != 0)
+            {
+                meanPercentageDamageDealtByUser /= numberOfGames;
+                meanPercentageDamageTakenByUser /= numberOfGames;
+                meanPercentageDamageDealtByUser *= 100;
+                meanPercentageDamageTakenByUser *= 100;
+            }
+            else
+            {
+                meanPercentageDamageDealtByUser = 0;
+                meanPercentageDamageTakenByUser = 0;
+            }
             summoner.getChampion().getStatistic().setDamageDealtPercentage(meanPercentageDamageDealtByUser);
             summoner.getChampion().getStatistic().setDamageTakenPercentage(meanPercentageDamageTakenByUser);
         } catch(Exception e){
             e.printStackTrace();
             Log.v("Erreur creep", e.getMessage());
+        }
+    }
+
+    public static void getSummonerFavoriteBuild(Summoner summoner, JSONArray matchHistory) {
+
+        ArrayList<int[]> itemHistoy = new ArrayList<>();
+        int[] matchItemHistory = new int[7];
+        JSONArray jsonParticipants = null;
+        try {
+            for (int i = 0; i < matchHistory.length(); i++) {
+                if (!matchHistory.getJSONObject(i).isNull("participants")) {
+                    jsonParticipants = matchHistory.getJSONObject(i).getJSONArray("participants");
+                    matchItemHistory = getUserBuild(jsonParticipants);
+                    if (i == 0) {
+                        for (int j = 0; j < 7; j++) {
+                            int[] item = new int[2];
+                            item[0] = matchItemHistory[j];
+                            item[1] = 0;
+                            itemHistoy.add(item);
+                        }
+                    } else for (int j = 0; j < 7; j++) {
+
+                        boolean found = false;
+                        for (int k = 0; k < itemHistoy.size(); k++) {
+                            if (itemHistoy.get(k)[0] == matchItemHistory[j]) {
+                                itemHistoy.get(k)[1]++;
+                                found = true;
+                            }
+                        }
+                        if (!found) {
+                            //Log.v("DAO", "Item into, user : " + user.getName());
+                            int itemID = matchItemHistory[j];
+                            if (itemID != 0) {
+                                String jsonItems = Utils.getDocument(Constant.API_ITEMS + itemID + "?itemData=into");
+                                JSONObject result = new JSONObject(jsonItems);
+                                if (result.isNull("into")) {
+                                    int[] newItem = new int[2];
+                                    newItem[0] = itemID;
+                                    newItem[1] = 0;
+                                    itemHistoy.add(newItem);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        Collections.sort(itemHistoy, new SortIntegerTabArrayList());
+        Item[] Build = new Item[7];
+        for(int i=0;i<7;i++)
+        {
+            Build[i] = new Item(String.valueOf(itemHistoy.get(i)[0]) + ".png", null);
+            new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, Build[i]);
+        }
+        summoner.getChampion().setBuild(Build);
+        } catch (Exception e){
+            e.printStackTrace();
+            Log.v("Erreur creep", e.getMessage());
+        }
+    }
+
+    public static JSONArray getMatchHistory(Summoner summoner, int numberOfGamesAnalyzed){
+        JSONObject jsonResult;
+        try {
+            jsonResult = new JSONObject(Utils.getDocument(Constant.API_MATCH_HISTORY_URI +
+                    summoner.getId() +
+                    "?championIds=" +
+                    summoner.getChampion().getId() +
+                    "&rankedQueus=RANKED_SOLO_5x5&beginIndex=" + 0 + "&endIndex=" + numberOfGamesAnalyzed));
+            JSONArray jsonMatches = null;
+            if(!jsonResult.isNull("matches")) {
+                jsonMatches = jsonResult.getJSONArray("matches");
+            }
+            return jsonMatches;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.v("Erreur creep", e.getMessage());
+            return null;
         }
     }
 }

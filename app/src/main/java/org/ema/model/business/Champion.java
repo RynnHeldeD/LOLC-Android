@@ -1,6 +1,7 @@
 package org.ema.model.business;
 
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -197,4 +198,17 @@ public class Champion implements ISettableIcon, Parcelable {
 
         return areImagesLoaded;
     }
+
+    public boolean areImagesBuildLoaded() {
+        for(int i = 0; i < this.getBuild().length; i++) {
+            if(this.getBuild()[i].getIcon() == null) {
+                Log.v("IMAGES_ITEMS", this.getBuild()[i].getIconName() + " not loaded");
+                return false;
+            }
+        }
+
+        Log.v("IMAGES_ITEMS", "all images loaded");
+        return true;
+    }
+
 }

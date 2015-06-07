@@ -28,4 +28,24 @@ public class SummonerList {
 
         return result;
     }
+
+    public static boolean areSummenersStatsLoaded(ArrayList<Summoner> summoners) {
+        for(Summoner current : summoners) {
+            if(!current.getDataProcessed().isStats()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean areSummenersPremadesLoaded(ArrayList<Summoner> summoners) {
+        for(Summoner current : summoners) {
+            if(!current.getDataProcessed().isPremades()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

@@ -22,6 +22,7 @@ import java.util.Date;
  */
 public class WsEventHandling {
 
+    public static String waitingReconnexionMessage = "";
 
     public static void handlingMessage(String message) {
         Log.v("Websocket:", "message from websocket: " + message);
@@ -259,6 +260,33 @@ public class WsEventHandling {
 
     public static void startGameTimestamp(long serverTimestamp) {
         GameTimestamp.setGameTimestamp(serverTimestamp);
+
+        //Ici on envoi le message qui a été envoyé pour se reconnecter
+        //On ne peut pas l'envoyer à la reconnexion car il faut attendre d'avoir le nouveau temps serveur
+        if(!waitingReconnexionMessage.equals("")) {
+            //Si on est en reconnexion, il faut attendre que le serveur se reconnecte pour envoyer le message.
+            //Sachant que la connexion ne retourne rien, on est obligé de le mettre ici
+
+                String messageAfterReconnexionModified ="";
+                //Comme le message a été envoyé avant la reconnexion, il n'a pas le bon timestamp, on va donc le mettre a jour.
+                if(waitingReconnexionMessage.contains("timestampDeclenchement")){
+                    try{
+                        JSONObject obj = new JSONObject(waitingReconnexionMessage);
+                        String oldTimeStamp = obj.getString("timestampDeclenchement");
+                         messageAfterReconnexionModified = waitingReconnexionMessage.replace(oldTimeStamp,Long.toString(GameTimestamp.getServerTimestamp()));
+                    } catch (JSONException e) {
+                        Log.v("Websocket","Erreur : parse : " + e.getMessage());
+                    } catch (Exception ex){
+                        Log.v("Websocket","Erreur :" + ex.getMessage());
+                    }
+                }
+                //si il n'y a pas eu de bug, on envoi la string modifiée, sinon on ne fait rien pour ne pas envoyer de fausses infos
+                if(!messageAfterReconnexionModified.equals("")){
+                    WebSocket.send(messageAfterReconnexionModified);
+                }
+            waitingReconnexionMessage ="";
+
+        }
     }
 
 
@@ -272,7 +300,6 @@ public class WsEventHandling {
 
     private static void sendMessage(String msg) {
         WebSocket.send(msg);
-        Log.v("Websocket","Message send to websocket: " + msg);
     }
 
     public static void pickedChampion(Integer gameId, Integer teamId, String championIconName, String channel) {

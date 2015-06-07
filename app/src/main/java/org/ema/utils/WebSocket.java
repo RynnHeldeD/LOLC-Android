@@ -6,6 +6,7 @@ import org.ema.lolcompanion.CompanionActivity;
 import org.ema.lolcompanion.WsEventHandling;
 import org.ema.model.business.Summoner;
 import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
@@ -15,14 +16,14 @@ import java.util.ArrayList;
 public class WebSocket {
 
     public static WebSocketClient mWebSocketClient;
-
+    public static Boolean alreadyDisconnected = false;
 
 
     public static void connectWebSocket() {
         URI uri;
         try {
             //    uri = new URI("ws://10.0.2.2:12345/");
-            uri = new URI("ws://5.135.153.45:8080/");
+            uri = new URI("ws://5.135.153.45:8081/");
 
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -34,18 +35,19 @@ public class WebSocket {
             public void onOpen(ServerHandshake serverHandshake) {
                 Log.v("Websocket", "Opened");
 
+                if(alreadyDisconnected){
+                    CompanionActivity.instanceCompanion.reconnectionNotification();
+                }
+
                 String userNickname = ((Summoner)GlobalDataManager.get("user")).getName();
                 ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
                 String passphrase = CompanionActivity.instance.settingsManager.get(CompanionActivity.instanceCompanion,"passphrase");
                 Summoner user = (Summoner)GlobalDataManager.get("user");
-                Log.v("Websocket","User: " + user.getName());
 
                 for(Summoner s : summonersList){
                     if(s.getName().equals(userNickname)){
                         user.setTeamId(s.getTeamId());
-                        Log.v("Websocket", "User team: " + user.getTeamId());
                         user.getChampion().setIconName(s.getChampion().getIconName());
-                        Log.v("Websocket", "User icon: " + user.getChampion().getIconName());
                         user.setGameId(s.getGameId());
                     }
                 }
@@ -55,6 +57,7 @@ public class WebSocket {
 
                 mWebSocketClient.send("{\"action\":\"pickedChampion\",\"gameId\":\""+ user.getGameId() +"\",\"teamId\":\"" + user.getTeamId() + "\",\"championIconId\":\""+ user.getChampion().getIconName() +"\",\"passphrase\":\""+ passphrase +"\"}");
                 Log.v("Websocket","{\"action\":\"pickedChampion\",\"gameId\":\""+ user.getGameId() +"\",\"teamId\":\"" + user.getTeamId() + "\",\"championIconId\":\""+ user.getChampion().getIconName() +"\",\"passphrase\":\""+ passphrase +"\"}");
+
             }
 
             @Override
@@ -66,12 +69,13 @@ public class WebSocket {
             public void onClose(int i, String s, boolean b) {
                 Log.v("Websocket", "Closed :" + s);
                 CompanionActivity.instanceCompanion.handleDisconnection();
+
             }
 
             @Override
             public void onError(Exception e)  {
                 Log.v("Websocket", "Error :" + e.getMessage());
-                this.onClose(0, "", true);
+                //CompanionActivity.instanceCompanion.handleDisconnection();
             }
 
         };
@@ -80,6 +84,17 @@ public class WebSocket {
     }
 
     public static void send(String s) {
-        mWebSocketClient.send(s);
+        try{
+            mWebSocketClient.send(s);
+            Log.v("Websocket","Message send to websocket: " + s);
+        } catch (WebsocketNotConnectedException e){
+            try {
+                connectWebSocket();
+                WsEventHandling.waitingReconnexionMessage = s;
+            }catch (WebsocketNotConnectedException er){
+                Log.v("Websocket","La tentative de reconnexion au serveur WS a echoué");
+            }
+            Log.v("Websocket","Erreur lors de l'envoi du message: " + e.getMessage());
+        }
     }
 }

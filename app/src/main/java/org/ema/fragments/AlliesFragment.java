@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.ema.lolcompanion.AdvancedStatsActivity;
+import org.ema.lolcompanion.CompanionActivity;
 import org.ema.lolcompanion.MainActivity;
 import org.ema.lolcompanion.R;
 import org.ema.model.business.Summoner;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class AlliesFragment extends LoLStatActivity implements ChampionTipDialogFragment.NoticeDialogListener{
+
 
     ArrayList<Summoner> summonersAlliesList = new ArrayList<Summoner>();
 
@@ -64,7 +67,7 @@ public class AlliesFragment extends LoLStatActivity implements ChampionTipDialog
         args.putString("name", summonersAlliesList.get(v.getId()).getChampion().getName());
         args.putString("tips", summonersAlliesList.get(v.getId()).getChampion().getAllyTips());
         //the next value for the (Next) Button of the dialog. If it's the last item which is clicked, go back to first item, else go tho next
-        args.putInt("next", (v.getId() == (summonersAlliesList.size()-1)) ? 0 : v.getId()+1);
+        args.putInt("next", (v.getId() == (summonersAlliesList.size() - 1)) ? 0 : v.getId() + 1);
         dialog.setArguments(args);
         dialog.show(getFragmentManager(), "tips");
     }
@@ -95,5 +98,20 @@ public class AlliesFragment extends LoLStatActivity implements ChampionTipDialog
     public void launchMainActivity(){
         Intent intent = new Intent(this.getActivity(), MainActivity.class);
         startActivity(intent);
+    }
+
+    //This function handle the advanced statistic goto
+    public void showAdvancedStatistics(View v, Boolean isEnnemy) {
+        GlobalDataManager.add("summonerForAdvStats", summonersAlliesList.get(v.getId()));
+        Intent intent = new Intent(this.getActivity(), AdvancedStatsActivity.class);
+        startActivity(intent);
+    }
+
+    public ArrayList<Summoner> getSummonersAlliesList() {
+        return summonersAlliesList;
+    }
+
+    public void setSummonersAlliesList(ArrayList<Summoner> summonersAlliesList) {
+        this.summonersAlliesList = summonersAlliesList;
     }
 }

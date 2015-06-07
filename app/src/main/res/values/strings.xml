@@ -57,12 +57,20 @@
     <string name="next_dialog">Next</string>
     <string name="confirm_dialog">OK</string>
     <string name="title_activity_companion">CompanionActivity</string>
-    <string name="title_activity_test">TestActivity</string>
+
+    <!-- Advanced stats activity -->
+    <string name="advstats_title_activity">Advanced Stats</string>
+    <string name="advstats_build">Favorite build</string>
+    <string name="advstats_winrates">Win Rates</string>
+    <string name="advstats_mpc">Most played champions</string>
+    <string name="advstats_cpm">Average Creeps / Minute</string>
+
 
     <!-- TOASTS -->
     <string name="pending_logging">logging&#8230;</string>
     <string name="pending_waiting_signal">waiting for game signal&#8230;</string>
     <string name="pending_loading_game">loading game data&#8230;</string>
     <string name="disconnected_from_ws">disconnected from server</string>
+    <string name="title_activity_advanced_stats">AdvancedStatsActivity</string>
 
 </resources>

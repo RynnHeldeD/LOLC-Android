@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.ema.lolcompanion.AdvancedStatsActivity;
 import org.ema.lolcompanion.MainActivity;
 import org.ema.lolcompanion.R;
 import org.ema.model.business.Summoner;
@@ -67,6 +68,13 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
         args.putInt("next", (v.getId() == (summonersOpponentsList.size()-1)) ? 0 : v.getId()+1);
         dialog.setArguments(args);
         dialog.show(getFragmentManager(), "tips");
+    }
+
+    //This function handle the advanced statistic goto
+    public void showAdvancedStatistics(View v, Boolean isEnnemy) {
+        GlobalDataManager.add("summonerForAdvStats", summonersOpponentsList.get(v.getId()));
+        Intent intent = new Intent(this.getActivity(), AdvancedStatsActivity.class);
+        startActivity(intent);
     }
 
     // The dialog fragment receives a reference to this Activity through the

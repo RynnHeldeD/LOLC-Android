@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -160,6 +161,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         }
     }
 
+    //Show the dialod to set the cooldown reduction for a champion
     public void showCooldownReducers(View v) {
         Bundle args = new Bundle();
         switch (v.getId()) {
@@ -187,6 +189,17 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         timerFragment.showCooldownReducers(v, args);
     }
 
+    //Go to AdvancedStat Activity
+    public void showAdvancedStatistics(View v) {
+        switch (mPager.getCurrentItem()) {
+            case 0:
+                ennemiesFragment.showAdvancedStatistics(v, true);
+                break;
+            case 2:
+                alliesFragment.showAdvancedStatistics(v, false);
+                break;
+        }
+    }
 
     @Override
     public void onDialogNeutralClick(DialogFragment dialog, int idRessource) {

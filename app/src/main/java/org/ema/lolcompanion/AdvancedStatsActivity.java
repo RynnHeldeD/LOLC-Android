@@ -1,51 +1,65 @@
-package org.ema.utils;
+package org.ema.lolcompanion;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.ema.fragments.EnnemiesFragment;
-import org.ema.lolcompanion.AdvancedStatsActivity;
-import org.ema.lolcompanion.CompanionActivity;
-import org.ema.lolcompanion.MainActivity;
-import org.ema.lolcompanion.PendingRoomActivity;
-import org.ema.lolcompanion.R;
-import org.ema.model.DAO.SummonerDAO;
 import org.ema.model.business.Summoner;
+import org.ema.utils.GlobalDataManager;
+import org.ema.utils.LoLStatActivity;
+import org.ema.utils.VerticalProgressBar;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LoLStatActivity extends Fragment {
+
+public class AdvancedStatsActivity extends Activity {
 
     //Ressources (name) of all summoners Views
-    protected List<String> textRessourcesSummoner = Arrays.asList("s1name", "s1K", "s1Kv", "s1D", "s1Dv", "s1A", "s1Av", "s1DmDv", "s1DmRv", "s1Wins", "s1Defs", "s1LP");
-    protected List<String> imageRessourcesSummoner = Arrays.asList("s1tips", "s1Img", "s1Perf", "s1Main", "s1Team", "s1Rank");
+    private List<String> textRessourcesSummoner = Arrays.asList("s1name", "s1K", "s1Kv", "s1D", "s1Dv", "s1A", "s1Av", "s1DmDv", "s1DmRv", "s1Wins", "s1Defs", "s1LP");
+    private List<String> imageRessourcesSummoner = Arrays.asList("s1tips", "s1Img", "s1Perf", "s1Main", "s1Team", "s1Rank");
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_advanced_stats);
+        Intent intent = getIntent();
+
+        LinearLayout rootView = (LinearLayout) findViewById(R.id.root_advstats);
+
+        Summoner summonerToShow = (Summoner) GlobalDataManager.get("summonerForAdvStats");
+        Summoner current = (Summoner) GlobalDataManager.get("user");
+
+        fillSummonerInformations(rootView, 1, summonerToShow, 0, 100);
+        if(summonerToShow.getTeamId() != current.getTeamId()){
+            LinearLayout globalContainer = (LinearLayout) findViewById(R.id.global_container);
+            globalContainer.setBackgroundDrawable(getResources().getDrawable(R.drawable.background_red));
+        }
+
+        //to font => advstats_build -
+    }
 
     //This function will fill the statistics of one summoner - has to be called in the foreach using the summoner list retrieve by DAO
     protected void fillSummonerInformations(LinearLayout containerView, int idForLine, Summoner summoner, int minPerformance, int maxPerformance) {
 
-        Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
-        View rootview = getActivity().getLayoutInflater().inflate(R.layout.line_champion, containerView, false);
+        Typeface font = Typeface.createFromAsset(this.getAssets(), "fonts/lol.ttf");
+        View rootview = this.getLayoutInflater().inflate(R.layout.line_champion, containerView, false);
         //setting the fonts for the ressources
         for (String s : textRessourcesSummoner) {
-            int IDRessource = getResources().getIdentifier(s, "id", getActivity().getBaseContext().getPackageName());
+            int IDRessource = getResources().getIdentifier(s, "id", this.getBaseContext().getPackageName());
             TextView ressource = (TextView) rootview.findViewById(IDRessource);
             ressource.setTypeface(font);
 
@@ -200,5 +214,5 @@ public class LoLStatActivity extends Fragment {
         //add the line to the rootview
         containerView.addView(rootview);
     }
-    
 }
+

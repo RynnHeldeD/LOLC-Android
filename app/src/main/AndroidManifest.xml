@@ -28,7 +28,11 @@
         <activity
             android:name=".CompanionActivity"
             android:label="@string/title_activity_companion"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".AdvancedStatsActivity"
+            android:label="@string/title_activity_advanced_stats" >
         </activity>
     </application>
 

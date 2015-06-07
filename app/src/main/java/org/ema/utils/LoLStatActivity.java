@@ -40,6 +40,7 @@ public class LoLStatActivity extends Fragment {
 
             if (s.contains("name")) {
                 ressource.setText(summoner.getName().substring(0, Math.min(summoner.getName().length(),R.integer.max_champion_name_character_lenght)));
+                ressource.setId(idForLine);
             }
             //if Statistics object is set
             if (summoner.getChampion().getStatistic() != null) {
@@ -69,7 +70,6 @@ public class LoLStatActivity extends Fragment {
 
             if (s.contains("LP")) {
                 if (summoner.getLeague().getDivision().toLowerCase().contains("unranked")) {
-                    //Log.v("MIC",String.valueOf(summoner.getLevel()));
                     ressource.setText(getResources().getString(R.string.summoner_level) + " " + String.valueOf(summoner.getLevel()));
                 }else {
                     ressource.setText(summoner.getLeague().getDivision().toUpperCase() + " " + String.valueOf(summoner.getLeague().getLeaguePoints()) + " LP");
@@ -165,6 +165,6 @@ public class LoLStatActivity extends Fragment {
         }
 
         //add the line to the rootview
-        containerView.addView(rootview);
+            containerView.addView(rootview);
     }
 }

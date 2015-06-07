@@ -13,11 +13,13 @@ import android.widget.TextView;
 import org.ema.lolcompanion.MainActivity;
 import org.ema.lolcompanion.R;
 import org.ema.model.business.Summoner;
-import org.ema.utils.ChampionTipDialogFragment;
+import org.ema.dialogs.ChampionTipDialogFragment;
 import org.ema.utils.GlobalDataManager;
 import org.ema.utils.LoLStatActivity;
+import org.ema.utils.SortSummonerId;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDialogFragment.NoticeDialogListener{
 
@@ -43,8 +45,11 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
             }
         }
 
+        Collections.sort(summonersOpponentsList, new SortSummonerId());
+
         //We get the container where we are going to add all the champion lines
         LinearLayout ennemies_container = (LinearLayout) rootView.findViewById(R.id.root_ennemies);
+        //Create summoner lines
         for(int idForLine = 0; idForLine < summonersOpponentsList.size(); idForLine++) {
             fillSummonerInformations(ennemies_container,  idForLine, summonersOpponentsList.get(idForLine), 0, 100);
         }
@@ -55,9 +60,11 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
     public void showChampionTips(View v) {
         DialogFragment dialog = new ChampionTipDialogFragment();
         Bundle args = new Bundle();
+        //We give to the dialog the summoners info to display
         args.putString("name", summonersOpponentsList.get(v.getId()).getChampion().getName());
         args.putString("tips", summonersOpponentsList.get(v.getId()).getChampion().getAllyTips());
-        args.putInt("next", v.getId()+1);
+        //the next value for the (Next) Button of the dialog. If it's the last item which is clicked, go back to first item, else go tho next
+        args.putInt("next", (v.getId() == (summonersOpponentsList.size()-1)) ? 0 : v.getId()+1);
         dialog.setArguments(args);
         dialog.show(getFragmentManager(), "tips");
     }
@@ -65,13 +72,15 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
     // The dialog fragment receives a reference to this Activity through the
     // Fragment.onAttach() callback, which it uses to call the following methods
     // defined by the NoticeDialogFragment.NoticeDialogListener interface
+    // Handle the (Next) Button to show the next tip
     @Override
     public void onDialogNeutralClick(DialogFragment dialog, int next) {
         // User touched the dialog's positive button
         DialogFragment dialog_next = new ChampionTipDialogFragment();
         Bundle args = new Bundle();
         args.putString("name", summonersOpponentsList.get(next).getChampion().getName());
-        args.putString("tips", summonersOpponentsList.get(next).getChampion().getAllyTips());
+        args.putString("tips", summonersOpponentsList.get(next).getChampion().getEnemyTips());
+        //If it's the last item which is clicked, go back to first item, else go tho next
         args.putInt("next", next == (summonersOpponentsList.size()-1) ? 0 : next+1);
         dialog_next.setArguments(args);
         dialog_next.show(getFragmentManager(), "tips");
@@ -86,5 +95,14 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
     public void launchMainActivity(){
         Intent intent = new Intent(this.getActivity(), MainActivity.class);
         startActivity(intent);
+    }
+
+
+    public ArrayList<Summoner> getSummonersOpponentsList() {
+        return summonersOpponentsList;
+    }
+
+    public void setSummonersOpponentsList(ArrayList<Summoner> summonersOpponentsList) {
+        this.summonersOpponentsList = summonersOpponentsList;
     }
 }

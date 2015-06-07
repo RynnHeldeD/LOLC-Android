@@ -109,7 +109,7 @@ public class MainActivity extends Activity {
         int position = spinner.getSelectedItemPosition();
 
         Constant.setRegion(Constant.regionsFromViewHashtable.get(spinner.getSelectedItem().toString()));
-        text.setText("logging ...");
+        text.setText(getResources().getString(R.string.pending_logging));
         toast.show();
         user = SummonerDAO.getSummoner(message);
         if(user != null){

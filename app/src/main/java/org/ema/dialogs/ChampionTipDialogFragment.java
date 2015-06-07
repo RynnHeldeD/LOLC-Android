@@ -1,4 +1,4 @@
-package org.ema.utils;
+package org.ema.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -56,17 +56,17 @@ public class ChampionTipDialogFragment extends DialogFragment {
 
         //View dialogLayout = new View(this.getActivity());
         Typeface font = Typeface.createFromAsset(this.getActivity().getAssets(), "fonts/lol.ttf");
-        TextView advice_title = (TextView) dialogLayout.findViewById(R.id.dialog_advice_title);
+        TextView advice_title = (TextView) dialogLayout.findViewById(R.id.dialog_title);
         advice_title.setText(((String) this.getArguments().get("name")));
         advice_title.setTypeface(font);
 
-        LinearLayout layout = (LinearLayout) dialogLayout.findViewById(R.id.dialog_advices);
+        LinearLayout layout = (LinearLayout) dialogLayout.findViewById(R.id.dialog_container);
         String[] advices = ((String) this.getArguments().get("tips")).split("\",\"");
         LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         for(String advice : advices) {
             TextView tv = new TextView(this.getActivity());
             tv.setText(advice.replace("\"", ""));
-            tv.setPadding(10,5,10,5);
+            tv.setPadding(5, 10, 5, 10);
             tv.setTextSize(getResources().getDimension(R.dimen.tips_champion_font));
             tv.setTextColor(getResources().getColor(R.color.black_font));
             layout.addView(tv, tvParams);

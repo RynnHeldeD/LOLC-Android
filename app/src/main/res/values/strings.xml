@@ -47,6 +47,7 @@
 
     <string name="wins">W</string>
     <string name="looses">L</string>
+    <string name="purcent">%</string>
     <string name="summoner_level">LEVEL </string>
 
     <!-- Ennemies screen -->

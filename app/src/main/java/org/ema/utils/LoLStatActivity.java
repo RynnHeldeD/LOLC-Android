@@ -17,6 +17,8 @@ import android.widget.TextView;
 import org.ema.lolcompanion.R;
 import org.ema.model.business.Summoner;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,17 +41,31 @@ public class LoLStatActivity extends Fragment {
             ressource.setTypeface(font);
 
             if (s.contains("name")) {
-                ressource.setText(summoner.getName().substring(0, Math.min(summoner.getName().length(),R.integer.max_champion_name_character_lenght)));
+                ressource.setText(summoner.getName().substring(0, Math.min(summoner.getName().length(),getResources().getInteger(R.integer.max_champion_name_character_lenght))));
                 ressource.setId(idForLine);
             }
+
+            DecimalFormat df = new DecimalFormat("00.0");
+            df.setRoundingMode(RoundingMode.HALF_UP);
             //if Statistics object is set
             if (summoner.getChampion().getStatistic() != null) {
                 if (s.contains("Kv")) {
                     ressource.setText(String.valueOf(Math.round(summoner.getChampion().getStatistic().getKill())));
                 } else if (s.contains("DmDv")) {
-                    ressource.setText(String.valueOf(Math.round(summoner.getChampion().getStatistic().getDamageDealtPercentage())));
+                    if(summoner.getChampion().getStatistic().getDamageDealtPercentage() == 0) {
+                        ressource.setText("0" + getResources().getString(R.string.purcent));
+                    }
+                    else {
+                        ressource.setText(String.valueOf(df.format(summoner.getChampion().getStatistic().getDamageDealtPercentage())) + getResources().getString(R.string.purcent));
+                    }
+
                 } else if (s.contains("DmRv")) {
-                    ressource.setText(String.valueOf(Math.round(summoner.getChampion().getStatistic().getDamageTakenPercentage())));
+                    if(summoner.getChampion().getStatistic().getDamageTakenPercentage() == 0) {
+                        ressource.setText("0" + getResources().getString(R.string.purcent));
+                    }
+                    else {
+                        ressource.setText(String.valueOf(df.format(summoner.getChampion().getStatistic().getDamageTakenPercentage())) + getResources().getString(R.string.purcent));
+                    }
                 } else if (s.contains("Wins")) {
                     Log.v("MIC", String.valueOf(String.valueOf(summoner.getChampion().getStatistic().getWin())));
                     ressource.setText(String.valueOf(summoner.getChampion().getStatistic().getWin()) + getResources().getString(R.string.wins));

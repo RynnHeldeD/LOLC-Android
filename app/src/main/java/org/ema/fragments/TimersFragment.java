@@ -38,7 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class TimersFragment extends LoLStatActivity implements SecureDialogFragment.NoticeDialogListener {
-
+    public static TimersFragment instance = null;
     public HashMap<String,Long> timerMap;
     public static SettingsManager settingsManager = null;
 
@@ -53,8 +53,7 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
 
         TimersFragment.settingsManager = new SettingsManager();
         PreferenceManager.getDefaultSharedPreferences(this.getActivity().getApplicationContext());
-        ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
-
+        TimersFragment.instance = this;
         WebSocket.connectWebSocket();
         return rootView;
     }
@@ -82,10 +81,6 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
 
         //Chargement des timers
         this.buildTimerTable(teamSummonersList);
-
-        //
-        Handler timerHandler = new Handler();
-        GlobalDataManager.add("timerHandler", timerHandler);
     }
 
     public void cleanChannelSummary(){
@@ -284,16 +279,32 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
     */
 
     public void stopTimer(String buttonID, boolean fromWebSocket){
-        TimerButton tbtn = getButtonFromIdString(buttonID);
+        class TimerAction implements Runnable {
+            String buttonID;
+            TimerButton tbtn;
+            boolean fromWebSocket;
 
-        if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
-            //On transmet le message
-            if(!fromWebSocket){
-                WsEventHandling.stopTimer(buttonID);
+            public TimerAction(String buttonID, boolean fromWebSocket){
+                this.buttonID = buttonID;
+                this.tbtn = getButtonFromIdString(buttonID);
+                this.fromWebSocket = fromWebSocket;
             }
-            //On fait l'action sur le timerbutton
-            tbtn.getTimer().onFinish();
+
+            @Override
+            public void run(){
+                if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
+                    //On transmet le message
+                    if(!fromWebSocket){
+                        WsEventHandling.stopTimer(buttonID);
+                    }
+                    //On fait l'action sur le timerbutton
+                    tbtn.getTimer().onFinish();
+                }
+            }
         }
+
+        Handler h = new Handler();
+        h.post(new TimerAction(buttonID, fromWebSocket));
     }
 
     public TimerButton getButtonFromIdString(String buttonID){

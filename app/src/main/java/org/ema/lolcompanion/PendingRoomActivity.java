@@ -77,6 +77,7 @@ public class PendingRoomActivity extends Activity {
         super.onCreate(savedInstanceState);
         //Clear cache
         Utils.cache.clear();
+        Utils.nbRequests = 0;
         // Get the summoner_name from the intent
         Intent intent = getIntent();
         setContentView(R.layout.activity_pending_room);

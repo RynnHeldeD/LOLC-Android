@@ -36,6 +36,7 @@ import java.util.Hashtable;
 public class Utils {
     //Local cache for applications API.
     public static Hashtable<String,String> cache = new Hashtable<String,String>();
+    public static int nbRequests = 0;
 
     //Please insert the url by imageView.setTag(yourUrl)
     //To call this async function:
@@ -195,6 +196,9 @@ public class Utils {
             return cache.get(urlToRead);
         }
 
+        nbRequests ++;
+        Log.v("REQUESTS",String.valueOf(nbRequests));
+
         HttpClient httpclient = new DefaultHttpClient();
         HttpResponse response;
         String responseString = null;
@@ -227,6 +231,9 @@ public class Utils {
             Log.v("CACHE",urlToRead);
             return cache.get(urlToRead);
         }
+
+        nbRequests ++;
+        Log.v("REQUESTS",String.valueOf(nbRequests));
 
         HttpClient httpclient = new DefaultHttpClient();
         HttpResponse response;

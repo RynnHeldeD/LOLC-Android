@@ -54,6 +54,10 @@ public class MainActivity extends Activity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        //Clear cache
+        Utils.cache.clear();
+        Utils.nbRequests = 0;
+
         // Initialize PreferencesManager
         MainActivity.settingsManager = new SettingsManager();
         PreferenceManager.getDefaultSharedPreferences(this);

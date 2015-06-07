@@ -24,7 +24,7 @@ import java.util.Iterator;
 
 public class CurrentGameDAO {
 
-    public static int numberOfGamesAnalyzed = 10;
+    public static int numberOfGamesAnalyzed = 3;
     public static void loadStatisticsDetailed(Summoner summoner) {
         //Load images of mostPlayedChampions
         loadMostPlayedChampionsImages(summoner);

@@ -230,10 +230,11 @@ public class Summoner implements Parcelable {
     public boolean areImagesMostPlayedChampionsLoaded() {
         for(Champion champion : this.getMostChampionsPlayed()) {
             if(champion.getIcon() == null) {
+                Log.v("IMAGES_MOST", champion.getIconName() + " not loaded");
                 return false;
             }
         }
-        
+        Log.v("IMAGES_MOST", "loaded");
         return true;
     }
 

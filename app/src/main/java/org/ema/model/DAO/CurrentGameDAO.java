@@ -32,18 +32,13 @@ public class CurrentGameDAO {
         JSONArray matchHistory = getMatchHistory(summoner, numberOfGamesAnalyzed);
         if(matchHistory != null ) {
             getSummonerFavoriteBuild(summoner, matchHistory);
-            getCreepChartInfo(summoner, matchHistory);
+            //getCreepChartInfo(summoner, matchHistory);
         }
-        while((summoner.areImagesMostPlayedChampionsLoaded() && areImagesBuildLoaded(summoner))){
+
+        while(!summoner.areImagesMostPlayedChampionsLoaded() || !summoner.getChampion().areImagesBuildLoaded()){
             SystemClock.sleep(500);
         }
     }
-
-    public static boolean areImagesBuildLoaded(Summoner summoner) {
-        //TODO check images
-        return true;
-    }
-
 
     public static ArrayList<Summoner> getSummunerListInGameFromCurrentUser(Summoner user) {
         //Get request
@@ -771,6 +766,7 @@ public class CurrentGameDAO {
         for(int i=0;i<7;i++)
         {
             Build[i] = new Item(String.valueOf(itemHistoy.get(i)[0]) + ".png", null);
+            new Utils.SetObjectIcon().execute(Build[i]);
         }
         summoner.getChampion().setBuild(Build);
         } catch (Exception e){

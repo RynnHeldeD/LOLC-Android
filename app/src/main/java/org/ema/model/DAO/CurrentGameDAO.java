@@ -1,4 +1,5 @@
 package org.ema.model.DAO;
+import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -12,6 +13,7 @@ import org.ema.utils.Constant;
 import org.ema.utils.SortChampionsArrayList;
 import org.ema.utils.SortIntegerTabArrayList;
 import org.ema.utils.SortSummonerByTeamAndPerf;
+import org.ema.utils.SummonerList;
 import org.ema.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -102,7 +104,7 @@ public class CurrentGameDAO {
                 float spellCouldown[] = new float[1];
                 spellCouldown[0] = Float.valueOf(jsonSpell1.get("cooldown").toString().replaceAll("\\[", "").replaceAll("\\]",""));
                 current.getSpells()[0].setCooldown(spellCouldown);
-                new Utils.SetObjectIcon().execute(current.getSpells()[0]);
+                new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current.getSpells()[0]);
 
                 //Set spell2
                 JSONObject jsonSpell2 = (JSONObject)((JSONObject)jsonSummonerSpells.get("data")).get(((Integer)current.getSpells()[1].getId()).toString());
@@ -110,7 +112,7 @@ public class CurrentGameDAO {
                 float spellCouldown2[] = new float[1];
                 spellCouldown2[0] = Float.valueOf(jsonSpell2.get("cooldown").toString().replaceAll("\\[", "").replaceAll("\\]",""));
                 current.getSpells()[1].setCooldown(spellCouldown2);
-                new Utils.SetObjectIcon().execute(current.getSpells()[1]);
+                new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current.getSpells()[1]);
 
                 //set champion
                 JSONObject championJson = (JSONObject)((JSONObject)jsonChampions.get("data")).get(((Integer)current.getChampion().getId()).toString());
@@ -118,7 +120,7 @@ public class CurrentGameDAO {
                 current.getChampion().setAllyTips(championJson.get("allytips").toString().replaceAll("\\[", "").replaceAll("\\]", ""));
                 current.getChampion().setEnemyTips(championJson.get("enemytips").toString().replaceAll("\\[", "").replaceAll("\\]", ""));
                 current.getChampion().setIconName(((JSONObject) championJson.get("image")).get("full").toString());
-                new Utils.SetObjectIcon().execute(current.getChampion());
+                new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current.getChampion());
 
                 JSONObject jsonUltimateSpell = (JSONObject)((JSONArray) championJson.get("spells")).get(3);
                 Spell ultimate = new Spell();
@@ -130,18 +132,23 @@ public class CurrentGameDAO {
                 }
                 ultimate.setCooldown(cooldowns);
                 current.getChampion().setSpell(ultimate);
-                new Utils.SetObjectIcon().execute(ultimate);
+                new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ultimate);
 	        }
 
             getSummonersRank(summonersList);
 
             for(Summoner current : summonersList) {
-                //current.getChampion().setStatistic(getSummonerHistoryStatistic(current));
-                getPremades(current,summonersList);
-                getStatiscicsAndMostChampionsPlayed(current);
-                calculUserPerformance(current);
+                new Utils.getPremades().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current, summonersList);
+                new Utils.getStats().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current);
             }
 
+            while(!SummonerList.areSummenersPremadesLoaded(summonersList) || !SummonerList.areSummenersStatsLoaded(summonersList)){
+                SystemClock.sleep(500);
+            }
+
+            for(Summoner current : summonersList) {
+                calculUserPerformance(current);
+            }
 
             Collections.sort(summonersList, new SortSummonerByTeamAndPerf());
 
@@ -398,6 +405,8 @@ public class CurrentGameDAO {
             e.printStackTrace();
             return;
         }
+
+        summoner.getDataProcessed().setStats(true);
     }
 
     //Load async images
@@ -411,7 +420,7 @@ public class CurrentGameDAO {
                     JSONObject championJson = (JSONObject) ((JSONObject)jsonChampions.get("data")).get(((Integer)summoner.getMostChampionsPlayed()[i].getId()).toString());
                     summoner.getMostChampionsPlayed()[i].setName(championJson.get("name").toString());
                     summoner.getMostChampionsPlayed()[i].setIconName(((JSONObject) championJson.get("image")).get("full").toString());
-                    new Utils.SetObjectIcon().execute(summoner.getMostChampionsPlayed()[i]);
+                    new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, summoner.getMostChampionsPlayed()[i]);
                 }
             }
         }
@@ -534,6 +543,8 @@ public class CurrentGameDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        summoner.getDataProcessed().setPremades(true);
     }
 
     public static int[] getUserBuild(JSONArray jsonParticipants)
@@ -629,7 +640,7 @@ public class CurrentGameDAO {
         float meanPercentageDamageTakenByUser = 0;
 
         try {
-            for (int i = 0; i < Math.min(3,jsonMatches.length()); i++) {
+            for (int i = 0; i < Math.min(3, jsonMatches.length()); i++) {
                 JSONObject test = jsonMatches.getJSONObject(i);
                 idGame = jsonMatches.getJSONObject(i).getInt("matchId");
                 teamID = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getInt("teamId");
@@ -710,7 +721,7 @@ public class CurrentGameDAO {
         for(int i=0;i<7;i++)
         {
             Build[i] = new Item(String.valueOf(itemHistoy.get(i)[0]) + ".png", null);
-            new Utils.SetObjectIcon().execute(Build[i]);
+            new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, Build[i]);
         }
         summoner.getChampion().setBuild(Build);
         } catch (Exception e){

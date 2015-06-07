@@ -18,6 +18,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.ema.lolcompanion.MainActivity;
 import org.ema.lolcompanion.R;
+import org.ema.model.DAO.CurrentGameDAO;
+import org.ema.model.business.Summoner;
 import org.ema.model.interfaces.ISettableIcon;
 
 import java.io.BufferedReader;
@@ -31,6 +33,7 @@ import java.lang.reflect.Constructor;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class Utils {
@@ -192,12 +195,12 @@ public class Utils {
     public static String getDocument(String urlToRead) {
         //Return cache if exist.
         if(cache.get(urlToRead) != null) {
-            Log.v("CACHE",urlToRead);
+            //Log.v("CACHE",urlToRead);
             return cache.get(urlToRead);
         }
 
         nbRequests ++;
-        Log.v("REQUESTS",String.valueOf(nbRequests));
+        //Log.v("REQUESTS",String.valueOf(nbRequests));
 
         HttpClient httpclient = new DefaultHttpClient();
         HttpResponse response;
@@ -228,12 +231,12 @@ public class Utils {
     public static String getDocumentAndCheck(String urlToRead, int limit) {
         //Return cache if exist.
         if(cache.get(urlToRead) != null) {
-            Log.v("CACHE",urlToRead);
+//            Log.v("CACHE",urlToRead);
             return cache.get(urlToRead);
         }
 
         nbRequests ++;
-        Log.v("REQUESTS",String.valueOf(nbRequests));
+        //      Log.v("REQUESTS",String.valueOf(nbRequests));
 
         HttpClient httpclient = new DefaultHttpClient();
         HttpResponse response;
@@ -272,5 +275,28 @@ public class Utils {
             }
         }
         return responseString;
+    }
+
+    public static class getStats extends AsyncTask<Object, Void, Integer> {
+        private String path = "";
+
+        @Override
+        protected Integer doInBackground(Object... params) {
+            Summoner summoner = (Summoner)params[0];
+            CurrentGameDAO.getStatiscicsAndMostChampionsPlayed(summoner);
+            return new Integer(1);
+        }
+    }
+
+    public static class getPremades extends AsyncTask<Object, Void, Integer> {
+        private String path = "";
+
+        @Override
+        protected Integer doInBackground(Object... params) {
+            Summoner summoner = (Summoner)params[0];
+            ArrayList<Summoner> summonerList = (ArrayList<Summoner>)params[1];
+            CurrentGameDAO.getPremades(summoner,summonerList);
+            return new Integer(1);
+        }
     }
 }

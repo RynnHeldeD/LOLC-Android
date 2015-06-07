@@ -24,6 +24,15 @@ public class Summoner implements Parcelable {
     private float looses;
     //size between 1 and 3
     private Champion[] mostChampionsPlayed;
+    private DataProcessed dataProcessed = new DataProcessed();
+
+    public DataProcessed getDataProcessed() {
+        return dataProcessed;
+    }
+
+    public void setDataProcessed(DataProcessed dataProcessed) {
+        this.dataProcessed = dataProcessed;
+    }
 
     public int getLevel() {
         return level;
@@ -125,7 +134,7 @@ public class Summoner implements Parcelable {
     public Summoner() {
     }
 
-    public Summoner(int id, String name, int level, Spell[] spells, Champion champion, League league, int teamId, int premade, float wins, float looses, Champion[] mostChampionsPlayed,int gameId) {
+    public Summoner(int id, String name, int level, Spell[] spells, Champion champion, League league, int teamId, int premade, float wins, float looses, Champion[] mostChampionsPlayed,int gameId,DataProcessed data) {
         this.id = id;
         this.name = name;
         this.level = level;
@@ -137,6 +146,8 @@ public class Summoner implements Parcelable {
         this.wins = wins;
         this.looses = looses;
         this.mostChampionsPlayed = mostChampionsPlayed;
+        this.gameId = gameId;
+        this.dataProcessed = data;
     }
 
     public Summoner(Summoner s) {
@@ -156,6 +167,8 @@ public class Summoner implements Parcelable {
         this.premade = s.premade;
         this.wins = s.wins;
         this.looses = s.looses;
+        this.gameId = s.gameId;
+        this.dataProcessed = s.dataProcessed;
     }
 
     @Override
@@ -187,6 +200,8 @@ public class Summoner implements Parcelable {
         this.premade = in.readInt();
         this.wins = in.readFloat();
         this.looses = in.readFloat();
+        this.gameId = in.readInt();
+        this.dataProcessed = (DataProcessed) in.readParcelable(DataProcessed.class.getClassLoader());
     }
 
     public int describeContents() {
@@ -237,5 +252,4 @@ public class Summoner implements Parcelable {
         Log.v("IMAGES_MOST", "loaded");
         return true;
     }
-
 }

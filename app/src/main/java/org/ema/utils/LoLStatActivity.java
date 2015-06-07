@@ -39,14 +39,7 @@ public class LoLStatActivity extends Fragment {
             ressource.setTypeface(font);
 
             if (s.contains("name")) {
-                String summoner_name = summoner.getName();
-                Log.v("MIC","name lenght" + String.valueOf(summoner_name.length()));
-                Log.v("MIC", "limit : " + String.valueOf(summoner_name.length()));
-                if(summoner_name.length() > (int)getResources().getInteger(R.integer.max_champion_name_character_lenght)) {
-                    ressource.setText(summoner_name.substring(0,  (int)getResources().getInteger(R.integer.max_champion_name_character_lenght)));
-                }
-                else ressource.setText(summoner_name);
-                ressource.setId(idForLine);
+                ressource.setText(summoner.getName().substring(0, Math.min(summoner.getName().length(),R.integer.max_champion_name_character_lenght)));
             }
             //if Statistics object is set
             if (summoner.getChampion().getStatistic() != null) {
@@ -76,7 +69,7 @@ public class LoLStatActivity extends Fragment {
 
             if (s.contains("LP")) {
                 if (summoner.getLeague().getDivision().toLowerCase().contains("unranked")) {
-                    Log.v("MIC",String.valueOf(summoner.getLevel()));
+                    //Log.v("MIC",String.valueOf(summoner.getLevel()));
                     ressource.setText(getResources().getString(R.string.summoner_level) + " " + String.valueOf(summoner.getLevel()));
                 }else {
                     ressource.setText(summoner.getLeague().getDivision().toUpperCase() + " " + String.valueOf(summoner.getLeague().getLeaguePoints()) + " LP");

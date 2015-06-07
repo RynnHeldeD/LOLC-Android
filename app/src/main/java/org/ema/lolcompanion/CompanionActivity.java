@@ -200,7 +200,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
             }
         }
         );
-        launchMainActivity();
+        //launchMainActivity();
     }
 
     public void launchMainActivity(){

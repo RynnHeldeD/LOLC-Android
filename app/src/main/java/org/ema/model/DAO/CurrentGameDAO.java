@@ -14,6 +14,8 @@ import org.ema.utils.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -72,6 +74,8 @@ public class CurrentGameDAO {
 
                 summonersList.add(summoner);
             }
+
+            getLevels(summonersList);
 
             JSONObject jsonSummonerSpells = new JSONObject(Utils.getDocumentAndCheck(Constant.API_SUMMONER_SPELLS,2));
             JSONObject jsonChampions = new JSONObject(Utils.getDocumentAndCheck(Constant.API_CHAMPION_URI,2));
@@ -611,5 +615,47 @@ public class CurrentGameDAO {
         }
 
         return value;
+    }
+
+    private static void getLevels(ArrayList<Summoner> summoners) {
+        try {
+            //Get request
+            String jsonResult = Utils.getDocument(Constant.API_SUMMONER_INFO_URI + concatAndEncodeNames(summoners));
+
+            //Player not exist
+            if(jsonResult == null) {
+                return;
+            }
+
+            JSONObject json = new JSONObject(jsonResult);
+
+            for(Summoner current : summoners) {
+                JSONObject jsonChampion = (JSONObject)json.get(current.getName().replaceAll(" ", "").toLowerCase());
+
+                //Set summuner level
+                current.setLevel((int) jsonChampion.get("summonerLevel"));
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    //Concat and encod names
+    private static String concatAndEncodeNames(ArrayList<Summoner> summoners) {
+        String result = "";
+
+        try {
+            for(Summoner summoner : summoners) {
+                result += URLEncoder.encode(summoner.getName(),"UTF-8") + ",";
+            }
+
+            result = result.substring(0, result.length() - 1);
+        }
+        catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return  result;
     }
 }

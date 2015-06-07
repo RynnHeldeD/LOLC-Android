@@ -26,7 +26,8 @@
         </activity>
         <activity
             android:name=".CompanionActivity"
-            android:label="@string/title_activity_companion" >
+            android:label="@string/title_activity_companion"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

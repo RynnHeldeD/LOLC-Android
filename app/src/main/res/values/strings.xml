@@ -44,9 +44,10 @@
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam placerat magna sit amet elit malesuada, et maximus odio gravida. Vivamus sit amet dictum nulla, fringilla consectetur nibh. In vitae pulvinar neque, vitae congue enim. Nullam ultricies erat quis lectus tristique, in finibus nibh laoreet. Nunc egestas consectetur orci vitae finibus. Curabitur molestie accumsan tempor. Aenean eget mauris sed arcu lacinia molestie vel et augue. Sed elementum pulvinar dignissim. Vivamus pha
     </string>
     <string name="unranked">UNRANKED</string>
+
     <string name="wins">W</string>
     <string name="looses">L</string>
-    <string name="summoner_level">Level </string>
+    <string name="summoner_level">LEVEL </string>
 
     <!-- Ennemies screen -->
     <string name="title_activity_ennemies">EnnemiesActivity</string>

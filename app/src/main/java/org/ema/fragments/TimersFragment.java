@@ -311,6 +311,54 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
         return (TimerButton) getActivity().findViewById(getResources().getIdentifier(buttonID, "id", getActivity().getPackageName()));
     }
 
+    public void activateTimer(final String buttonID, final long timerDelay) {
+        this.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+
+                TimerButton tbtn = getButtonFromIdString(buttonID);
+                //loading the league of legend equiv fonts
+                Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
+
+                if (tbtn.getTimer() == null) {
+                    //Setting the TextView so the timer update the countdown in FO
+                    int timerTextViewID = getResources().getIdentifier(buttonID.concat("t"), "id", getActivity().getBaseContext().getPackageName());
+                    //settings the textView with the font
+                    TextView txtv = (TextView) getActivity().findViewById(timerTextViewID);
+                    txtv.setTypeface(font);
+                    tbtn.setTimer(new Timer(0, 0, txtv, tbtn));
+                }
+
+                //On active le timer
+                tbtn.setTimer(new Timer(timerDelay, 1000, tbtn.getTimer().getTimerTextView(), tbtn));
+                tbtn.getTimer().start();
+                tbtn.getTimer().setVisible(true);
+            }
+        });
+    }
+/*
+    public void activateTimer(String buttonID, long timerDelay) {
+
+
+        class activateTimer implements Runnable {
+            String buttonID;
+            long timerDelay;
+
+            public activateTimer(String buttonID, long timerDelay){
+                this.buttonID = buttonID;
+                this.timerDelay = timerDelay;
+            }
+
+            @Override
+            public void run(){
+
+            }
+        }
+
+        Handler h = new Handler();
+        h.post(new activateTimer(buttonID, timerDelay));
+     }
+*/
+
     public String[][] shareTimers(){
         List<String> timerButtons = Arrays.asList("b12","b13", "b14", "b22","b23", "b24", "b32","b33", "b34","b42", "b43", "b44", "b52","b53", "b54");
 

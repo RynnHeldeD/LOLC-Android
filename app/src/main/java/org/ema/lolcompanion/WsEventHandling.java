@@ -44,6 +44,11 @@ public class WsEventHandling {
                         updateChannelPlayers(obj.getJSONArray("allies"));
                         break;
                     case "playerList_toNewAllies":
+                        updateChannelPlayers(obj.getJSONArray("allies"));
+                        if(obj.has("share")){
+                            shareTimers();
+                        }
+                        break;
                     case "playerList_toOldAllies":
                         updateChannelPlayers(obj.getJSONArray("allies"));
                         break;
@@ -56,11 +61,12 @@ public class WsEventHandling {
                     case "stopTimer":
                         doStopTimer(obj.getString("idSortGrille"));
                         break;
-                    case "shareTimers":
-                        shareTimers();
-                        break;
                     case "sharedTimers":
-                        //TODO reception du partage
+                        try {
+                            updateTimers(obj.getJSONArray("timers"),obj.getString("timestamp"));
+                        } catch (JSONException e){
+                            Log.v("Websocket","Erreur parsage:" + e.getMessage());
+                        }
                         break;
                     default:
                         break;
@@ -291,20 +297,42 @@ public class WsEventHandling {
         }
     }
 
-    public void shareTimers(){
+    public static void shareTimers(){
         String[][] timersTableToShare = CompanionActivity.instance.shareTimers();
         int tableSize = timersTableToShare.length;
 
-        String requestToSend = "{\"action\":\"sentTimers\",\"timers\":[";
-        for (int i = 0;i< tableSize;i++){
-            requestToSend += "[\"" + timersTableToShare[i][0] + "\",\"" + timersTableToShare[i][1] + "\"],";
+        if(tableSize > 0){
+            String requestToSend = "{\"action\":\"sentTimers\",\"timers\":[";
+            for (int i = 0;i< tableSize;i++){
+                requestToSend += "[\"" + timersTableToShare[i][0] + "\",\"" + timersTableToShare[i][1] + "\"],";
+            }
+            requestToSend = requestToSend.substring(0, requestToSend.length() - 1);
+
+            long serverTime = GameTimestamp.getServerTimestamp();
+            requestToSend += "],\"timestamp\":" + serverTime + "}";
+
+            sendMessage(requestToSend);
         }
-        requestToSend = requestToSend.substring(0, requestToSend.length()-1);
+    }
 
-        long serverTime = GameTimestamp.getServerTimestamp();
-        requestToSend += "],\"timestamp\":" + serverTime + "}";
+    public static void updateTimers(JSONArray timerTable,String timestampEnvoi){
 
-        sendMessage(requestToSend);
+        long delayOfTransfert = GameTimestamp.transfertDelay(Long.parseLong(timestampEnvoi));
+        try {
+            //HashMap<String,String> timerHaspmap = (HashMap<String,String>) timerTable.get(0);
+
+            for(int i = 0; i < timerTable.length();i++){
+                Log.v("Websocket","Update timer " + i);
+                JSONArray buttonAndCooldown = (JSONArray) timerTable.get(i);
+                if((Long.parseLong(buttonAndCooldown.getString(1)) - delayOfTransfert) > 0) {
+                    long cooldown = Long.parseLong(buttonAndCooldown.getString(1)) - delayOfTransfert;
+                    CompanionActivity.instance.activateTimer(buttonAndCooldown.getString(0),cooldown);
+                }
+            }
+        } catch (JSONException e){
+            Log.v("Websocket","Erreur lors de la reception des timers partagés");
+        }
+
     }
 
 

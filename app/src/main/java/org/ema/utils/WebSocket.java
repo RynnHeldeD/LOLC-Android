@@ -23,7 +23,7 @@ public class WebSocket {
         URI uri;
         try {
             //    uri = new URI("ws://10.0.2.2:12345/");
-            uri = new URI("ws://5.135.153.45:8080/");
+            uri = new URI("ws://5.135.153.45:8081/");
 
         } catch (URISyntaxException e) {
             e.printStackTrace();

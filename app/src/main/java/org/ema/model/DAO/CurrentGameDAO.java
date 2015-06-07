@@ -1,4 +1,5 @@
 package org.ema.model.DAO;
+import android.os.SystemClock;
 import android.util.Log;
 
 import org.ema.model.business.Champion;
@@ -19,13 +20,24 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 
 public class CurrentGameDAO {
 
     public static void loadStatisticsDetailed(Summoner summoner) {
         //Load images of mostPlayedChampions
         loadMostPlayedChampionsImages(summoner);
+
+        while((summoner.areImagesMostPlayedChampionsLoaded() && areImagesBuildLoaded(summoner))){
+            SystemClock.sleep(500);
+        }
     }
+
+    public static boolean areImagesBuildLoaded(Summoner summoner) {
+        //TODO check images
+        return true;
+    }
+
 
     public static ArrayList<Summoner> getSummunerListInGameFromCurrentUser(Summoner user) {
         //Get request
@@ -453,6 +465,7 @@ public class CurrentGameDAO {
                     JSONObject championJson = (JSONObject) ((JSONObject)jsonChampions.get("data")).get(((Integer)summoner.getMostChampionsPlayed()[i].getId()).toString());
                     summoner.getMostChampionsPlayed()[i].setName(championJson.get("name").toString());
                     summoner.getMostChampionsPlayed()[i].setIconName(((JSONObject) championJson.get("image")).get("full").toString());
+                    new Utils.SetObjectIcon().execute(summoner.getMostChampionsPlayed()[i]);
                 }
             }
         }

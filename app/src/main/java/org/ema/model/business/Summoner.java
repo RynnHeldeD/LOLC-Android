@@ -2,6 +2,7 @@ package org.ema.model.business;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.Arrays;
 
@@ -225,4 +226,15 @@ public class Summoner implements Parcelable {
 
         return areImagesLoaded;
     }
+
+    public boolean areImagesMostPlayedChampionsLoaded() {
+        for(Champion champion : this.getMostChampionsPlayed()) {
+            if(champion.getIcon() == null) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
 }

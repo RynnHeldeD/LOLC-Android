@@ -207,7 +207,7 @@ public class CurrentGameDAO {
             }
             Statistic statsUser = new Statistic(kill, death, assist, win, loose, (float) 0, (float) 0, (float) 0, null);
             user.getChampion().setStatistic(statsUser);
-            //getCreepChartInfo(user);
+            getCreepChartInfo(user);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -258,12 +258,13 @@ public class CurrentGameDAO {
 
     public static void getCreepChartInfo(Summoner user) {
         JSONObject jsonResult;
+        int numberOfGamesAnalyzed = 3;
         try {
             jsonResult = new JSONObject(Utils.getDocument(Constant.API_MATCH_HISTORY_URI +
                     user.getId() +
                     "?championIds=" +
                     user.getChampion().getId() +
-                    "&rankedQueus=RANKED_SOLO_5x5&beginIndex=" + 0 + "&endIndex=" + 10));
+                    "&rankedQueus=RANKED_SOLO_5x5&beginIndex=" + 0 + "&endIndex=" + numberOfGamesAnalyzed));
             JSONArray jsonMatches = null;
             if(!jsonResult.isNull("matches")) {
                 jsonMatches = jsonResult.getJSONArray("matches");
@@ -611,7 +612,6 @@ public class CurrentGameDAO {
     }
 
     public static void getDamageDealtAndDamageTaken(Summoner summoner, JSONArray jsonMatches){
-        Log.v("DAO", "Begining damage dealt / taken");
         int idGame = 0;
         int teamID = 0;
         int totalDamageDealtByUserTeamInCurrentGame = 0;
@@ -655,6 +655,5 @@ public class CurrentGameDAO {
             e.printStackTrace();
             Log.v("Erreur creep", e.getMessage());
         }
-        Log.v("DAO", "End damage dealt / taken");
     }
 }

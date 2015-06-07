@@ -47,6 +47,9 @@ public class LoLStatActivity extends Fragment {
 
             DecimalFormat df = new DecimalFormat("00.0");
             df.setRoundingMode(RoundingMode.HALF_UP);
+            DecimalFormat dfsmall = new DecimalFormat("0.0");
+            dfsmall.setRoundingMode(RoundingMode.HALF_UP);
+
             //if Statistics object is set
             if (summoner.getChampion().getStatistic() != null) {
                 if (s.contains("Kv")) {
@@ -55,13 +58,19 @@ public class LoLStatActivity extends Fragment {
                     if(summoner.getChampion().getStatistic().getDamageDealtPercentage() == 0) {
                         ressource.setText("0" + getResources().getString(R.string.purcent));
                     }
+                    else if (summoner.getChampion().getStatistic().getDamageDealtPercentage() < 10){
+                        ressource.setText(String.valueOf(dfsmall.format(summoner.getChampion().getStatistic().getDamageDealtPercentage())) + getResources().getString(R.string.purcent));
+                    }
                     else {
                         ressource.setText(String.valueOf(df.format(summoner.getChampion().getStatistic().getDamageDealtPercentage())) + getResources().getString(R.string.purcent));
                     }
 
                 } else if (s.contains("DmRv")) {
-                    if(summoner.getChampion().getStatistic().getDamageTakenPercentage() == 0) {
+                    if (summoner.getChampion().getStatistic().getDamageTakenPercentage() == 0) {
                         ressource.setText("0" + getResources().getString(R.string.purcent));
+                    }
+                    else if(summoner.getChampion().getStatistic().getDamageTakenPercentage() < 10){
+                        ressource.setText(String.valueOf(dfsmall.format(summoner.getChampion().getStatistic().getDamageTakenPercentage())) + getResources().getString(R.string.purcent));
                     }
                     else {
                         ressource.setText(String.valueOf(df.format(summoner.getChampion().getStatistic().getDamageTakenPercentage())) + getResources().getString(R.string.purcent));

@@ -236,7 +236,7 @@ public class CurrentGameDAO {
         float nbGamesWithChampion = 0;
         if((float)summoner.getChampion().getStatistic().getWin() + (float)summoner.getChampion().getStatistic().getLoose() != 0){
              winRateWithChampion = (float)summoner.getChampion().getStatistic().getWin()/((float)summoner.getChampion().getStatistic().getWin()+(float)summoner.getChampion().getStatistic().getLoose());
-             nbGamesWithChampion = Math.min(summoner.getChampion().getStatistic().getWin()+summoner.getChampion().getStatistic().getLoose()/50,1);
+             nbGamesWithChampion = Math.min((summoner.getChampion().getStatistic().getWin()+summoner.getChampion().getStatistic().getLoose())/50,1);
         }
 
         float rank;
@@ -263,7 +263,7 @@ public class CurrentGameDAO {
         //Coefficient values / 10
         //Set a ratio between 0 and 1
         summoner.getChampion().getStatistic().setPerformance((winRateWithChampion*(float)2.5+nbGamesWithChampion*(float)2.5+5*rank)/10);
-    }
+     }
 
     public static void getCreepChartInfo(Summoner user) {
         JSONObject jsonResult;

@@ -220,9 +220,9 @@ public class Utils {
                 throw new IOException(statusLine.getReasonPhrase());
             }
         } catch (ClientProtocolException e) {
-            Log.v("REQUEST_FAILED",e.getMessage());
+            Log.v("REQUEST_FAILED",e.getMessage() + " " + urlToRead);
         } catch (IOException e) {
-            Log.v("REQUEST_FAILED",e.getMessage());
+            Log.v("REQUEST_FAILED",e.getMessage() + " " + urlToRead);
         }
         return responseString;
     }
@@ -271,7 +271,7 @@ public class Utils {
                 return getDocumentAndCheck(urlToRead, --limit);
             }
             else {
-                Log.v("REQUEST_FAILED",e.getMessage());
+                Log.v("REQUEST_FAILED",e.getMessage() + " " + urlToRead);
             }
         }
         return responseString;

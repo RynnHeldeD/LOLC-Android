@@ -362,6 +362,7 @@ public class CurrentGameDAO {
         try {
             //Not on game
             if (jsonResult == null) {
+                summoner.getDataProcessed().setStats(true);
                 return;
             }
 
@@ -399,13 +400,14 @@ public class CurrentGameDAO {
             if(mostChampionsPlayed.length != 0 && mostChampionsPlayed[0].getId() == summoner.getChampion().getId()) {
                 summoner.getChampion().setMain(true);
             }
-
+            summoner.getDataProcessed().setStats(true);
         } catch (Exception e) {
+            summoner.getDataProcessed().setStats(true);
             e.printStackTrace();
             return;
         }
 
-        summoner.getDataProcessed().setStats(true);
+
     }
 
     //Load async images
@@ -537,13 +539,12 @@ public class CurrentGameDAO {
                     }
                 }
             }
-
+            summoner.getDataProcessed().setPremades(true);
             //Log.v("TOTO", "Limit = " + String.valueOf(limit));
         } catch (Exception e) {
+            summoner.getDataProcessed().setPremades(true);
             e.printStackTrace();
         }
-
-        summoner.getDataProcessed().setPremades(true);
     }
 
     public static int[] getUserBuild(JSONArray jsonParticipants)

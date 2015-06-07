@@ -629,7 +629,7 @@ public class CurrentGameDAO {
         float meanPercentageDamageTakenByUser = 0;
 
         try {
-            for (int i = 0; i < jsonMatches.length(); i++) {
+            for (int i = 0; i < Math.min(3,jsonMatches.length()); i++) {
                 JSONObject test = jsonMatches.getJSONObject(i);
                 idGame = jsonMatches.getJSONObject(i).getInt("matchId");
                 teamID = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getInt("teamId");

@@ -11,11 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by Constantin on 19/05/2015.
@@ -59,6 +55,12 @@ public class WsEventHandling {
                         break;
                     case "stopTimer":
                         doStopTimer(obj.getString("idSortGrille"));
+                        break;
+                    case "shareTimers":
+                        shareTimers();
+                        break;
+                    case "sharedTimers":
+                        //TODO reception du partage
                         break;
                     default:
                         break;
@@ -287,6 +289,22 @@ public class WsEventHandling {
             waitingReconnexionMessage ="";
 
         }
+    }
+
+    public void shareTimers(){
+        String[][] timersTableToShare = CompanionActivity.instance.shareTimers();
+        int tableSize = timersTableToShare.length;
+
+        String requestToSend = "{\"action\":\"sentTimers\",\"timers\":[";
+        for (int i = 0;i< tableSize;i++){
+            requestToSend += "[\"" + timersTableToShare[i][0] + "\",\"" + timersTableToShare[i][1] + "\"],";
+        }
+        requestToSend = requestToSend.substring(0, requestToSend.length()-1);
+
+        long serverTime = GameTimestamp.getServerTimestamp();
+        requestToSend += "],\"timestamp\":" + serverTime + "}";
+
+        sendMessage(requestToSend);
     }
 
 

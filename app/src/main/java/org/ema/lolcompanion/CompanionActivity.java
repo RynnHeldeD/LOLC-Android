@@ -98,6 +98,15 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         //button ID formated like "b12"
         String buttonID = IDButton.substring(IDButton.lastIndexOf("/") + 1);
 
+        if(!tbtn.isTriggered()) {
+            tbtn.setTriggered(true);
+            timerFragment.simpleClickTimer(buttonID, 0, false, true);
+        } else {
+            timerFragment.simpleClickTimer(buttonID, 0, false, false);
+        }
+
+        // FUNCTION FOR DOUBLE CLICK (DISABLED)
+        /*
         java.util.Date date= new java.util.Date();
         long now = date.getTime();
         long btnTimestp = tbtn.getClickedTimestamp();
@@ -130,6 +139,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
             }
             tbtn.setTriggered(false);
         }
+        */
     }
 
 

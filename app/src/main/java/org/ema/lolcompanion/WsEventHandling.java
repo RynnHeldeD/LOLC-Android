@@ -54,7 +54,7 @@ public class WsEventHandling {
                         delayTimer(obj.getString("idSortGrille"));
                         break;
                     case "razTimer":
-                        doRestartTimer(obj.getString("idSortGrille"), obj.getString("timestampDeclenchement"));
+                        //doRestartTimer(obj.getString("idSortGrille"), obj.getString("timestampDeclenchement"));
                         break;
                     case "stopTimer":
                         doStopTimer(obj.getString("idSortGrille"));
@@ -120,6 +120,10 @@ public class WsEventHandling {
         }.start();
     }
 
+    /**
+     * FUNCTION DISABLED
+     */
+    /*
     public static void doRestartTimer(final String buttonIdGrid, final String activationTimestamp){
         class WebSocketAction implements Runnable {
             public String buttonIdGrid;
@@ -158,6 +162,7 @@ public class WsEventHandling {
             }
         }.start();
     }
+    */
 
     public static void doStopTimer(final String buttonIdGrid){
         class WebSocketAction implements Runnable {

@@ -264,8 +264,12 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
         }
     }
 
+    /**
+     * FUNCTION DISABLED
+     */
+    /*
     public void restartTimer(String buttonID, long timestamp, boolean fromWebSocket) {
-        /*TimerButton tbtn = getButtonFromIdString(buttonID);
+        TimerButton tbtn = getButtonFromIdString(buttonID);
         Timestamp tstmp = new Timestamp(new Date().getTime());
 
         if (tbtn.getTimer() != null && tbtn.getTimer().isTicking()) {
@@ -276,8 +280,8 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
             //On fait l'action sur le timerbutton
             tbtn.getTimer().onFinish();
             simpleClickTimer(buttonID, timestamp, true, false);
-        }*/
     }
+    */
 
     public void stopTimer(String buttonID, boolean fromWebSocket){
         TimerButton tbtn = getButtonFromIdString(buttonID);

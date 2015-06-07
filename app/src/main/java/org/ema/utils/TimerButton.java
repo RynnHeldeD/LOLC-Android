@@ -16,20 +16,20 @@ import java.lang.reflect.Method;
 public class TimerButton extends RoundedImageView {
     public static final int DELAY = 200;
     protected Timer timer;
-    protected long clickedTimestamp;
+    //protected long clickedTimestamp;
     protected boolean triggered;
 
     public TimerButton(Context context) {
         super(context);
         this.timer = null;
-        this.clickedTimestamp = 0;
+        //this.clickedTimestamp = 0;
         this.triggered = false;
     }
 
     public TimerButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.timer = null;
-        this.clickedTimestamp = 0;
+        //this.clickedTimestamp = 0;
         this.triggered = false;
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TimerButton);
@@ -102,7 +102,7 @@ public class TimerButton extends RoundedImageView {
     public TimerButton(final Context context, final AttributeSet attrs, final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.timer = null;
-        this.clickedTimestamp = 0;
+        //this.clickedTimestamp = 0;
         this.triggered = false;
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TimerButton);
@@ -193,6 +193,7 @@ public class TimerButton extends RoundedImageView {
         }
     }
 
+    /*
     public long getClickedTimestamp() {
         return this.clickedTimestamp;
     }
@@ -200,6 +201,7 @@ public class TimerButton extends RoundedImageView {
     public void setClickedTimestamp(long clickedTimestamp) {
         this.clickedTimestamp = clickedTimestamp;
     }
+    */
 
     public boolean isTriggered() {
         return triggered;

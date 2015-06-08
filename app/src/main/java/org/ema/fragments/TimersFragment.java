@@ -74,8 +74,6 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
             }
         }
 
-        Collections.sort(teamSummonersList, new SortSummonerId());
-
         // Changement des bitmap
         this.setTimerButtonsImage(teamSummonersList);
 
@@ -86,6 +84,7 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
     }
 
     public void cleanChannelSummary(){
+        Log.v("Websocket", "On clean la liste");
         LinearLayout channelSummary = (LinearLayout) getActivity().findViewById(R.id.channel_summary);
         channelSummary.removeAllViewsInLayout();
     }
@@ -402,9 +401,6 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
         this.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 List<String> timerButtons = Arrays.asList("b12", "b13", "b14", "b22", "b23", "b24", "b32", "b33", "b34", "b42", "b43", "b44", "b52", "b53", "b54");
-
-                String[][] timersTableToShare = new String[15][2];
-                int count = 0;
 
                 for(int i = 0; i < 15;i++){
                     String buttonID = timerButtons.get(i);

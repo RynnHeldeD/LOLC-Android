@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -51,6 +52,9 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         tab_strp = (PagerTabStrip) findViewById(R.id.companion_title_strip);
         tab_strp.setTextColor(Color.WHITE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        instance = timerFragment;
+        instanceCompanion = this;
     }
 
     //Permet de Switcher entre les fragments
@@ -212,25 +216,30 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         this.runOnUiThread(new Runnable() {
                                @Override
                                public void run() {
-                                   if (!WebSocket.alreadyDisconnected) {
-                                       Toast.makeText(CompanionActivity.this, "Disconnected from server", Toast.LENGTH_SHORT).show();
-                                   }
-                                   CompanionActivity.instance.cleanChannelSummary();
-                                   //On dis au websocket que maintenant ça ne sert plus a rien d'afficher des messages d'erreur car l'utilisteur sais qu'il est déconnecté
-                                   WebSocket.alreadyDisconnected = true;
-                               }
-                           }
+               if (!WebSocket.alreadyDisconnected) {
+                   Toast.makeText(CompanionActivity.this, "Disconnected from server", Toast.LENGTH_SHORT).show();
+               }
+               try{
+                   CompanionActivity.instance.cleanChannelSummary();
+               } catch (Exception e){
+                   Log.v("Websocket", "Erreur dans handleDisconnection au moment du CleanChannel:" + e.getMessage());
+               }
+
+               //On dis au websocket que maintenant ça ne sert plus a rien d'afficher des messages d'erreur car l'utilisteur sais qu'il est déconnecté
+               WebSocket.alreadyDisconnected = true;
+           }
+       }
         );
     }
 
     public void reconnectionNotification() {
         this.runOnUiThread(new Runnable() {
-                               @Override
-                               public void run() {
-                                   Toast.makeText(CompanionActivity.this, "You've been reconnected", Toast.LENGTH_SHORT).show();
-                                   WebSocket.alreadyDisconnected = false;
-                               }
-                           }
+               @Override
+               public void run() {
+                   Toast.makeText(CompanionActivity.this, "You've been reconnected", Toast.LENGTH_SHORT).show();
+                   WebSocket.alreadyDisconnected = false;
+               }
+           }
         );
     }
 
@@ -242,14 +251,14 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
     @Override
     public void onResume() {
         super.onResume();
-        instance = timerFragment;
-        instanceCompanion = this;
+       // instance = timerFragment;
+       // instanceCompanion = this;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        instance = null;
-        instanceCompanion = null;
+        //instance = null;
+       // instanceCompanion = null;
     }
 }

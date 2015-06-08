@@ -656,16 +656,11 @@ public class CurrentGameDAO {
         float meanPercentageDamageTakenByUser = 0;
 
         int numberOfGames = 0;
-        Log.v("DAO", summoner.getChampion().getName());
-        Log.v("DAO", "Summoner id : " + summoner.getId());
-        Log.v("DAO", "Champion  id : " + summoner.getChampion().getId());
         try {
             for (int i = jsonMatches.length()-1; i > Math.max(jsonMatches.length() - 3, jsonMatches.length() - 2) ; i--) {
-                Log.v("DAO", jsonMatches.getJSONObject(i).getString("season"));
                 //if (!jsonMatches.getJSONObject(i).isNull("season") && (jsonMatches.getJSONObject(i).getString("season").equals("SEASON2015") || (jsonMatches.getJSONObject(i).getString("season").equals("PRESEASON2015")))) {
                 if (!jsonMatches.getJSONObject(i).isNull("season") && (jsonMatches.getJSONObject(i).getString("season").equals("SEASON2015") )) {
                     numberOfGames++;
-                    Log.v("DAO", "Calculate");
                     JSONObject test = jsonMatches.getJSONObject(i);
                     idGame = jsonMatches.getJSONObject(i).getInt("matchId");
                     teamID = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getInt("teamId");
@@ -774,11 +769,9 @@ public class CurrentGameDAO {
         Collections.sort(itemHistoy, new SortIntegerTabArrayList());
         int numberOfitems = Math.min(numberOfItemToAnalyze, itemHistoy.size());
         Item[] Build = new Item[numberOfitems];
-        Log.v("DAO", summoner.getChampion().getName());
         for(int i=0; i <numberOfitems;i++)
         {
-            Log.v("DAO","i : " + i);
-            Build[i] = new Item(String.valueOf(itemHistoy.get(i)[0]) + ".png", null);
+             Build[i] = new Item(String.valueOf(itemHistoy.get(i)[0]) + ".png", null);
             new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, Build[i]);
         }
         summoner.getChampion().setBuild(Build);

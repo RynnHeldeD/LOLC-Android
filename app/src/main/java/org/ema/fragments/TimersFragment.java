@@ -227,39 +227,43 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
     //Fonctions pour les évènements WS
     public void simpleClickTimer(String buttonID,long delayOfTransfert, boolean fromWebSocket, boolean doTimerActivation){
 
+        long timerDelayToUse;
         if (timerMap.get(buttonID) * 1000 > delayOfTransfert) {
-            TimerButton tbtn = getButtonFromIdString(buttonID);
+            timerDelayToUse = (timerMap.get(buttonID) * 1000) - delayOfTransfert;
+        } else {
+            timerDelayToUse = 1;
+        }
+        TimerButton tbtn = getButtonFromIdString(buttonID);
 
-            //Name of the clicked button => example : b21
-            String IDButton = getResources().getResourceName(tbtn.getId());
-            //loading the league of legend equiv fonts
-            Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
+        //Name of the clicked button => example : b21
+        String IDButton = getResources().getResourceName(tbtn.getId());
+        //loading the league of legend equiv fonts
+        Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
 
-            //Timer is null and has never been instancied
-            if (tbtn.getTimer() == null && doTimerActivation) {
-                //Setting the TextView so the timer update the countdown in FO
-                int timerTextViewID = getResources().getIdentifier(IDButton.concat("t"), "id", getActivity().getBaseContext().getPackageName());
-                //settings the textView with the font
-                TextView txtv = (TextView) getActivity().findViewById(timerTextViewID);
-                txtv.setTypeface(font);
-                tbtn.setTimer(new Timer(0, 0, txtv, tbtn));
+        //Timer is null and has never been instancied
+        if (tbtn.getTimer() == null && doTimerActivation) {
+            //Setting the TextView so the timer update the countdown in FO
+            int timerTextViewID = getResources().getIdentifier(IDButton.concat("t"), "id", getActivity().getBaseContext().getPackageName());
+            //settings the textView with the font
+            TextView txtv = (TextView) getActivity().findViewById(timerTextViewID);
+            txtv.setTypeface(font);
+            tbtn.setTimer(new Timer(0, 0, txtv, tbtn));
 
-                if (!fromWebSocket) {
-                    WsEventHandling.timerActivation(buttonID, Long.toString(GameTimestamp.getServerTimestamp()));
-                }
-                //On active le time
-                //Si on a des cooldown a 0 ou inférieur au temps de transfert, on met pas de timer
-                tbtn.setTimer(new Timer((timerMap.get(buttonID) * 1000) - delayOfTransfert, 1000, tbtn.getTimer().getTimerTextView(), tbtn));
-                tbtn.getTimer().start();
-                tbtn.getTimer().setVisible(true);
-            } else if (tbtn.getTimer() != null && doTimerActivation != true) {
-                //On transmet le message
-                if (!fromWebSocket) {
-                    WsEventHandling.timerDelay(buttonID);
-                }
-                //On fait l'action sur le timerbutton
-                tbtn.timerDelay(5000);
+            if (!fromWebSocket) {
+                WsEventHandling.timerActivation(buttonID, Long.toString(GameTimestamp.getServerTimestamp()));
             }
+            //On active le time
+            //Si on a des cooldown a 0 ou inférieur au temps de transfert, on met pas de timer
+            tbtn.setTimer(new Timer(timerDelayToUse, 1000, tbtn.getTimer().getTimerTextView(), tbtn));
+            tbtn.getTimer().start();
+            tbtn.getTimer().setVisible(true);
+        } else if (tbtn.getTimer() != null && doTimerActivation != true) {
+            //On transmet le message
+            if (!fromWebSocket) {
+                WsEventHandling.timerDelay(buttonID);
+            }
+            //On fait l'action sur le timerbutton
+            tbtn.timerDelay(5000);
         }
     }
 

@@ -76,7 +76,6 @@ public class SecureDialogFragment extends DialogFragment {
         if(!TimersFragment.settingsManager.get(this.getActivity(), "passphrase").equals("")) {
             et.setText(TimersFragment.settingsManager.get(this.getActivity(), "passphrase"));
         }
-        else et.setHint(R.string.secure_timers_edit);
         tv.setPadding(5, 10, 5, 10);
         tv.setTextSize(getResources().getDimension(R.dimen.tips_champion_font));
         et.setTextColor(getResources().getColor(R.color.grey_font));

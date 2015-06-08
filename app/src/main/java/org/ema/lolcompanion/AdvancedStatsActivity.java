@@ -134,7 +134,7 @@ public class AdvancedStatsActivity extends FragmentActivity implements OnChartVa
 
         TextView advWinRateChampion = (TextView) findViewById(R.id.advstats_winrate_champion_value);
         float winRateWithChampion = 0;
-        if ((float) summonerToShow.getWins() + (float) summonerToShow.getLooses() != 0) {
+        if ((float) summonerToShow.getChampion().getStatistic().getWin() + (float) summonerToShow.getChampion().getStatistic().getLoose() != 0) {
             winRateWithChampion = (float) (summonerToShow.getChampion().getStatistic().getWin()/((float)summonerToShow.getChampion().getStatistic().getWin()+(float)summonerToShow.getChampion().getStatistic().getLoose()) * 100);
         }
         String winRateChampionFormatted = String.valueOf( winRateWithChampion > 0 && winRateWithChampion < 10 ? dfsmall.format(winRateWithChampion) : df.format(winRateWithChampion));

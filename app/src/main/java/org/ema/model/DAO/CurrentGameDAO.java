@@ -161,7 +161,11 @@ public class CurrentGameDAO {
                 calculUserPerformance(current);
             }
 
+            calculLanesProbabilities(summonersList);
+
             Collections.sort(summonersList, new SortSummonerByTeamAndPerf());
+
+            summonersList = SummonerList.sortSummonersByTeamAndLanes(summonersList);
 
             return summonersList;
 
@@ -823,6 +827,94 @@ public class CurrentGameDAO {
         } catch(Exception e){
             e.printStackTrace();
             Log.v("Erreur lanes", e.getMessage());
+        }
+    }
+
+    public static void calculLanesProbabilities(ArrayList<Summoner> summonersList) {
+        for(Summoner summoner : summonersList) {
+            ArrayList<LaneProbability> summary = new ArrayList<>();
+            for(LaneProbability laneHistory : summoner.getChampion().getLanesProbabilities()) {
+                boolean isFound = false;
+                for(LaneProbability lane : summary) {
+                    if(lane.getLane().equals(laneHistory.getLane()) && lane.getRole().equals(laneHistory.getRole())) {
+                        if((lane.getSpellId1() == laneHistory.getSpellId1() || lane.getSpellId1() == laneHistory.getSpellId2()) &&
+                                (lane.getSpellId2() == laneHistory.getSpellId1() || lane.getSpellId2() == laneHistory.getSpellId2())) {
+                            lane.setNbOccurences(lane.getNbOccurences() + 1);
+                            isFound = true;
+                        }
+                    }
+                }
+                if(!isFound) {
+                    laneHistory.setNbOccurences(1);
+                    summary.add(laneHistory);
+                }
+            }
+
+            for(LaneProbability lane : summary) {
+                lane.setProba((float) lane.getNbOccurences() / (float) summoner.getChampion().getLanesProbabilities().size());
+                if((summoner.getSpells()[0].getId() == lane.getSpellId1() || summoner.getSpells()[0].getId() == lane.getSpellId2()) &&
+                        (summoner.getSpells()[1].getId() == lane.getSpellId1() || summoner.getSpells()[1].getId() == lane.getSpellId2())) {
+                    lane.setProba(lane.getProba() + new Float(0.5));
+                }
+
+             }
+
+            summoner.getChampion().setLanesProbabilities(summary);
+
+            for(LaneProbability lane : summary) {
+                if(lane.getRole().contains("SUPPORT")) {
+                    summoner.getChampion().getSummary()[4].setProba(summoner.getChampion().getSummary()[4].getProba() + lane.getProba());
+                }
+                else if(lane.getLane().contains("JUNGLE")) {
+                    summoner.getChampion().getSummary()[1].setProba(summoner.getChampion().getSummary()[1].getProba() + lane.getProba());
+                }
+                else if(lane.getLane().contains("TOP")) {
+                    summoner.getChampion().getSummary()[0].setProba(summoner.getChampion().getSummary()[0].getProba() + lane.getProba());
+                }
+                else if(lane.getLane().contains("MIDDLE")) {
+                    summoner.getChampion().getSummary()[2].setProba(summoner.getChampion().getSummary()[2].getProba() + lane.getProba());
+                }
+                else if(lane.getRole().contains("CARRY")) {
+                    summoner.getChampion().getSummary()[3].setProba(summoner.getChampion().getSummary()[3].getProba() + lane.getProba());
+                }
+            }
+        }
+
+        for(int i = 0; i < 5; i++) {
+            Summoner user = null;
+            Summoner user2 = null;
+
+            for(Summoner summoner : summonersList) {
+                if(summoner.getTeamId() == 100) {
+                    if(user == null) {
+                        user = summoner;
+                    }
+                    else if(user.getChampion().getSummary()[i].getProba() < summoner.getChampion().getSummary()[i].getProba()) {
+                        user = summoner;
+                    }
+                }
+
+            }
+
+            for(Summoner summoner : summonersList) {
+                if(summoner.getTeamId() == 200) {
+                    if(user2 == null) {
+                        user2 = summoner;
+                    }
+                    else if(user2.getChampion().getSummary()[i].getProba() < summoner.getChampion().getSummary()[i].getProba()) {
+                        user2 = summoner;
+                    }
+                }
+
+            }
+
+            if(user != null && user.getChampion().getSummary()[i].getProba() != new Float(0)) {
+                user.getChampion().setLane(user.getChampion().getSummary()[i].getLane());
+            }
+
+            if(user2 != null && user2.getChampion().getSummary()[i].getProba() != new Float(0)) {
+                user2.getChampion().setLane(user.getChampion().getSummary()[i].getLane());
+            }
         }
     }
 }

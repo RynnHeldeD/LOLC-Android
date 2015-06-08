@@ -392,7 +392,7 @@ public class AdvancedStatsActivity extends FragmentActivity implements OnChartVa
         //######################### Name of the summoner
         TextView name = (TextView) rootview.findViewById(R.id.s1name);
         name.setText(summoner.getName().substring(0, Math.min(summoner.getName().length(), getResources().getInteger(R.integer.max_champion_name_character_lenght))));
-
+        name.setId(idForLine);
         //######################## TEAM PREMADE
         if (summoner.getPremade() != 0) {
             ImageView premade = (ImageView) rootview.findViewById(R.id.s1Team);
@@ -504,7 +504,7 @@ public class AdvancedStatsActivity extends FragmentActivity implements OnChartVa
     }
 
     public void showChampionTips(View v) {
-        DialogFragment dialog = new ChampionTipDialogFragment();
+        DialogFragment dialog = new ChampionTipAdvStatsDialogFragment();
         Bundle args = new Bundle();
         //We give to the dialog the summoners info to display
         if (summonerToShow.getTeamId() != current.getTeamId()) {

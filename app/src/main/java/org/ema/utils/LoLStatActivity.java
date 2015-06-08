@@ -78,7 +78,7 @@ public class LoLStatActivity extends Fragment {
         Bitmap bitmap = summoner.getChampion().getIcon();
         img.setImageBitmap(bitmap);
         img.setId(idForLine);
-        if (summoner.getChampion().getStatistic() == null) {
+        if (summoner.getChampion().getStatistic() == null || (summoner.getChampion().getStatistic().getDamageDealtPercentage() == 0 && summoner.getChampion().getStatistic().getDamageTakenPercentage() == 0)) {
             img.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -109,7 +109,7 @@ public class LoLStatActivity extends Fragment {
         //######################### Name of the summoner
         TextView name = (TextView) rootview.findViewById(R.id.s1name);
         name.setText(summoner.getName().substring(0, Math.min(summoner.getName().length(), getResources().getInteger(R.integer.max_champion_name_character_lenght))));
-
+        name.setId(idForLine);
         //######################## TEAM PREMADE
         if (summoner.getPremade() != 0) {
             ImageView premade = (ImageView) rootview.findViewById(R.id.s1Team);

@@ -563,13 +563,13 @@ public class CurrentGameDAO {
         }
     }
 
-    public static int[] getUserBuild(JSONArray jsonParticipants)
+    public static int[] getUserBuild(JSONArray jsonParticipants, int numberOfItemToAnalyze)
     {
         JSONArray json = jsonParticipants;
 
-        int[] build = new int[7];
+        int[] build = new int[numberOfItemToAnalyze];
         try{
-            for(int i=0;i<7;i++)
+            for(int i=0;i<numberOfItemToAnalyze;i++)
             {
                 if(!jsonParticipants.getJSONObject(0).isNull("stats")) {
                     if(!jsonParticipants.getJSONObject(0).getJSONObject("stats").isNull("item" + i)){
@@ -655,15 +655,14 @@ public class CurrentGameDAO {
         float meanPercentageDamageDealtByUser = 0;
         float meanPercentageDamageTakenByUser = 0;
 
-        int numberOfGames = jsonMatches.length();
-        if(summoner.getChampion().getId() == 238)
-        {
-            Log.v("DAO", "HERE");
+        int numberOfGames = 0;
+        if(summoner.getChampion().getId() == 157){
+            Log.v("DAO", "Error");
         }
-
         try {
-            for (int i = 0; i < Math.min(3, jsonMatches.length()); i++) {
-                if (!jsonMatches.getJSONObject(i).isNull("season") && jsonMatches.getJSONObject(i).getString("season").equals("SEASON2015")) {
+            for (int i = 0; i <Math.min(3, jsonMatches.length()); i++) {
+                if (!jsonMatches.getJSONObject(i).isNull("season") && (jsonMatches.getJSONObject(i).getString("season").equals("SEASON2015") || (jsonMatches.getJSONObject(i).getString("season").equals("PRESEASON2015")))) {
+                    numberOfGames++;
                     JSONObject test = jsonMatches.getJSONObject(i);
                     idGame = jsonMatches.getJSONObject(i).getInt("matchId");
                     teamID = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getInt("teamId");
@@ -684,9 +683,6 @@ public class CurrentGameDAO {
                         totalDamageTakenByUserTeamInCurrentGame = 0;
                     }
                 }
-                else{
-                    numberOfGames--;
-                }
             }
             if(numberOfGames != 0)
             {
@@ -697,6 +693,7 @@ public class CurrentGameDAO {
             }
             else
             {
+                Log.v("DAO", "Number of game is 0");
                 meanPercentageDamageDealtByUser = 0;
                 meanPercentageDamageTakenByUser = 0;
             }
@@ -712,22 +709,30 @@ public class CurrentGameDAO {
 
         ArrayList<int[]> itemHistoy = new ArrayList<>();
         int[] matchItemHistory = new int[6];
+        int numberOfItemToAnalyze = 5;
         JSONArray jsonParticipants = null;
         try {
             for (int i = 0; i < matchHistory.length(); i++) {
                 if (!matchHistory.getJSONObject(i).isNull("participants")) {
                     jsonParticipants = matchHistory.getJSONObject(i).getJSONArray("participants");
-                    matchItemHistory = getUserBuild(jsonParticipants);
+                    matchItemHistory = getUserBuild(jsonParticipants, numberOfItemToAnalyze);
                     if (i == 0) {
-                        for (int j = 0; j < 6; j++) {
-                            int[] item = new int[2];
-                            item[0] = matchItemHistory[j];
-                            item[1] = 0;
-                            itemHistoy.add(item);
+                        for (int j = 0; j < numberOfItemToAnalyze; j++) {
+                            int itemID = matchItemHistory[j];
+                            if (itemID != 0){
+                                String jsonItems = Utils.getDocument(Constant.API_ITEMS + itemID + "?itemData=gold,into");
+                                JSONObject result = new JSONObject(jsonItems);
+                                if (result.isNull("into") && result.getJSONObject("gold").getInt("total") > 1000) {
+                                    int[] item = new int[2];
+                                    item[0] = itemID;
+                                    item[1] = 0;
+                                    itemHistoy.add(item);
+                                }
+                            }
                         }
                     }
                     else {
-                        for (int j = 0; j < 6; j++) {
+                        for (int j = 0; j < numberOfItemToAnalyze; j++) {
 
                             boolean found = false;
                             for (int k = 0; k < itemHistoy.size(); k++) {
@@ -742,8 +747,7 @@ public class CurrentGameDAO {
                                 if (itemID != 0) {
                                     String jsonItems = Utils.getDocument(Constant.API_ITEMS + itemID + "?itemData=gold,into");
                                     JSONObject result = new JSONObject(jsonItems);
-                                    int price = result.getJSONObject("gold").getInt("total");
-                                    if (result.isNull("into") && result.getJSONObject("gold").getInt("total") > 500) {
+                                    if (result.isNull("into") && result.getJSONObject("gold").getInt("total") > 1000) {
                                         int[] newItem = new int[2];
                                         newItem[0] = itemID;
                                         newItem[1] = 0;
@@ -756,7 +760,7 @@ public class CurrentGameDAO {
                 }
             }
         Collections.sort(itemHistoy, new SortIntegerTabArrayList());
-        int numberOfitems = Math.min(6, itemHistoy.size());
+        int numberOfitems = Math.min(numberOfItemToAnalyze, itemHistoy.size());
         Item[] Build = new Item[numberOfitems];
         for(int i=0; i <numberOfitems;i++)
         {

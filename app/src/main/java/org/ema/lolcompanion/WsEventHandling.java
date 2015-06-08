@@ -306,7 +306,6 @@ public class WsEventHandling {
             //HashMap<String,String> timerHaspmap = (HashMap<String,String>) timerTable.get(0);
 
             for(int i = 0; i < timerTable.length();i++){
-                Log.v("Websocket","Update timer " + i);
                 JSONArray buttonAndCooldown = (JSONArray) timerTable.get(i);
                 if((Long.parseLong(buttonAndCooldown.getString(1)) - delayOfTransfert) > 0) {
                     long cooldown = Long.parseLong(buttonAndCooldown.getString(1)) - delayOfTransfert;

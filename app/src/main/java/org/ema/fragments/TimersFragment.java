@@ -86,9 +86,9 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
     }
 
     public void cleanChannelSummary(){
-        Log.v("Websocket", "On clean la liste");
         LinearLayout channelSummary = (LinearLayout) getActivity().findViewById(R.id.channel_summary);
         channelSummary.removeAllViewsInLayout();
+        channelSummary.refreshDrawableState();
     }
 
     //This functions adds dynamically a player icon in the channel summary so user can know who is connected
@@ -415,7 +415,6 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
         for(int k = 0; k< count;k++){
             trimmedTable[k][0] = timersTableToShare[k][0];
             trimmedTable[k][1] = timersTableToShare[k][1];
-            Log.v("Websocket","On remplis le tableau avec [" + timersTableToShare[k][0] + "][" +  timersTableToShare[k][1] + "]" );
         }
 
         return trimmedTable;

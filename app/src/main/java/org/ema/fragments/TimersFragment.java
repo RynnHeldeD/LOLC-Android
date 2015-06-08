@@ -40,7 +40,6 @@ import java.util.List;
 
 
 public class TimersFragment extends LoLStatActivity implements SecureDialogFragment.NoticeDialogListener, CooldownTimersDialogFragment.NoticeDialogListener {
-    public static TimersFragment instance = null;
     public HashMap<String,Long> timerMap;
     public static SettingsManager settingsManager = null;
 
@@ -55,7 +54,6 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
 
         TimersFragment.settingsManager = new SettingsManager();
         PreferenceManager.getDefaultSharedPreferences(this.getActivity().getApplicationContext());
-        TimersFragment.instance = this;
         WebSocket.connectWebSocket();
         return rootView;
     }

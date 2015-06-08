@@ -9,6 +9,7 @@ import android.view.View;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.ema.fragments.TimersFragment;
+import org.ema.lolcompanion.CompanionActivity;
 import org.ema.lolcompanion.R;
 
 import java.lang.reflect.InvocationTargetException;
@@ -78,7 +79,7 @@ public class TimerButton extends RoundedImageView {
                                     int id = getId();
                                     params[0] = getContext().getResources().getResourceEntryName(id);
                                     params[1] = false;
-                                    mHandler.invoke(TimersFragment.instance, params);
+                                    mHandler.invoke(CompanionActivity.instance, params);
                                     result = true;
                                 } catch (IllegalAccessException e) {
                                     throw new IllegalStateException("Could not execute non "

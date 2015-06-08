@@ -707,7 +707,7 @@ public class CurrentGameDAO {
     public static void getSummonerFavoriteBuild(Summoner summoner, JSONArray matchHistory) {
 
         ArrayList<int[]> itemHistoy = new ArrayList<>();
-        int[] matchItemHistory = new int[7];
+        int[] matchItemHistory = new int[6];
         JSONArray jsonParticipants = null;
         try {
             for (int i = 0; i < matchHistory.length(); i++) {
@@ -715,32 +715,36 @@ public class CurrentGameDAO {
                     jsonParticipants = matchHistory.getJSONObject(i).getJSONArray("participants");
                     matchItemHistory = getUserBuild(jsonParticipants);
                     if (i == 0) {
-                        for (int j = 0; j < 7; j++) {
+                        for (int j = 0; j < 6; j++) {
                             int[] item = new int[2];
                             item[0] = matchItemHistory[j];
                             item[1] = 0;
                             itemHistoy.add(item);
                         }
-                    } else for (int j = 0; j < 7; j++) {
+                    }
+                    else {
+                        for (int j = 0; j < 6; j++) {
 
-                        boolean found = false;
-                        for (int k = 0; k < itemHistoy.size(); k++) {
-                            if (itemHistoy.get(k)[0] == matchItemHistory[j]) {
-                                itemHistoy.get(k)[1]++;
-                                found = true;
+                            boolean found = false;
+                            for (int k = 0; k < itemHistoy.size(); k++) {
+                                if (itemHistoy.get(k)[0] == matchItemHistory[j]) {
+                                    itemHistoy.get(k)[1]++;
+                                    found = true;
+                                }
                             }
-                        }
-                        if (!found) {
-                            //Log.v("DAO", "Item into, user : " + user.getName());
-                            int itemID = matchItemHistory[j];
-                            if (itemID != 0) {
-                                String jsonItems = Utils.getDocument(Constant.API_ITEMS + itemID + "?itemData=into");
-                                JSONObject result = new JSONObject(jsonItems);
-                                if (result.isNull("into")) {
-                                    int[] newItem = new int[2];
-                                    newItem[0] = itemID;
-                                    newItem[1] = 0;
-                                    itemHistoy.add(newItem);
+                            if (!found) {
+                                //Log.v("DAO", "Item into, user : " + user.getName());
+                                int itemID = matchItemHistory[j];
+                                if (itemID != 0) {
+                                    String jsonItems = Utils.getDocument(Constant.API_ITEMS + itemID + "?itemData=gold,into");
+                                    JSONObject result = new JSONObject(jsonItems);
+                                    int price = result.getJSONObject("gold").getInt("total");
+                                    if (result.isNull("into") && result.getJSONObject("gold").getInt("total") > 500) {
+                                        int[] newItem = new int[2];
+                                        newItem[0] = itemID;
+                                        newItem[1] = 0;
+                                        itemHistoy.add(newItem);
+                                    }
                                 }
                             }
                         }
@@ -748,8 +752,9 @@ public class CurrentGameDAO {
                 }
             }
         Collections.sort(itemHistoy, new SortIntegerTabArrayList());
-        Item[] Build = new Item[7];
-        for(int i=0;i<7;i++)
+        int numberOfitems = Math.min(6, itemHistoy.size());
+        Item[] Build = new Item[numberOfitems];
+        for(int i=0; i <numberOfitems;i++)
         {
             Build[i] = new Item(String.valueOf(itemHistoy.get(i)[0]) + ".png", null);
             new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, Build[i]);

@@ -31,4 +31,8 @@
 
     <color name="summoner_wins">#4bb000</color>
     <color name="summoner_defs">#e90000</color>
+
+    <!-- advstats -->
+    <color name="advstats_winrate_global_background">#04737a</color>
+    <color name="advstats_winrate_champion_background">#e59c00</color>
 </resources>

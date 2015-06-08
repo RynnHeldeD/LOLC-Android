@@ -64,7 +64,8 @@
     <string name="advstats_winrates">Win Rates</string>
     <string name="advstats_mpc">Most played champions</string>
     <string name="advstats_cpm">Average Creeps / Minute</string>
-
+    <string name="advstats_winrates_global_title">Global</string>
+    <string name="advstats_winrates_champion_title">With</string>
 
     <!-- TOASTS -->
     <string name="pending_logging">logging&#8230;</string>

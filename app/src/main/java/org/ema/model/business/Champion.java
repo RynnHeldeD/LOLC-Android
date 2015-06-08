@@ -239,6 +239,10 @@ public class Champion implements ISettableIcon, Parcelable {
     }
 
     public boolean areImagesBuildLoaded() {
+        if(this.getBuild() == null) {
+            return true;
+        }
+
         for(int i = 0; i < this.getBuild().length; i++) {
             if(this.getBuild()[i].getIcon() == null) {
                 Log.v("IMAGES_ITEMS", this.getBuild()[i].getIconName() + " not loaded");

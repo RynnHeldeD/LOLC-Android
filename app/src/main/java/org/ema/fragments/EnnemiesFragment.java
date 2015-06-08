@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -122,6 +123,7 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
         this.summonersOpponentsList = summonersOpponentsList;
     }
 
+    /*
     @Override
     public void onResume() {
         super.onResume();
@@ -129,5 +131,5 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
         LinearLayout loader = (LinearLayout) getActivity().findViewById(R.id.loading_advstats);
         loader.setVisibility(View.GONE);
         view_ally.setVisibility(View.VISIBLE);
-    }
+    }*/
 }

@@ -110,7 +110,6 @@ public class AlliesFragment extends LoLStatActivity implements ChampionTipDialog
         Summoner summonerToShow = summonersAlliesList.get(v.getId());
         //Load detailed statistics directly in the summoner
         CurrentGameDAO.loadStatisticsDetailed(summonerToShow);
-
         GlobalDataManager.add("summonerForAdvStats", summonerToShow);
         Intent intent = new Intent(this.getActivity(), AdvancedStatsActivity.class);
         startActivity(intent);
@@ -123,7 +122,7 @@ public class AlliesFragment extends LoLStatActivity implements ChampionTipDialog
     public void setSummonersAlliesList(ArrayList<Summoner> summonersAlliesList) {
         this.summonersAlliesList = summonersAlliesList;
     }
-
+    /*
     @Override
     public void onResume() {
         super.onResume();
@@ -131,5 +130,5 @@ public class AlliesFragment extends LoLStatActivity implements ChampionTipDialog
         LinearLayout loader = (LinearLayout) getActivity().findViewById(R.id.loading_advstats);
         loader.setVisibility(View.GONE);
         view_ally.setVisibility(View.VISIBLE);
-    }
+    }*/
 }

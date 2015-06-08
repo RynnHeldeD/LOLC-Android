@@ -206,7 +206,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         switch (mPager.getCurrentItem()) {
             case 0:
                 //##############create a bitmap of activity
-                ScrollView view = (ScrollView) ennemiesFragment.getActivity().findViewById(R.id.root_scroll_ennemies);
+                /*ScrollView view = (ScrollView) ennemiesFragment.getActivity().findViewById(R.id.root_scroll_ennemies);
                 Bitmap bm = getBitmapFromView(ennemiesFragment.getActivity().findViewById(R.id.root_activity_ennemy_load));
                 Bitmap blurredBitmap = fastblur(bm, 12);
                 BitmapDrawable bd = new BitmapDrawable(getResources(), blurredBitmap);
@@ -214,12 +214,12 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                 LinearLayout loader = (LinearLayout) ennemiesFragment.getActivity().findViewById(R.id.loading_advstats);
                 loader.setBackgroundDrawable(bd);
                 view.setVisibility(View.GONE);
-                loader.setVisibility(View.VISIBLE);
+                loader.setVisibility(View.VISIBLE);*/
                 ennemiesFragment.showAdvancedStatistics(v, true);
                 break;
             case 2:
                 //##############create a bitmap of activity
-                ScrollView view_ally = (ScrollView) alliesFragment.getActivity().findViewById(R.id.root_scroll_allies);
+               /* ScrollView view_ally = (ScrollView) alliesFragment.getActivity().findViewById(R.id.root_scroll_allies);
                 Bitmap bm_ally = getBitmapFromView(ennemiesFragment.getActivity().findViewById(R.id.root_activity_ally_load));
                 Bitmap blurredBitmap_ally = fastblur(bm_ally, 12);
                 BitmapDrawable bd_ally = new BitmapDrawable(getResources(), blurredBitmap_ally);
@@ -228,7 +228,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                 LinearLayout loader_ally = (LinearLayout) alliesFragment.getActivity().findViewById(R.id.loading_advstats);
                 loader_ally.setBackgroundDrawable(bd_ally);
                 view_ally.setVisibility(View.GONE);
-                loader_ally.setVisibility(View.VISIBLE);
+                loader_ally.setVisibility(View.VISIBLE);*/
                alliesFragment.showAdvancedStatistics(v, false);
                 break;
         }

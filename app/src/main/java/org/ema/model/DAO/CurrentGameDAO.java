@@ -4,6 +4,7 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import org.ema.model.business.Champion;
+import org.ema.model.business.LaneProbability;
 import org.ema.model.business.League;
 import org.ema.model.business.Spell;
 import org.ema.model.business.Statistic;
@@ -22,23 +23,26 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 
 public class CurrentGameDAO {
 
-    public static int numberOfGamesAnalyzed = 3;
+    public static int numberOfGamesAnalyzed = 10;
     public static void loadStatisticsDetailed(Summoner summoner) {
-        //Load images of mostPlayedChampions
-        loadMostPlayedChampionsImages(summoner);
+        if(!summoner.getDataProcessed().isDetailedStats()) {
+            //Load images of mostPlayedChampions
+            loadMostPlayedChampionsImages(summoner);
 
-        JSONArray matchHistory = getMatchHistory(summoner, numberOfGamesAnalyzed);
-        if(matchHistory != null ) {
-            getSummonerFavoriteBuild(summoner, matchHistory);
-            getCreepChartInfo(summoner, matchHistory);
-        }
+            JSONArray matchHistory = getMatchHistory(summoner, numberOfGamesAnalyzed);
+            if(matchHistory != null ) {
+                getSummonerFavoriteBuild(summoner, matchHistory);
+                getCreepChartInfo(summoner, matchHistory);
+            }
 
-        while(!summoner.areImagesMostPlayedChampionsLoaded() || !summoner.getChampion().areImagesBuildLoaded()){
-            SystemClock.sleep(500);
+            while(!summoner.areImagesMostPlayedChampionsLoaded() || !summoner.getChampion().areImagesBuildLoaded()){
+                SystemClock.sleep(500);
+            }
+
+            summoner.getDataProcessed().setDetailedStats(true);
         }
     }
 
@@ -79,6 +83,13 @@ public class CurrentGameDAO {
                 Spell[] spells = new Spell[2];
                 spells[0] = new Spell((int) jsonParticipant.get("spell1Id"),"",null,null);
                 spells[1] = new Spell((int) jsonParticipant.get("spell2Id"),"",null,null);
+
+                //This is the flash
+                if(spells[0].getId() == 4) {
+                    Spell spell = spells[1];
+                    spells[1] = spells[0];
+                    spells[0] = spell;
+                }
                 summoner.setSpells(spells);
 
                 //The summoner is the user of the application
@@ -240,6 +251,7 @@ public class CurrentGameDAO {
             JSONArray matchHistory = getMatchHistory(user, numberOfGamesAnalyzed);
             if(matchHistory != null ) {
                 getDamageDealtAndDamageTaken(user, matchHistory);
+                getLanesProbabilities(user, matchHistory);
             }
 
         } catch (Exception e) {
@@ -695,7 +707,7 @@ public class CurrentGameDAO {
     public static void getSummonerFavoriteBuild(Summoner summoner, JSONArray matchHistory) {
 
         ArrayList<int[]> itemHistoy = new ArrayList<>();
-        int[] matchItemHistory = new int[7];
+        int[] matchItemHistory = new int[6];
         JSONArray jsonParticipants = null;
         try {
             for (int i = 0; i < matchHistory.length(); i++) {
@@ -703,32 +715,36 @@ public class CurrentGameDAO {
                     jsonParticipants = matchHistory.getJSONObject(i).getJSONArray("participants");
                     matchItemHistory = getUserBuild(jsonParticipants);
                     if (i == 0) {
-                        for (int j = 0; j < 7; j++) {
+                        for (int j = 0; j < 6; j++) {
                             int[] item = new int[2];
                             item[0] = matchItemHistory[j];
                             item[1] = 0;
                             itemHistoy.add(item);
                         }
-                    } else for (int j = 0; j < 7; j++) {
+                    }
+                    else {
+                        for (int j = 0; j < 6; j++) {
 
-                        boolean found = false;
-                        for (int k = 0; k < itemHistoy.size(); k++) {
-                            if (itemHistoy.get(k)[0] == matchItemHistory[j]) {
-                                itemHistoy.get(k)[1]++;
-                                found = true;
+                            boolean found = false;
+                            for (int k = 0; k < itemHistoy.size(); k++) {
+                                if (itemHistoy.get(k)[0] == matchItemHistory[j]) {
+                                    itemHistoy.get(k)[1]++;
+                                    found = true;
+                                }
                             }
-                        }
-                        if (!found) {
-                            //Log.v("DAO", "Item into, user : " + user.getName());
-                            int itemID = matchItemHistory[j];
-                            if (itemID != 0) {
-                                String jsonItems = Utils.getDocument(Constant.API_ITEMS + itemID + "?itemData=into");
-                                JSONObject result = new JSONObject(jsonItems);
-                                if (result.isNull("into")) {
-                                    int[] newItem = new int[2];
-                                    newItem[0] = itemID;
-                                    newItem[1] = 0;
-                                    itemHistoy.add(newItem);
+                            if (!found) {
+                                //Log.v("DAO", "Item into, user : " + user.getName());
+                                int itemID = matchItemHistory[j];
+                                if (itemID != 0) {
+                                    String jsonItems = Utils.getDocument(Constant.API_ITEMS + itemID + "?itemData=gold,into");
+                                    JSONObject result = new JSONObject(jsonItems);
+                                    int price = result.getJSONObject("gold").getInt("total");
+                                    if (result.isNull("into") && result.getJSONObject("gold").getInt("total") > 500) {
+                                        int[] newItem = new int[2];
+                                        newItem[0] = itemID;
+                                        newItem[1] = 0;
+                                        itemHistoy.add(newItem);
+                                    }
                                 }
                             }
                         }
@@ -736,8 +752,9 @@ public class CurrentGameDAO {
                 }
             }
         Collections.sort(itemHistoy, new SortIntegerTabArrayList());
-        Item[] Build = new Item[7];
-        for(int i=0;i<7;i++)
+        int numberOfitems = Math.min(6, itemHistoy.size());
+        Item[] Build = new Item[numberOfitems];
+        for(int i=0; i <numberOfitems;i++)
         {
             Build[i] = new Item(String.valueOf(itemHistoy.get(i)[0]) + ".png", null);
             new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, Build[i]);
@@ -766,6 +783,28 @@ public class CurrentGameDAO {
             e.printStackTrace();
             Log.v("Erreur creep", e.getMessage());
             return null;
+        }
+    }
+
+    private static void getLanesProbabilities(Summoner user, JSONArray matchHistory) {
+        try {
+            for (int i = 0; i < matchHistory.length(); i++) {
+                LaneProbability laneProbability = new LaneProbability();
+
+                JSONObject jsonMatch = (JSONObject)matchHistory.get(i);
+                jsonMatch = (JSONObject)(((JSONArray)jsonMatch.get("participants")).get(0));
+
+                laneProbability.setSpellId1(jsonMatch.getInt("spell1Id"));
+                laneProbability.setSpellId2(jsonMatch.getInt("spell2Id"));
+                jsonMatch = (JSONObject)jsonMatch.get("timeline");
+                laneProbability.setLane(jsonMatch.getString("lane"));
+                laneProbability.setRole(jsonMatch.getString("role"));
+
+                user.getChampion().addLaneProbability(laneProbability);
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+            Log.v("Erreur lanes", e.getMessage());
         }
     }
 }

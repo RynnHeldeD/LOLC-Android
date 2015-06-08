@@ -45,205 +45,246 @@
 
     </RelativeLayout>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/root_advstats"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="-10dp"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/activity_horizontal_margin"
-        tools:context="org.ema.lolcompanion.AdvancedStatsActivity">
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="-10dp">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/root_advstats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@color/bg_black_transparent"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:orientation="vertical"
-            android:paddingLeft="@dimen/activity_vertical_margin"
-            android:paddingRight="@dimen/activity_vertical_margin"
-            tools:context=".AdvancedStatsActivity">
+            android:paddingBottom="@dimen/activity_horizontal_margin"
+            tools:context="org.ema.lolcompanion.AdvancedStatsActivity">
 
-            <!-- FAVORITE BUILD CONTAINER -->
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
                 android:orientation="vertical"
                 tools:context=".AdvancedStatsActivity">
 
-                <TextView
-                    android:id="@+id/advstats_build"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:gravity="start"
-                    android:shadowColor="#000000"
-                    android:shadowDx="3"
-                    android:shadowDy="-3"
-                    android:shadowRadius="1.5"
-                    android:text="@string/advstats_build"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="@dimen/font_advstats_section_title"
-                    android:textColor="@color/light_font" />
-
-                <!-- FAVORITE ITEMS -->
+                <!-- FAVORITE BUILD CONTAINER -->
                 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     xmlns:tools="http://schemas.android.com/tools"
-                    android:id="@+id/advstats_build_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
+                    android:background="@color/bg_black_transparent"
+                    android:paddingBottom="@dimen/activity_vertical_mid_margin"
+                    android:paddingTop="@dimen/activity_vertical_mid_margin"
+                    android:paddingLeft="@dimen/activity_vertical_margin"
+                    android:paddingRight="@dimen/activity_vertical_margin"
                     tools:context=".AdvancedStatsActivity">
 
+                    <TextView
+                        android:id="@+id/advstats_build"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:gravity="start"
+                        android:shadowColor="#000000"
+                        android:shadowDx="3"
+                        android:shadowDy="-3"
+                        android:shadowRadius="1.5"
+                        android:text="@string/advstats_build"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/light_font"
+                        android:textSize="@dimen/font_advstats_section_title" />
+
+                    <!-- FAVORITE ITEMS -->
+                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        xmlns:tools="http://schemas.android.com/tools"
+                        android:id="@+id/advstats_build_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        tools:context=".AdvancedStatsActivity">
+
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
-            </LinearLayout>
-
-            <!-- Winrates CONTAINER -->
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/advstats_winrates_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:orientation="vertical"
-                tools:context=".AdvancedStatsActivity">
-
-                <TextView
-                    android:id="@+id/advstats_winrate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="start"
-                    android:shadowColor="#000000"
-                    android:shadowDx="3"
-                    android:shadowDy="-3"
-                    android:shadowRadius="1.5"
-                    android:text="@string/advstats_winrates"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="@dimen/font_advstats_section_title"
-                    android:textColor="@color/light_font" />
-
+                <!-- Winrates CONTAINER -->
                 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/advstats_winrates_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
+                    android:background="@color/bg_black_transparent"
+                    android:paddingLeft="@dimen/activity_vertical_margin"
+                    android:paddingRight="@dimen/activity_vertical_margin"
+                    android:paddingBottom="@dimen/activity_vertical_mid_margin"
+                    android:paddingTop="@dimen/activity_vertical_mid_margin"
                     tools:context=".AdvancedStatsActivity">
 
-                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                        xmlns:tools="http://schemas.android.com/tools"
-                        android:id="@+id/advstats_winrate_global"
+                    <TextView
+                        android:id="@+id/advstats_winrate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/advstats_winrate_global_background"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        tools:context=".AdvancedStatsActivity">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="@string/advstats_winrates_global_title"
-                            android:textSize="@dimen/font_advstats_winrates_title"
-                            android:textColor="@color/black_font" />
-
-                        <TextView
-                            android:id="@+id/advstats_winrate_global_value"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:shadowColor="#000000"
-                            android:shadowDx="3"
-                            android:shadowDy="-3"
-                            android:shadowRadius="1.5"
-                            android:text=""
-                            android:paddingTop="@dimen/activity_vertical_high_margin"
-                            android:paddingBottom="@dimen/activity_vertical_high_margin"
-                            android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:textSize="@dimen/font_advstats_winrates_purcent"
-                            android:textColor="@color/light_font" />
-                    </LinearLayout>
+                        android:gravity="start"
+                        android:shadowColor="#000000"
+                        android:shadowDx="3"
+                        android:shadowDy="-3"
+                        android:shadowRadius="1.5"
+                        android:text="@string/advstats_winrates"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/light_font"
+                        android:textSize="@dimen/font_advstats_section_title" />
 
                     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                         xmlns:tools="http://schemas.android.com/tools"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/advstats_winrate_champion_background"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
+                        android:orientation="horizontal"
                         tools:context=".AdvancedStatsActivity">
 
-                        <TextView
-                            android:id="@+id/advstats_winrate_champion"
+                        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                            xmlns:tools="http://schemas.android.com/tools"
+                            android:id="@+id/advstats_winrate_global"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="@string/advstats_winrates_champion_title"
-                            android:textSize="@dimen/font_advstats_winrates_title"
-                            android:textColor="@color/black_font" />
+                            android:layout_weight="1"
+                            android:background="@color/advstats_winrate_global_background"
+                            android:orientation="vertical"
+                            tools:context=".AdvancedStatsActivity">
 
-                        <TextView
-                            android:id="@+id/advstats_winrate_champion_value"
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="@string/advstats_winrates_global_title"
+                                android:textColor="@color/black_font"
+                                android:textSize="@dimen/font_advstats_winrates_title" />
+
+                            <TextView
+                                android:id="@+id/advstats_winrate_global_value"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:shadowColor="#000000"
+                                android:shadowDx="3"
+                                android:shadowDy="-3"
+                                android:shadowRadius="1.5"
+                                android:text=""
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:textColor="@color/light_font"
+                                android:textSize="@dimen/font_advstats_winrates_purcent" />
+                        </LinearLayout>
+
+                        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                            xmlns:tools="http://schemas.android.com/tools"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:shadowColor="#000000"
-                            android:shadowDx="3"
-                            android:shadowDy="-3"
-                            android:shadowRadius="1.5"
-                            android:text=""
-                            android:paddingTop="@dimen/activity_vertical_high_margin"
-                            android:paddingBottom="@dimen/activity_vertical_high_margin"
-                            android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:textSize="@dimen/font_advstats_winrates_purcent"
-                            android:textColor="@color/light_font" />
+                            android:layout_weight="1"
+                            android:background="@color/advstats_winrate_champion_background"
+                            android:orientation="vertical"
+                            tools:context=".AdvancedStatsActivity">
+
+                            <TextView
+                                android:id="@+id/advstats_winrate_champion"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="@string/advstats_winrates_champion_title"
+                                android:textColor="@color/black_font"
+                                android:textSize="@dimen/font_advstats_winrates_title" />
+
+                            <TextView
+                                android:id="@+id/advstats_winrate_champion_value"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:shadowColor="#000000"
+                                android:shadowDx="3"
+                                android:shadowDy="-3"
+                                android:shadowRadius="1.5"
+                                android:text=""
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:textColor="@color/light_font"
+                                android:textSize="@dimen/font_advstats_winrates_purcent" />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
 
-            <!-- MPC -->
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/advstats_mpc_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                tools:context=".AdvancedStatsActivity">
-
-                <TextView
-                    android:id="@+id/advstats_mpc"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:gravity="start"
-                    android:shadowColor="#000000"
-                    android:shadowDx="3"
-                    android:shadowDy="-3"
-                    android:shadowRadius="1.5"
-                    android:text="@string/advstats_mpc"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="@dimen/font_advstats_section_title"
-                    android:textColor="@color/light_font" />
-
-                <com.github.mikephil.charting.charts.BarChart
-                    android:id="@+id/advstats_chart_mpc"
+                <!-- MPC -->
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/advstats_mpc_container"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:background="@color/bg_black_transparent"
+                    android:paddingLeft="@dimen/activity_vertical_margin"
+                    android:paddingRight="@dimen/activity_vertical_margin"
+                    android:paddingBottom="@dimen/activity_vertical_mid_margin"
+                    android:paddingTop="@dimen/activity_vertical_mid_margin"
+                    tools:context=".AdvancedStatsActivity">
 
+                    <TextView
+                        android:id="@+id/advstats_mpc"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:shadowColor="#000000"
+                        android:shadowDx="3"
+                        android:shadowDy="-3"
+                        android:shadowRadius="1.5"
+                        android:text="@string/advstats_mpc"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/light_font"
+                        android:textSize="@dimen/font_advstats_section_title" />
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/advstats_chart_mpc"
+                        android:layout_width="match_parent"
+                        android:layout_height="140dip" />
+
+                </LinearLayout>
+
+                <!-- CREEPS / MIN -->
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/advstats_cpm_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:background="@color/bg_white_transparent"
+                    android:paddingLeft="@dimen/activity_vertical_margin"
+                    android:paddingRight="@dimen/activity_vertical_margin"
+                    android:paddingBottom="@dimen/activity_vertical_mid_margin"
+                    android:paddingTop="@dimen/activity_vertical_mid_margin"
+                    tools:context=".AdvancedStatsActivity">
+
+                    <TextView
+                        android:id="@+id/advstats_cpm"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:shadowColor="#000000"
+                        android:shadowDx="3"
+                        android:shadowDy="-3"
+                        android:shadowRadius="1.5"
+                        android:text="@string/advstats_cpm"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/light_font"
+                        android:textSize="@dimen/font_advstats_section_title" />
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/advstats_chart_cpm"
+                        android:layout_width="match_parent"
+                        android:layout_height="140dip" />
+
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
-
-    </LinearLayout>
+    </ScrollView>
 </LinearLayout>

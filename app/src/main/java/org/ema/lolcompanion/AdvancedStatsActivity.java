@@ -3,43 +3,56 @@ package org.ema.lolcompanion;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.Highlight;
+import com.github.mikephil.charting.utils.ValueFormatter;
 
+import org.ema.dialogs.ChampionTipAdvStatsDialogFragment;
+import org.ema.dialogs.ChampionTipDialogFragment;
 import org.ema.model.DAO.CurrentGameDAO;
 import org.ema.model.business.Champion;
 import org.ema.model.business.Item;
 import org.ema.model.business.Summoner;
 import org.ema.utils.GlobalDataManager;
-import org.ema.utils.LoLStatActivity;
 import org.ema.utils.VerticalProgressBar;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
+public class AdvancedStatsActivity extends FragmentActivity implements OnChartValueSelectedListener, ChampionTipAdvStatsDialogFragment.NoticeDialogListener{
 
-public class AdvancedStatsActivity extends Activity {
+    private BarChart chartMPC;
+    private BarChart chartCPM;
+    private Summoner summonerToShow;
+    private Summoner current;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_advanced_stats);
         Intent intent = getIntent();
-        Summoner summonerToShow = (Summoner) GlobalDataManager.get("summonerForAdvStats");
-        Summoner current = (Summoner) GlobalDataManager.get("user");
+        summonerToShow = (Summoner) GlobalDataManager.get("summonerForAdvStats");
+        current = (Summoner) GlobalDataManager.get("user");
 
         //background dynamic color
         if (summonerToShow.getTeamId() != current.getTeamId()) {
@@ -60,13 +73,12 @@ public class AdvancedStatsActivity extends Activity {
         advWinrate.setTypeface(font);
         TextView advMPC = (TextView) findViewById(R.id.advstats_mpc);
         advMPC.setTypeface(font);
+        TextView advCPM = (TextView) findViewById(R.id.advstats_cpm);
+        advCPM.setTypeface(font);
 
         //summary of previous view (line champion)
         LinearLayout rootView = (LinearLayout) findViewById(R.id.root_advstats);
         fillSummonerInformations(rootView, 1, summonerToShow, 0, 100);
-
-        //Load detailed statistics directly in the summoner
-        CurrentGameDAO.loadStatisticsDetailed(summonerToShow);
 
         //Item build
         Item[] listOfItems = summonerToShow.getChampion().getBuild();
@@ -75,6 +87,30 @@ public class AdvancedStatsActivity extends Activity {
             addFavoriteItemToFavoriteBuild(rootItemBuildView, i, listOfItems[i]);
         }
 
+
+        addWinRates();
+        addMPCChart();
+        addCPMChart();
+    }
+
+    //this function handles the addition of favorite items
+    private void addFavoriteItemToFavoriteBuild(LinearLayout containerView, int idForLine, Item item) {
+        View rootview = this.getLayoutInflater().inflate(R.layout.advstats_build_item_box, containerView, false);
+        //Item icon
+        ImageView itemIcon = (ImageView) rootview.findViewById(R.id.item);
+        Bitmap bitmap = item.getIcon();
+        itemIcon.setImageBitmap(bitmap);
+        itemIcon.setId(idForLine);
+
+        //Item name
+        //TextView itemName = (TextView) rootview.findViewById(R.id.item_name);
+        //itemName.setText(item.getName());
+
+        containerView.addView(rootview);
+    }
+
+    //handles the winrates in the layout
+    public void addWinRates(){
         //Winrates
         DecimalFormat df = new DecimalFormat("00.0");
         df.setRoundingMode(RoundingMode.HALF_UP);
@@ -104,30 +140,202 @@ public class AdvancedStatsActivity extends Activity {
         String winRateChampionFormatted = String.valueOf( winRateWithChampion > 0 && winRateWithChampion < 10 ? dfsmall.format(winRateWithChampion) : df.format(winRateWithChampion));
         advWinRateChampion.setText(String.valueOf(winRateChampionFormatted) + getResources().getString(R.string.purcent));
 
+    }
+
+    //handles the MostPlayedChampion chart
+    public void addMPCChart(){
         //most played champion
         Champion[] champions = summonerToShow.getMostChampionsPlayed();
-        BarChart chart_mpc = (BarChart) findViewById(R.id.advstats_chart_mpc);
-        chart_mpc.setBackgroundColor(getResources().getColor(R.color.bg_black_transparent));
-        chart_mpc.setDescriptionTextSize(getResources().getDimension(R.dimen.font_advstats_chart_mpc_description));
+        chartMPC = (BarChart) findViewById(R.id.advstats_chart_mpc);
+        chartMPC.setDescriptionTextSize(getResources().getDimension(R.dimen.font_advstats_chart_mpc_description));
+        chartMPC.setDescription("");
+        //Axix X
+        chartMPC.getXAxis().setEnabled(true);
+        chartMPC.getXAxis().setDrawAxisLine(true);
+        chartMPC.getXAxis().setDrawGridLines(false);
+        chartMPC.getXAxis().setDrawLabels(true);
+        chartMPC.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        chartMPC.getXAxis().setAxisLineColor(Color.WHITE);
+        chartMPC.getXAxis().setTextSize(getResources().getDimension(R.dimen.font_advstats_chart_mpc_champion_name));
+        chartMPC.getXAxis().setTextColor(getResources().getColor(R.color.grey_font));
 
+        //Axux y - left
+        chartMPC.getAxisLeft().setEnabled(true);
+        chartMPC.getAxisLeft().setDrawAxisLine(true);
+        chartMPC.getAxisLeft().setDrawGridLines(false);
+        chartMPC.getAxisLeft().setDrawLabels(true);
+        chartMPC.getAxisLeft().setAxisLineColor(Color.WHITE);
+        chartMPC.getAxisLeft().setTextColor(getResources().getColor(R.color.grey_font));
+
+        //display as int
+        class IntValueFormatter implements ValueFormatter {
+
+            @Override
+            public String getFormattedValue(float value) {
+                return " " + (int)value; // append a dollar-sign
+            }
+        }
+
+        chartMPC.getAxisLeft().setValueFormatter(new IntValueFormatter());
+
+        //Axis y -right
+        chartMPC.getAxisRight().setEnabled(false);
+
+        chartMPC.setPinchZoom(false);
+        chartMPC.setDrawValueAboveBar(true);
+        chartMPC.setDrawBarShadow(false);
+        chartMPC.setDrawGridBackground(false);
+        chartMPC.setOnChartValueSelectedListener(this);
+
+        //legend
+        Legend l = chartMPC.getLegend();
+        l.setFormSize(10); // set the size of the legend forms/shapes
+        l.setForm(Legend.LegendForm.SQUARE); // set what type of form/shape should be used
+        l.setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
+        l.setTextSize(12);
+        l.setTextColor(Color.WHITE);
+        l.setXEntrySpace(5); // set the space between the legend entries on the x-axis
+        l.setYEntrySpace(5); // set the space between the legend entries on the y-axis
+
+
+        //ArrayList<Bitmap> xChampions = new ArrayList<Bitmap>();
+        ArrayList<String> xChampions = new ArrayList<String>();
+        ArrayList<BarEntry> yPlayedGames = new ArrayList<BarEntry>();
+        ArrayList<BarEntry> yWinGames = new ArrayList<BarEntry>();
+        ArrayList<BarEntry> yLoseGames = new ArrayList<BarEntry>();
+
+        for(int i = 0; i < champions.length; i++) {
+            xChampions.add(champions[i].getName());
+            Log.v("MIC", champions[i].toString());
+            Log.v("MIC", String.valueOf(champions[i].getStatistic().getWin() + champions[i].getStatistic().getLoose()));
+            yPlayedGames.add(new BarEntry((champions[i].getStatistic().getWin() + champions[i].getStatistic().getLoose()), i));
+            yWinGames.add(new BarEntry(champions[i].getStatistic().getWin(), i));
+            yLoseGames.add(new BarEntry(champions[i].getStatistic().getLoose(), i));
+        }
+
+        BarDataSet set1 = new BarDataSet(yPlayedGames, getResources().getString(R.string.advstats_chart_mpc_played_game));
+        // set1.setColors(ColorTemplate.createColors(getApplicationContext(),
+        // ColorTemplate.FRESH_COLORS));
+        set1.setColor(getResources().getColor(R.color.advstats_mpc_total_games));
+        set1.setValueTextColor(Color.WHITE);
+        set1.setValueFormatter(new IntValueFormatter());
+        BarDataSet set2 = new BarDataSet(yWinGames, getResources().getString(R.string.advstats_chart_mpc_winned_games));
+        set2.setColor(getResources().getColor(R.color.advstats_mpc_total_wins));
+        set2.setValueTextColor(Color.WHITE);
+        set2.setValueFormatter(new IntValueFormatter());
+        BarDataSet set3 = new BarDataSet(yLoseGames, getResources().getString(R.string.advstats_chart_mpc_losed_games));
+        set3.setColor(getResources().getColor(R.color.advstats_mpc_total_loses));
+        set3.setValueTextColor(Color.WHITE);
+        set3.setValueFormatter(new IntValueFormatter());
+
+        ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
+        dataSets.add(set1);
+        dataSets.add(set2);
+        dataSets.add(set3);
+
+        BarData data = new BarData(xChampions, dataSets);
+        // add space between the dataset groups in percent of bar-width
+        data.setGroupSpace(40f);
+
+        chartMPC.setData(data);
+        chartMPC.invalidate();
     }
 
-    //this function handles the addition of favorite items
-    private void addFavoriteItemToFavoriteBuild(LinearLayout containerView, int idForLine, Item item) {
-        View rootview = this.getLayoutInflater().inflate(R.layout.advstats_build_item_box, containerView, false);
-        //Item icon
-        ImageView itemIcon = (ImageView) rootview.findViewById(R.id.item);
-        Bitmap bitmap = item.getIcon();
-        itemIcon.setImageBitmap(bitmap);
-        itemIcon.setId(idForLine);
+    //handles the CreepsPerMinute chart
+    public void addCPMChart(){
+        //most played champion
+        // 2 lines - 4 column
+        // creep killed : 0-10m | 10-20m | 20-30m | 30-end
+        double[][] creepsInfo = summonerToShow.getChampion().getStatistic().getCreepChartInfo();
+        chartCPM = (BarChart) findViewById(R.id.advstats_chart_cpm);
+        chartCPM.setDescriptionTextSize(getResources().getDimension(R.dimen.font_advstats_chart_mpc_description));
+        chartCPM.setDescription("");
+        //Axix X
+        chartCPM.getXAxis().setEnabled(true);
+        chartCPM.getXAxis().setDrawAxisLine(true);
+        chartCPM.getXAxis().setDrawGridLines(false);
+        chartCPM.getXAxis().setDrawLabels(true);
+        chartCPM.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        chartCPM.getXAxis().setAxisLineColor(Color.BLACK);
+        chartCPM.getXAxis().setTextSize(getResources().getDimension(R.dimen.font_advstats_chart_cpm_x));
+        chartCPM.getXAxis().setTextColor(getResources().getColor(R.color.black_font));
 
-        //Item name
-        //TextView itemName = (TextView) rootview.findViewById(R.id.item_name);
-        //itemName.setText(item.getName());
+        //Axux y - left
+        chartCPM.getAxisLeft().setEnabled(true);
+        chartCPM.getAxisLeft().setDrawAxisLine(true);
+        chartCPM.getAxisLeft().setDrawGridLines(false);
+        chartCPM.getAxisLeft().setDrawLabels(true);
+        chartCPM.getAxisLeft().setAxisLineColor(Color.BLACK);
+        chartCPM.getAxisLeft().setTextColor(getResources().getColor(R.color.black_font));
 
-        containerView.addView(rootview);
+        //display as int
+        class IntValueFormatter implements ValueFormatter {
+
+            @Override
+            public String getFormattedValue(float value) {
+                return " " + (int)value; // append a dollar-sign
+            }
+        }
+
+        chartCPM.getAxisLeft().setValueFormatter(new IntValueFormatter());
+
+        //Axis y -right
+        chartCPM.getAxisRight().setEnabled(false);
+
+        chartCPM.setPinchZoom(false);
+        chartCPM.setDrawValueAboveBar(true);
+        chartCPM.setDrawBarShadow(false);
+        chartCPM.setDrawGridBackground(false);
+        chartCPM.setOnChartValueSelectedListener(this);
+
+        //legend
+        Legend l = chartCPM.getLegend();
+        l.setFormSize(10); // set the size of the legend forms/shapes
+        l.setForm(Legend.LegendForm.SQUARE); // set what type of form/shape should be used
+        l.setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
+        l.setTextSize(12);
+        l.setTextColor(Color.BLACK);
+        l.setXEntrySpace(5); // set the space between the legend entries on the x-axis
+        l.setYEntrySpace(5); // set the space between the legend entries on the y-axis
+
+
+        //ArrayList<Bitmap> xChampions = new ArrayList<Bitmap>();
+        ArrayList<String> xTimeIntervals = new ArrayList<String>();
+        ArrayList<BarEntry> yCreepsKilled = new ArrayList<BarEntry>();
+        ArrayList<BarEntry> yCreepsMissed = new ArrayList<BarEntry>();
+
+        xTimeIntervals.add("10m");
+        xTimeIntervals.add("20m");
+        xTimeIntervals.add("30m");
+        xTimeIntervals.add("end");
+
+        for(int i = 0; i < 4; i++) {
+            yCreepsKilled.add(new BarEntry((int)(creepsInfo[0][i]), i));
+            yCreepsMissed.add(new BarEntry((int)(creepsInfo[1][i]), i));
+        }
+
+        BarDataSet set1 = new BarDataSet(yCreepsKilled, getResources().getString(R.string.advstats_chart_cpm_killed_creeps));
+        // set1.setColors(ColorTemplate.createColors(getApplicationContext(),
+        // ColorTemplate.FRESH_COLORS));
+        set1.setColor(getResources().getColor(R.color.advstats_cpm_killed_creeps));
+        set1.setValueTextColor(Color.BLACK);
+        set1.setValueFormatter(new IntValueFormatter());
+        BarDataSet set2 = new BarDataSet(yCreepsMissed, getResources().getString(R.string.advstats_chart_cpm_missed_creeps));
+        set2.setColor(getResources().getColor(R.color.advstats_cpm_missed_creeps));
+        set2.setValueTextColor(Color.BLACK);
+        set2.setValueFormatter(new IntValueFormatter());
+
+        ArrayList<BarDataSet> dataSets = new ArrayList<BarDataSet>();
+        dataSets.add(set1);
+        dataSets.add(set2);
+
+        BarData data = new BarData(xTimeIntervals, dataSets);
+        // add space between the dataset groups in percent of bar-width
+        data.setGroupSpace(40f);
+
+        chartCPM.setData(data);
+        chartCPM.invalidate();
     }
-
 
     //This function will fill the statistics of one summoner - has to be called in the foreach using the summoner list retrieve by DAO
     private void fillSummonerInformations(LinearLayout containerView, int idForLine, Summoner summoner, int minPerformance, int maxPerformance) {
@@ -169,6 +377,7 @@ public class AdvancedStatsActivity extends Activity {
         Bitmap bitmap = summoner.getChampion().getIcon();
         img.setImageBitmap(bitmap);
         img.setId(idForLine);
+        img.setClickable(false);
 
         //######################### is main champion
         ImageView isMain = (ImageView) rootview.findViewById(R.id.s1Main);
@@ -294,5 +503,38 @@ public class AdvancedStatsActivity extends Activity {
         containerView.addView(rootview, 0);
     }
 
+    public void showChampionTips(View v) {
+        DialogFragment dialog = new ChampionTipDialogFragment();
+        Bundle args = new Bundle();
+        //We give to the dialog the summoners info to display
+        if (summonerToShow.getTeamId() != current.getTeamId()) {
+            args.putString("name", summonerToShow.getChampion().getName());
+            args.putString("tips", summonerToShow.getChampion().getEnemyTips());
+        }
+        else{
+            args.putString("name", summonerToShow.getChampion().getName());
+            args.putString("tips", summonerToShow.getChampion().getAllyTips());
+        }
+
+        //the next value for the (Next) Button of the dialog. If it's the last item which is clicked, go back to first item, else go tho next
+        args.putInt("next",  0);
+        dialog.setArguments(args);
+        dialog.show(getSupportFragmentManager(), "advstats_tips");
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+    }
+
+    @Override
+    public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
+
+    }
+
+    @Override
+    public void onNothingSelected() {
+
+    }
 }
 

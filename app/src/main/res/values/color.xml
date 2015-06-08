@@ -35,4 +35,11 @@
     <!-- advstats -->
     <color name="advstats_winrate_global_background">#04737a</color>
     <color name="advstats_winrate_champion_background">#e59c00</color>
+
+    <color name="advstats_mpc_total_games">#8643aa</color>
+    <color name="advstats_mpc_total_wins">#37bc58</color>
+    <color name="advstats_mpc_total_loses">#b12c2e</color>
+
+    <color name="advstats_cpm_killed_creeps">#04737a</color>
+    <color name="advstats_cpm_missed_creeps">#b12c2e</color>
 </resources>

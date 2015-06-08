@@ -245,6 +245,17 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:onClick="lauchSummonerSearch"
             android:text="@string/login_submit" />
+
+        <ProgressBar
+            android:id="@+id/login_submit_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:background="@color/bg_black_transparent"
+            android:indeterminate="true"
+            android:layout_gravity="center_vertical"
+            android:minWidth="120dp"
+            android:gravity="center"
+            android:visibility="gone"/>
     </LinearLayout>
 
 

@@ -762,7 +762,7 @@ public class CurrentGameDAO {
         summoner.getChampion().setBuild(Build);
         } catch (Exception e){
             e.printStackTrace();
-            Log.v("Erreur creep", e.getMessage());
+            //Log.v("Erreur creep", e.getMessage());
         }
     }
 

@@ -28,17 +28,21 @@ public class CurrentGameDAO {
 
     public static int numberOfGamesAnalyzed = 3;
     public static void loadStatisticsDetailed(Summoner summoner) {
-        //Load images of mostPlayedChampions
-        loadMostPlayedChampionsImages(summoner);
+        if(!summoner.getDataProcessed().isDetailedStats()) {
+            //Load images of mostPlayedChampions
+            loadMostPlayedChampionsImages(summoner);
 
-        JSONArray matchHistory = getMatchHistory(summoner, numberOfGamesAnalyzed);
-        if(matchHistory != null ) {
-            getSummonerFavoriteBuild(summoner, matchHistory);
-            getCreepChartInfo(summoner, matchHistory);
-        }
+            JSONArray matchHistory = getMatchHistory(summoner, numberOfGamesAnalyzed);
+            if(matchHistory != null ) {
+                getSummonerFavoriteBuild(summoner, matchHistory);
+                getCreepChartInfo(summoner, matchHistory);
+            }
 
-        while(!summoner.areImagesMostPlayedChampionsLoaded() || !summoner.getChampion().areImagesBuildLoaded()){
-            SystemClock.sleep(500);
+            while(!summoner.areImagesMostPlayedChampionsLoaded() || !summoner.getChampion().areImagesBuildLoaded()){
+                SystemClock.sleep(500);
+            }
+
+            summoner.getDataProcessed().setDetailedStats(true);
         }
     }
 
@@ -79,6 +83,13 @@ public class CurrentGameDAO {
                 Spell[] spells = new Spell[2];
                 spells[0] = new Spell((int) jsonParticipant.get("spell1Id"),"",null,null);
                 spells[1] = new Spell((int) jsonParticipant.get("spell2Id"),"",null,null);
+
+                //This is the flash
+                if(spells[0].getId() == 4) {
+                    Spell spell = spells[1];
+                    spells[1] = spells[0];
+                    spells[0] = spell;
+                }
                 summoner.setSpells(spells);
 
                 //The summoner is the user of the application

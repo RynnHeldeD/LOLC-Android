@@ -226,13 +226,6 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
 
     //Fonctions pour les évènements WS
     public void simpleClickTimer(String buttonID,long delayOfTransfert, boolean fromWebSocket, boolean doTimerActivation){
-
-        long timerDelayToUse;
-        if (timerMap.get(buttonID) * 1000 > delayOfTransfert) {
-            timerDelayToUse = (timerMap.get(buttonID) * 1000) - delayOfTransfert;
-        } else {
-            timerDelayToUse = 1;
-        }
         TimerButton tbtn = getButtonFromIdString(buttonID);
 
         //Name of the clicked button => example : b21
@@ -242,6 +235,13 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
 
         //Timer is null and has never been instancied
         if (tbtn.getTimer() == null && doTimerActivation) {
+            long timerDelayToUse;
+            if (timerMap.get(buttonID) * 1000 > delayOfTransfert) {
+                timerDelayToUse = (timerMap.get(buttonID) * 1000) - delayOfTransfert;
+            } else {
+                timerDelayToUse = 1000;
+            }
+
             //Setting the TextView so the timer update the countdown in FO
             int timerTextViewID = getResources().getIdentifier(IDButton.concat("t"), "id", getActivity().getBaseContext().getPackageName());
             //settings the textView with the font
@@ -249,9 +249,12 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
             txtv.setTypeface(font);
             tbtn.setTimer(new Timer(0, 0, txtv, tbtn));
 
-            if (!fromWebSocket) {
-                WsEventHandling.timerActivation(buttonID, Long.toString(GameTimestamp.getServerTimestamp()));
+            if(timerDelayToUse > 1000){
+                if (!fromWebSocket) {
+                    WsEventHandling.timerActivation(buttonID, Long.toString(GameTimestamp.getServerTimestamp()));
+                }
             }
+
             //On active le time
             //Si on a des cooldown a 0 ou inférieur au temps de transfert, on met pas de timer
             tbtn.setTimer(new Timer(timerDelayToUse, 1000, tbtn.getTimer().getTimerTextView(), tbtn));

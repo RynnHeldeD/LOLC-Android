@@ -1,21 +1,21 @@
 package org.ema.lolcompanion;
 
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.util.Log;
+import android.widget.TextView;
 
 import org.ema.model.business.Summoner;
 import org.ema.utils.GameTimestamp;
 import org.ema.utils.GlobalDataManager;
+import org.ema.utils.Timer;
+import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by Constantin on 19/05/2015.
@@ -45,11 +45,16 @@ public class WsEventHandling {
                         break;
                     case "playerList":
                         startGameTimestamp(obj.getLong("timestamp"));
-                        updateChannelPlayers(obj.getJSONArray("allies"));
+                        updateChannelPlayersThread(obj.getJSONArray("allies"));
                         break;
                     case "playerList_toNewAllies":
+                        updateChannelPlayersThread(obj.getJSONArray("allies"));
+                        if(obj.has("share")){
+                            shareTimers();
+                        }
+                        break;
                     case "playerList_toOldAllies":
-                        updateChannelPlayers(obj.getJSONArray("allies"));
+                        updateChannelPlayersThread(obj.getJSONArray("allies"));
                         break;
                     case "timerDelay":
                         delayTimer(obj.getString("idSortGrille"));
@@ -59,6 +64,13 @@ public class WsEventHandling {
                         break;
                     case "stopTimer":
                         doStopTimer(obj.getString("idSortGrille"));
+                        break;
+                    case "sharedTimers":
+                        try {
+                            updateTimers(obj.getJSONArray("timers"),obj.getString("timestamp"));
+                        } catch (JSONException e){
+                            Log.v("Websocket","Erreur parsage:" + e.getMessage());
+                        }
                         break;
                     default:
                         break;
@@ -205,58 +217,36 @@ public class WsEventHandling {
         }.start();
     }
 
-    public static void updateChannelPlayers(JSONArray playersInChannelJson) {
-        Summoner user = (Summoner)GlobalDataManager.get("user");
-        ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
+    public static void updateChannelPlayersThread(final JSONArray playersInChannelJson) {
+        CompanionActivity.instance.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                try {
+                    CompanionActivity.instance.cleanChannelSummary();
 
-        //on clean les joueurs deja affichés
-        class TimerCleanPlayerList implements Runnable {
-            public void run(){
-                CompanionActivity.instance.cleanChannelSummary();
-            }
-        }
-        new Thread(){
-            public void run(){
-                CompanionActivity.instanceCompanion.runOnUiThread(new TimerCleanPlayerList());
-            }
-        }.start();
+                    Summoner user = (Summoner)GlobalDataManager.get("user");
+                    ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
 
-        try {
-            //on ajoute chaque joueur
-            for(int i = 0; i<playersInChannelJson.length();i++) {
-                String iconeSummonerName = playersInChannelJson.getString(i);
-                //On ajoute pas l'image du user qui utilie l'appli
-                for(Summoner s : summonersList) {
-                    //On passe dans la boucle si ce n'est pas le joueur courant et que c'est un allié
-                    if (!s.getName().equals(user.getName()) && s.getTeamId() ==  user.getTeamId() && s.getChampion().getIconName().equals(iconeSummonerName)) {
-                        Log.v("Websocket", "On ajoute l'icone du joueur:" + s.getName());
-                        final Bitmap summonerIconName = s.getChampion().getIcon();
-
-                        class TimerUpdatePlayerList implements Runnable {
-                            public Bitmap iconeName;
-
-                            public TimerUpdatePlayerList(Bitmap iconeName){
-                                this.iconeName = iconeName;
-                            }
-
-                            public void run(){
-                                CompanionActivity.instance.appendPlayerIconToChannelSummary(iconeName);
+                    //on ajoute chaque joueur
+                    for(int i = 0; i<playersInChannelJson.length();i++) {
+                        String iconeSummonerName = playersInChannelJson.getString(i);
+                        //On ajoute pas l'image du user qui utilie l'appli
+                        for(Summoner s : summonersList) {
+                            //On passe dans la boucle si ce n'est pas le joueur courant et que c'est un allié
+                            if (!s.getName().equals(user.getName()) && s.getTeamId() ==  user.getTeamId() && s.getChampion().getIconName().equals(iconeSummonerName)) {
+                                Log.v("Websocket", "On ajoute l'icone du joueur:" + s.getName());
+                                final Bitmap summonerIconName = s.getChampion().getIcon();
+                                 CompanionActivity.instance.appendPlayerIconToChannelSummary(summonerIconName);
                             }
                         }
-
-                        new Thread(){
-                            public void run(){
-                                CompanionActivity.instanceCompanion.runOnUiThread(new TimerUpdatePlayerList(summonerIconName));
-                            }
-                        }.start();
-                        break;
                     }
+                } catch (JSONException e) {
+                    Log.v("Websocket","Error during message parsing in updateChannelPlayers: " +e.getMessage());
                 }
             }
-        } catch (JSONException e) {
-            Log.v("Websocket","Error during message parsing in updateChannelPlayers: " +e.getMessage());
-        }
+        });
     }
+
+
 
     public static void startGameTimestamp(long serverTimestamp) {
         GameTimestamp.setGameTimestamp(serverTimestamp);
@@ -287,6 +277,46 @@ public class WsEventHandling {
             waitingReconnexionMessage ="";
 
         }
+    }
+
+    public static void shareTimers(){
+        String[][] timersTableToShare = CompanionActivity.instance.shareTimers();
+        int tableSize = timersTableToShare.length;
+
+        String requestToSend = "{\"action\":\"sentTimers\",\"timers\":[";
+        for (int i = 0;i< tableSize;i++){
+            requestToSend += "[\"" + timersTableToShare[i][0] + "\",\"" + timersTableToShare[i][1] + "\"],";
+        }
+        if(tableSize > 0){
+            requestToSend = requestToSend.substring(0, requestToSend.length() - 1);
+        }
+
+
+        long serverTime = GameTimestamp.getServerTimestamp();
+        requestToSend += "],\"timestamp\":" + serverTime + "}";
+
+        sendMessage(requestToSend);
+    }
+
+    public static void updateTimers(JSONArray timerTable,String timestampEnvoi){
+        CompanionActivity.instance.cancelAllTimers();
+
+        long delayOfTransfert = GameTimestamp.transfertDelay(Long.parseLong(timestampEnvoi));
+        try {
+            //HashMap<String,String> timerHaspmap = (HashMap<String,String>) timerTable.get(0);
+
+            for(int i = 0; i < timerTable.length();i++){
+                Log.v("Websocket","Update timer " + i);
+                JSONArray buttonAndCooldown = (JSONArray) timerTable.get(i);
+                if((Long.parseLong(buttonAndCooldown.getString(1)) - delayOfTransfert) > 0) {
+                    long cooldown = Long.parseLong(buttonAndCooldown.getString(1)) - delayOfTransfert;
+                    CompanionActivity.instance.activateTimer(buttonAndCooldown.getString(0),cooldown);
+                }
+            }
+        } catch (JSONException e){
+            Log.v("Websocket","Erreur lors de la reception des timers partagés");
+        }
+
     }
 
 

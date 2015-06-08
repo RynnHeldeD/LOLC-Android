@@ -9,6 +9,7 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ServerHandshake;
 
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class WebSocket {
     public static Boolean alreadyDisconnected = false;
 
 
+
     public static void connectWebSocket() {
         URI uri;
         try {
@@ -27,36 +29,42 @@ public class WebSocket {
 
         } catch (URISyntaxException e) {
             e.printStackTrace();
+            Log.v("Websocket", "Fail to connect to websocket");
             return;
         }
-
+    try {
         mWebSocketClient = new WebSocketClient(uri) {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
                 Log.v("Websocket", "Opened");
 
-                if(alreadyDisconnected){
-                    CompanionActivity.instanceCompanion.reconnectionNotification();
+                if (alreadyDisconnected) {
+                    try{
+                        CompanionActivity.instanceCompanion.reconnectionNotification();
+                    } catch (Exception e){
+                        Log.v("Websocket","Erreur on Websocket open :" + e.getMessage());
+                    }
                 }
 
-                String userNickname = ((Summoner)GlobalDataManager.get("user")).getName();
-                ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
-                String passphrase = CompanionActivity.instance.settingsManager.get(CompanionActivity.instanceCompanion,"passphrase");
-                Summoner user = (Summoner)GlobalDataManager.get("user");
+                String userNickname = ((Summoner) GlobalDataManager.get("user")).getName();
+                ArrayList<Summoner> summonersList = (ArrayList<Summoner>) GlobalDataManager.get("summonersList");
+                String passphrase = CompanionActivity.instance.settingsManager.get(CompanionActivity.instanceCompanion, "passphrase");
 
-                for(Summoner s : summonersList){
-                    if(s.getName().equals(userNickname)){
+                Summoner user = (Summoner) GlobalDataManager.get("user");
+
+                for (Summoner s : summonersList) {
+                    if (s.getName().equals(userNickname)) {
                         user.setTeamId(s.getTeamId());
                         user.getChampion().setIconName(s.getChampion().getIconName());
                         user.setGameId(s.getGameId());
                     }
                 }
-                GlobalDataManager.add("user",user);
+                GlobalDataManager.add("user", user);
 
                 //mWebSocketClient.send("{\"action\":\"pickedChampion\",\"gameId\":\"0\",\"teamId\":\"0\",\"championIconId\":\"0\",\"passphrase\":\""+ passphrase +"\"}");
 
-                mWebSocketClient.send("{\"action\":\"pickedChampion\",\"gameId\":\""+ user.getGameId() +"\",\"teamId\":\"" + user.getTeamId() + "\",\"championIconId\":\""+ user.getChampion().getIconName() +"\",\"passphrase\":\""+ passphrase +"\"}");
-                Log.v("Websocket","{\"action\":\"pickedChampion\",\"gameId\":\""+ user.getGameId() +"\",\"teamId\":\"" + user.getTeamId() + "\",\"championIconId\":\""+ user.getChampion().getIconName() +"\",\"passphrase\":\""+ passphrase +"\"}");
+                mWebSocketClient.send("{\"action\":\"pickedChampion\",\"gameId\":\"" + user.getGameId() + "\",\"teamId\":\"" + user.getTeamId() + "\",\"championIconId\":\"" + user.getChampion().getIconName() + "\",\"passphrase\":\"" + passphrase + "\"}");
+                Log.v("Websocket", "{\"action\":\"pickedChampion\",\"gameId\":\"" + user.getGameId() + "\",\"teamId\":\"" + user.getTeamId() + "\",\"championIconId\":\"" + user.getChampion().getIconName() + "\",\"passphrase\":\"" + passphrase + "\"}");
 
             }
 
@@ -68,23 +76,28 @@ public class WebSocket {
             @Override
             public void onClose(int i, String s, boolean b) {
                 Log.v("Websocket", "Closed :" + s);
-
-                try {
+                try{
                     CompanionActivity.instanceCompanion.handleDisconnection();
+                } catch (NullPointerException ex){
+                    Log.v("Websocket","Erreur dans le try catch du websocketOnError" + ex.getMessage());
                 }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
+
             }
 
             @Override
-            public void onError(Exception e)  {
+            public void onError(Exception e) {
                 Log.v("Websocket", "Error :" + e.getMessage());
-                //CompanionActivity.instanceCompanion.handleDisconnection();
+              /*  try{
+                    CompanionActivity.instanceCompanion.handleDisconnection();
+                } catch (NullPointerException ex){
+                    Log.v("Websocket","Erreur dans le try catch du websocketOnError " + ex.getMessage());
+                }*/
             }
 
         };
-
+    } catch (Exception ex){
+        Log.v("Websocket","Timeout ? :" + ex.getMessage());
+    }
         mWebSocketClient.connect();
     }
 
@@ -97,9 +110,9 @@ public class WebSocket {
                 connectWebSocket();
                 WsEventHandling.waitingReconnexionMessage = s;
             }catch (WebsocketNotConnectedException er){
+                Log.v("Websocket","Erreur lors de l'envoi du message: " + e.getMessage());
                 Log.v("Websocket","La tentative de reconnexion au serveur WS a echoué");
             }
-            Log.v("Websocket","Erreur lors de l'envoi du message: " + e.getMessage());
         }
     }
 }

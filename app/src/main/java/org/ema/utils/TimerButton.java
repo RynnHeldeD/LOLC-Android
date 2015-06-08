@@ -179,11 +179,15 @@ public class TimerButton extends RoundedImageView {
     }
 
     public void timerDelay(long delayToRetrench){
-        Log.v("Websocket","ATTTEENNNNNTIONNNNN");
-        String test = this.getTimer().getTimerTextView().getText().toString();
-        Log.v("Websocket","Et voici une chaine vide:" + test);
-        long currentTimestamp = Long.parseLong(test) * 1000;
-        Log.v("Websocket","TU NE VERRA JAMAIS CE LOG");
+        String timerDelayString = this.getTimer().getTimerTextView().getText().toString();
+        long currentTimestamp;
+        try {
+            currentTimestamp = Long.parseLong(timerDelayString) * 1000;
+        } catch (NumberFormatException e){
+            //Si on a appuyer sur un timer qui était a une seconde, il se peux que le temps du traitement, il n'ai plus rien comme valeur
+            //Du coup on le passe a delayToRetrench pour que a la création du timer il soit à 0
+            currentTimestamp = delayToRetrench;
+        }
 
         if (currentTimestamp != 0) {
             if(this.getTimer() != null) {

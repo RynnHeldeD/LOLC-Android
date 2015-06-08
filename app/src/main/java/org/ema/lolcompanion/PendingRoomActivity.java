@@ -204,6 +204,8 @@ public class PendingRoomActivity extends Activity {
             }
 			else {
                 Log.v("DAO", "FATAL : summonersList is NULL. Summoner :" + summonerNameFromPreviousView);
+                shouldContinue = false;
+                launchMainActivity();
             }
 
             stopThread();

@@ -1,19 +1,24 @@
 package org.ema.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.ema.lolcompanion.AdvancedStatsActivity;
 import org.ema.lolcompanion.CompanionActivity;
 import org.ema.lolcompanion.MainActivity;
 import org.ema.lolcompanion.R;
+import org.ema.model.DAO.CurrentGameDAO;
 import org.ema.model.business.Summoner;
 import org.ema.dialogs.ChampionTipDialogFragment;
 import org.ema.utils.GlobalDataManager;
@@ -102,7 +107,10 @@ public class AlliesFragment extends LoLStatActivity implements ChampionTipDialog
 
     //This function handle the advanced statistic goto
     public void showAdvancedStatistics(View v, Boolean isEnnemy) {
-        GlobalDataManager.add("summonerForAdvStats", summonersAlliesList.get(v.getId()));
+        Summoner summonerToShow = summonersAlliesList.get(v.getId());
+        //Load detailed statistics directly in the summoner
+        CurrentGameDAO.loadStatisticsDetailed(summonerToShow);
+        GlobalDataManager.add("summonerForAdvStats", summonerToShow);
         Intent intent = new Intent(this.getActivity(), AdvancedStatsActivity.class);
         startActivity(intent);
     }
@@ -114,4 +122,13 @@ public class AlliesFragment extends LoLStatActivity implements ChampionTipDialog
     public void setSummonersAlliesList(ArrayList<Summoner> summonersAlliesList) {
         this.summonersAlliesList = summonersAlliesList;
     }
+    /*
+    @Override
+    public void onResume() {
+        super.onResume();
+        ScrollView view_ally = (ScrollView) getActivity().findViewById(R.id.root_scroll_allies);
+        LinearLayout loader = (LinearLayout) getActivity().findViewById(R.id.loading_advstats);
+        loader.setVisibility(View.GONE);
+        view_ally.setVisibility(View.VISIBLE);
+    }*/
 }

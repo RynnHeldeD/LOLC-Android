@@ -1,5 +1,8 @@
 package org.ema.fragments;
 
+import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.DialogFragment;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -8,11 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.ema.lolcompanion.AdvancedStatsActivity;
 import org.ema.lolcompanion.MainActivity;
 import org.ema.lolcompanion.R;
+import org.ema.model.DAO.CurrentGameDAO;
 import org.ema.model.business.Summoner;
 import org.ema.dialogs.ChampionTipDialogFragment;
 import org.ema.utils.GlobalDataManager;
@@ -65,14 +71,17 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
         args.putString("name", summonersOpponentsList.get(v.getId()).getChampion().getName());
         args.putString("tips", summonersOpponentsList.get(v.getId()).getChampion().getAllyTips());
         //the next value for the (Next) Button of the dialog. If it's the last item which is clicked, go back to first item, else go tho next
-        args.putInt("next", (v.getId() == (summonersOpponentsList.size()-1)) ? 0 : v.getId()+1);
+        args.putInt("next", (v.getId() == (summonersOpponentsList.size() - 1)) ? 0 : v.getId() + 1);
         dialog.setArguments(args);
         dialog.show(getFragmentManager(), "tips");
     }
 
     //This function handle the advanced statistic goto
     public void showAdvancedStatistics(View v, Boolean isEnnemy) {
-        GlobalDataManager.add("summonerForAdvStats", summonersOpponentsList.get(v.getId()));
+        Summoner summonerToShow = summonersOpponentsList.get(v.getId());
+        //Load detailed statistics directly in the summoner
+        CurrentGameDAO.loadStatisticsDetailed(summonerToShow);
+        GlobalDataManager.add("summonerForAdvStats", summonerToShow);
         Intent intent = new Intent(this.getActivity(), AdvancedStatsActivity.class);
         startActivity(intent);
     }
@@ -89,7 +98,7 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
         args.putString("name", summonersOpponentsList.get(next).getChampion().getName());
         args.putString("tips", summonersOpponentsList.get(next).getChampion().getEnemyTips());
         //If it's the last item which is clicked, go back to first item, else go tho next
-        args.putInt("next", next == (summonersOpponentsList.size()-1) ? 0 : next+1);
+        args.putInt("next", next == (summonersOpponentsList.size() - 1) ? 0 : next + 1);
         dialog_next.setArguments(args);
         dialog_next.show(getFragmentManager(), "tips");
     }
@@ -113,4 +122,14 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
     public void setSummonersOpponentsList(ArrayList<Summoner> summonersOpponentsList) {
         this.summonersOpponentsList = summonersOpponentsList;
     }
+
+    /*
+    @Override
+    public void onResume() {
+        super.onResume();
+        ScrollView view_ally = (ScrollView) getActivity().findViewById(R.id.root_scroll_ennemies);
+        LinearLayout loader = (LinearLayout) getActivity().findViewById(R.id.loading_advstats);
+        loader.setVisibility(View.GONE);
+        view_ally.setVisibility(View.VISIBLE);
+    }*/
 }

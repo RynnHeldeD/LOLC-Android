@@ -67,11 +67,20 @@
     <string name="advstats_winrates_global_title">Global</string>
     <string name="advstats_winrates_champion_title">With</string>
 
+
+    <string name="advstats_chart_mpc_played_game">Played Games</string>
+    <string name="advstats_chart_mpc_winned_games">Wins</string>
+    <string name="advstats_chart_mpc_losed_games">Loses</string>
+
+    <string name="advstats_chart_cpm_killed_creeps">Killed Creeps</string>
+    <string name="advstats_chart_cpm_missed_creeps">Missed Creeps</string>
+
     <!-- TOASTS -->
     <string name="pending_logging">logging&#8230;</string>
     <string name="pending_waiting_signal">waiting for game signal&#8230;</string>
     <string name="pending_loading_game">loading game data&#8230;</string>
     <string name="disconnected_from_ws">disconnected from server</string>
     <string name="title_activity_advanced_stats">AdvancedStatsActivity</string>
+    <string name="ranked_statistics_restriction_click_advanced_stats">Not enough statistics</string>
 
 </resources>

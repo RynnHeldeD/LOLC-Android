@@ -26,7 +26,7 @@ import java.util.Collections;
 
 public class CurrentGameDAO {
 
-    public static int numberOfGamesAnalyzed = 10;
+    public static int numberOfGamesAnalyzed = 3;
     public static void loadStatisticsDetailed(Summoner summoner) {
         if(!summoner.getDataProcessed().isDetailedStats()) {
             //Load images of mostPlayedChampions
@@ -651,14 +651,9 @@ public class CurrentGameDAO {
         float meanPercentageDamageDealtByUser = 0;
         float meanPercentageDamageTakenByUser = 0;
 
-        int numberOfGames = jsonMatches.length();
-        if(summoner.getChampion().getId() == 238)
-        {
-            Log.v("DAO", "HERE");
-        }
-
+        int numberOfGames = Math.min(3, jsonMatches.length());
         try {
-            for (int i = 0; i < Math.min(3, jsonMatches.length()); i++) {
+            for (int i = 0; i <numberOfGames; i++) {
                 if (!jsonMatches.getJSONObject(i).isNull("season") && jsonMatches.getJSONObject(i).getString("season").equals("SEASON2015")) {
                     JSONObject test = jsonMatches.getJSONObject(i);
                     idGame = jsonMatches.getJSONObject(i).getInt("matchId");
@@ -679,9 +674,6 @@ public class CurrentGameDAO {
                         totalDamageDealtByUserTeamInCurrentGame = 0;
                         totalDamageTakenByUserTeamInCurrentGame = 0;
                     }
-                }
-                else{
-                    numberOfGames--;
                 }
             }
             if(numberOfGames != 0)

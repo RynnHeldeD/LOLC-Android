@@ -72,6 +72,9 @@ public class WsEventHandling {
                             Log.v("Websocket","Erreur parsage:" + e.getMessage());
                         }
                         break;
+                    case "sharedCooldown":
+                        setCdr(obj.getString("champUlti"), obj.getInt("cdr"));
+                        break;
                     default:
                         break;
                 }
@@ -223,24 +226,24 @@ public class WsEventHandling {
                 try {
                     CompanionActivity.instance.cleanChannelSummary();
 
-                    Summoner user = (Summoner)GlobalDataManager.get("user");
-                    ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
+                    Summoner user = (Summoner) GlobalDataManager.get("user");
+                    ArrayList<Summoner> summonersList = (ArrayList<Summoner>) GlobalDataManager.get("summonersList");
 
                     //on ajoute chaque joueur
-                    for(int i = 0; i<playersInChannelJson.length();i++) {
+                    for (int i = 0; i < playersInChannelJson.length(); i++) {
                         String iconeSummonerName = playersInChannelJson.getString(i);
                         //On ajoute pas l'image du user qui utilie l'appli
-                        for(Summoner s : summonersList) {
+                        for (Summoner s : summonersList) {
                             //On passe dans la boucle si ce n'est pas le joueur courant et que c'est un allié
-                            if (!s.getName().equals(user.getName()) && s.getTeamId() ==  user.getTeamId() && s.getChampion().getIconName().equals(iconeSummonerName)) {
+                            if (!s.getName().equals(user.getName()) && s.getTeamId() == user.getTeamId() && s.getChampion().getIconName().equals(iconeSummonerName)) {
                                 Log.v("Websocket", "On ajoute l'icone du joueur:" + s.getName());
                                 final Bitmap summonerIconName = s.getChampion().getIcon();
-                                 CompanionActivity.instance.appendPlayerIconToChannelSummary(summonerIconName);
+                                CompanionActivity.instance.appendPlayerIconToChannelSummary(summonerIconName);
                             }
                         }
                     }
                 } catch (JSONException e) {
-                    Log.v("Websocket","Error during message parsing in updateChannelPlayers: " +e.getMessage());
+                    Log.v("Websocket", "Error during message parsing in updateChannelPlayers: " + e.getMessage());
                 }
             }
         });
@@ -319,6 +322,11 @@ public class WsEventHandling {
     }
 
 
+    public  static void setCdr(String buttonId, Integer cooldown){
+        CompanionActivity.instance.setCdr(buttonId,cooldown);
+    }
+
+
     public static void getErrorFromJson(JSONObject obj) {
         try {
             Log.v("Websocket","Error : server return error during action -" + obj.getString("action") + "- message : " + obj.getString("message"));
@@ -329,6 +337,10 @@ public class WsEventHandling {
 
     private static void sendMessage(String msg) {
         WebSocket.send(msg);
+    }
+
+    public static void sendCdr(String timerButton,Integer cdr){
+        sendMessage("{\"action\":\"sentCooldown\",\"champUlti\":\"" + timerButton + "\",\"cdr\":\"" + cdr + "\"}");
     }
 
     public static void pickedChampion(Integer gameId, Integer teamId, String championIconName, String channel) {

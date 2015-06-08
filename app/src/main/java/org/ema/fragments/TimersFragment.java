@@ -150,20 +150,14 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
     //function that handles cooldown dialod
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, int cooldown, String ennemy_button_id) {
-        Log.v("MIC", "Cooldown For " + ennemy_button_id + " reduced by " + cooldown + "%");
-        Log.v("Websocket","Taille hashpmap: " + timerCdrMap.entrySet().size());
         for(Map.Entry<String,Integer> button : timerCdrMap.entrySet()){
             String buttonUltimateId = ennemy_button_id.substring(0,2) + "2";
-            Log.v("Websocket","Button renvoye: " + buttonUltimateId + " button.getKey " + button.getKey() );
             if(button.getKey().equals(buttonUltimateId)){
                 timerCdrMap.put(button.getKey(), cooldown);
-                //TODO envoyer message ws
-                Log.v("Websocket","Cdr de " + button.getKey()  + " a " + timerCdrMap.get(button.getKey()));
+                  WsEventHandling.sendCdr(button.getKey(), cooldown);
                 break;
             }
         }
-
-
     }
 
     @Override
@@ -286,11 +280,9 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
                     //on calcule le temps que va afficher le timer , en prenant en compte la cdr
                     try{
                         Double cdr = ((double) timerCdrMap.get(buttonID)) / 100;
-                        Log.v("Websocket","CDR" + cdr);
+                        Log.v("Websocket","CDR de : " + cdr);
                         Double timerDelayWithCdr = timerMap.get(buttonID) * 1000 - (timerMap.get(buttonID) * 1000) * cdr;
-                        Log.v("Websocket","timerdelay avec cdr " + timerDelayWithCdr);
                         timerDelayToUse = Math.round(timerDelayWithCdr);
-                        Log.v("Websocket","timerDelayToUse " + timerDelayToUse);
                     } catch (Exception e){
                         timerDelayToUse = timerMap.get(buttonID) * 1000 - delayOfTransfert;
                     }
@@ -478,10 +470,10 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
                 }
             }
         });
+    }
 
-
-
-
+    public void setCdr(String buttonId, Integer cdr){
+        timerCdrMap.put(buttonId,cdr);
     }
 
 }

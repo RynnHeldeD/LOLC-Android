@@ -232,7 +232,7 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
             Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
 
             //Timer is null and has never been instancied
-            if (tbtn.getTimer() == null) {
+            if (tbtn.getTimer() == null && doTimerActivation) {
                 //Setting the TextView so the timer update the countdown in FO
                 int timerTextViewID = getResources().getIdentifier(IDButton.concat("t"), "id", getActivity().getBaseContext().getPackageName());
                 //settings the textView with the font
@@ -360,6 +360,8 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
 */
 
     public String[][] shareTimers(){
+
+
         List<String> timerButtons = Arrays.asList("b12","b13", "b14", "b22","b23", "b24", "b32","b33", "b34","b42", "b43", "b44", "b52","b53", "b54");
 
         String[][] timersTableToShare = new String[15][2];
@@ -388,6 +390,31 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
         }
 
         return trimmedTable;
+    }
+
+    public void cancelAllTimers(){
+
+        this.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                List<String> timerButtons = Arrays.asList("b12", "b13", "b14", "b22", "b23", "b24", "b32", "b33", "b34", "b42", "b43", "b44", "b52", "b53", "b54");
+
+                String[][] timersTableToShare = new String[15][2];
+                int count = 0;
+
+                for(int i = 0; i < 15;i++){
+                    String buttonID = timerButtons.get(i);
+                    TimerButton tbtn = getButtonFromIdString(buttonID);
+                    //Si le timer est présent et qu'il est en marche
+                    if (tbtn.getTimer() != null && tbtn.getTimer().isTicking() ) {
+                        tbtn.getTimer().onFinish();
+                    }
+                }
+            }
+        });
+
+
+
+
     }
 
 }

@@ -39,6 +39,7 @@ public class Timer extends CountDownTimer {
         isTicking = false;
         this.cancel();
         if(this.parent.getTimer() != null){
+            this.parent.setTriggered(false);
             this.parent.setTimer(null);
         }
     }

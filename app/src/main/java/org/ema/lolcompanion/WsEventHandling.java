@@ -316,6 +316,7 @@ public class WsEventHandling {
     }
 
     public static void updateTimers(JSONArray timerTable,String timestampEnvoi){
+        CompanionActivity.instance.cancelAllTimers();
 
         long delayOfTransfert = GameTimestamp.transfertDelay(Long.parseLong(timestampEnvoi));
         try {

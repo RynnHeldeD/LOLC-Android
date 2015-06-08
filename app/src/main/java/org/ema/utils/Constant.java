@@ -31,7 +31,7 @@ public class Constant {
     public static String API_STATS_URI = CACHE_SERVER_URI + API_DNS + "api/lol/euw/v1.3/stats/by-summoner/";
     public static String API_SUMMONER_INFO_URI = CACHE_SERVER_URI + API_DNS + "api/lol/euw/v1.4/summoner/by-name/";
     public static String API_SUMMONER_SPELLS = CACHE_SERVER_URI + API_STATIC_DNS + "api/lol/static-data/euw/v1.2/summoner-spell?dataById=true&spellData=cooldown,image";
-    public static String API_ITEMS = CACHE_SERVER_URI + API_STATIC_DNS + "api/lol/static-data/euw/v1.2/item/";
+    public static String API_ITEMS = CACHE_SERVER_URI + API_STATIC_DNS + "api/lol/static-data/euw/v1.2/item";
     public static String API_MATCHS = CACHE_SERVER_URI + API_DNS + "api/lol/euw/v2.2/match/";
 
     //Need to add "/recent" after the summoner id

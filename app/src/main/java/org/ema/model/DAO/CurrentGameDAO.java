@@ -707,6 +707,15 @@ public class CurrentGameDAO {
         int numberOfItemToAnalyze = 5;
         JSONArray jsonParticipants = null;
         try {
+            String globalItems = Utils.getDocumentAndCheck(Constant.API_ITEMS + "?itemListData=gold,into",4);
+
+            if(globalItems == null) {
+                return;
+            }
+
+            JSONObject jsonGlobalItems = new JSONObject(globalItems);
+            jsonGlobalItems = jsonGlobalItems.getJSONObject("data");
+
             for (int i = 0; i < matchHistory.length(); i++) {
                 if (!matchHistory.getJSONObject(i).isNull("participants") && matchHistory.getJSONObject(i).getString("season").equals("SEASON2015")) {
                     jsonParticipants = matchHistory.getJSONObject(i).getJSONArray("participants");
@@ -715,10 +724,10 @@ public class CurrentGameDAO {
                         for (int j = 0; j < numberOfItemToAnalyze; j++) {
                             int itemID = matchItemHistory[j];
                             if (itemID != 0){
-                                String jsonItems = Utils.getDocument(Constant.API_ITEMS + itemID + "?itemData=gold,into");
-                                if(jsonItems != null)
+                                if(!jsonGlobalItems.isNull(String.valueOf(itemID)))
                                 {
-                                    JSONObject result = new JSONObject(jsonItems);
+                                    JSONObject result = jsonGlobalItems.getJSONObject(String.valueOf(itemID));
+
                                     if(!result.isNull("gold") && !result.getJSONObject("gold").isNull("total"))
                                     {
                                         if (result.isNull("into") && result.getJSONObject("gold").getInt("total") > 1000) {
@@ -746,10 +755,9 @@ public class CurrentGameDAO {
                                 //Log.v("DAO", "Item into, user : " + user.getName());
                                 int itemID = matchItemHistory[j];
                                 if (itemID != 0) {
-                                    String jsonItems = Utils.getDocument(Constant.API_ITEMS + itemID + "?itemData=gold,into");
-                                    if(jsonItems != null)
+                                    if(!jsonGlobalItems.isNull(String.valueOf(itemID)))
                                     {
-                                        JSONObject result = new JSONObject(jsonItems);
+                                        JSONObject result = jsonGlobalItems.getJSONObject(String.valueOf(itemID));
                                         if(!result.isNull("gold") && !result.getJSONObject("gold").isNull("total"))
                                         {
                                             if (result.isNull("into") && result.getJSONObject("gold").getInt("total") > 1000) {

@@ -4,6 +4,7 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import org.ema.model.business.Champion;
+import org.ema.model.business.LaneProbability;
 import org.ema.model.business.League;
 import org.ema.model.business.Spell;
 import org.ema.model.business.Statistic;
@@ -22,11 +23,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 
 public class CurrentGameDAO {
 
-    public static int numberOfGamesAnalyzed = 3;
+    public static int numberOfGamesAnalyzed = 10;
     public static void loadStatisticsDetailed(Summoner summoner) {
         if(!summoner.getDataProcessed().isDetailedStats()) {
             //Load images of mostPlayedChampions
@@ -251,6 +251,7 @@ public class CurrentGameDAO {
             JSONArray matchHistory = getMatchHistory(user, numberOfGamesAnalyzed);
             if(matchHistory != null ) {
                 getDamageDealtAndDamageTaken(user, matchHistory);
+                getLanesProbabilities(user, matchHistory);
             }
 
         } catch (Exception e) {
@@ -777,6 +778,28 @@ public class CurrentGameDAO {
             e.printStackTrace();
             Log.v("Erreur creep", e.getMessage());
             return null;
+        }
+    }
+
+    private static void getLanesProbabilities(Summoner user, JSONArray matchHistory) {
+        try {
+            for (int i = 0; i < matchHistory.length(); i++) {
+                LaneProbability laneProbability = new LaneProbability();
+
+                JSONObject jsonMatch = (JSONObject)matchHistory.get(i);
+                jsonMatch = (JSONObject)(((JSONArray)jsonMatch.get("participants")).get(0));
+
+                laneProbability.setSpellId1(jsonMatch.getInt("spell1Id"));
+                laneProbability.setSpellId2(jsonMatch.getInt("spell2Id"));
+                jsonMatch = (JSONObject)jsonMatch.get("timeline");
+                laneProbability.setLane(jsonMatch.getString("lane"));
+                laneProbability.setRole(jsonMatch.getString("role"));
+
+                user.getChampion().addLaneProbability(laneProbability);
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+            Log.v("Erreur lanes", e.getMessage());
         }
     }
 }

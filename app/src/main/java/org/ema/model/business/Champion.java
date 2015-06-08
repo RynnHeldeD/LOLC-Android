@@ -8,6 +8,7 @@ import android.util.Log;
 
 import org.ema.model.interfaces.ISettableIcon;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Champion implements ISettableIcon, Parcelable {
@@ -21,6 +22,24 @@ public class Champion implements ISettableIcon, Parcelable {
     private Statistic statistic;
     private boolean isMain;
     private Item[] build;
+    private ArrayList<LaneProbability> lanesProbabilities = new ArrayList<LaneProbability>();
+    private LanesEnum lane = LanesEnum.UNKNOWN;
+
+    public LanesEnum getLane() {
+        return lane;
+    }
+
+    public void setLane(LanesEnum lane) {
+        this.lane = lane;
+    }
+
+    public ArrayList<LaneProbability> getLanesProbabilities() {
+        return lanesProbabilities;
+    }
+
+    public void setLanesProbabilities(ArrayList<LaneProbability> lanesProbabilities) {
+        this.lanesProbabilities = lanesProbabilities;
+    }
 
     public String getEnemyTips() {
         return enemyTips;
@@ -209,6 +228,10 @@ public class Champion implements ISettableIcon, Parcelable {
 
         Log.v("IMAGES_ITEMS", "all images loaded");
         return true;
+    }
+
+    public void addLaneProbability(LaneProbability lane) {
+        lanesProbabilities.add(lane);
     }
 
 }

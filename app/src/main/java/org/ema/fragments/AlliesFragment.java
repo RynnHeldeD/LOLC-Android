@@ -48,7 +48,7 @@ public class AlliesFragment extends LoLStatActivity implements ChampionTipDialog
             }
         }
 
-        Collections.sort(summonersAlliesList, new SortSummonerId());
+        //Collections.sort(summonersAlliesList, new SortSummonerId());
 
         //We get the container where we are going to add all the champion lines
         LinearLayout allies_container = (LinearLayout) rootView.findViewById(R.id.root_allies);

@@ -86,7 +86,7 @@ public class AdvancedStatsActivity extends Activity {
         float winRate = 0;
         //Log.v("MIC", "summoner wins : " + summonerToShow.getWins() + " summoner looses : " + summonerToShow.getLooses());
         if ((float) summonerToShow.getWins() + (float) summonerToShow.getLooses() != 0) {
-            winRate = (float) (summonerToShow.getWins() / ((float) summonerToShow.getWins() + (float) (float) summonerToShow.getLooses())) * 10;
+            winRate = (float) (summonerToShow.getWins() / ((float) summonerToShow.getWins() + (float) (float) summonerToShow.getLooses())) * 100;
         }
         //Log.v("MIC", "summoner Winrate : " + winRate);
         String winRateFormatted = String.valueOf( winRate > 0 && winRate < 10 ? dfsmall.format(winRate) : df.format(winRate));
@@ -99,7 +99,7 @@ public class AdvancedStatsActivity extends Activity {
         TextView advWinRateChampion = (TextView) findViewById(R.id.advstats_winrate_champion_value);
         float winRateWithChampion = 0;
         if ((float) summonerToShow.getWins() + (float) summonerToShow.getLooses() != 0) {
-            winRateWithChampion = (float) (summonerToShow.getChampion().getStatistic().getWin()/((float)summonerToShow.getChampion().getStatistic().getWin()+(float)summonerToShow.getChampion().getStatistic().getLoose()) * 10);
+            winRateWithChampion = (float) (summonerToShow.getChampion().getStatistic().getWin()/((float)summonerToShow.getChampion().getStatistic().getWin()+(float)summonerToShow.getChampion().getStatistic().getLoose()) * 100);
         }
         String winRateChampionFormatted = String.valueOf( winRateWithChampion > 0 && winRateWithChampion < 10 ? dfsmall.format(winRateWithChampion) : df.format(winRateWithChampion));
         advWinRateChampion.setText(String.valueOf(winRateChampionFormatted) + getResources().getString(R.string.purcent));

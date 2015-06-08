@@ -76,7 +76,7 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
             }
         }
 
-        Collections.sort(teamSummonersList, new SortSummonerId());
+        //Collections.sort(teamSummonersList, new SortSummonerId());
 
         // Changement des bitmap
         this.setTimerButtonsImage(teamSummonersList);

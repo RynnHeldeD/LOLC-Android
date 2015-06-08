@@ -54,8 +54,6 @@ public class EnnemiesFragment extends LoLStatActivity implements ChampionTipDial
 
         Collections.reverse(summonersOpponentsList);
 
-        //Collections.sort(summonersOpponentsList, new SortSummonerId());
-
         //We get the container where we are going to add all the champion lines
         LinearLayout ennemies_container = (LinearLayout) rootView.findViewById(R.id.root_ennemies);
         //Create summoner lines

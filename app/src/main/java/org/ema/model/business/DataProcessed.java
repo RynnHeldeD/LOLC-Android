@@ -7,6 +7,7 @@ public class DataProcessed {
     private boolean stats = false;
     private boolean premades = false;
     private boolean damages = false;
+    private boolean detailedStats = false;
 
 
     public boolean isStats() {
@@ -33,12 +34,14 @@ public class DataProcessed {
         this.damages = damages;
     }
 
-    public DataProcessed() {
+    public boolean isDetailedStats() {
+        return detailedStats;
     }
 
-    public DataProcessed(boolean stats, boolean premades, boolean damages) {
-        this.stats = stats;
-        this.premades = premades;
-        this.damages = damages;
+    public void setDetailedStats(boolean detailedStats) {
+        this.detailedStats = detailedStats;
+    }
+
+    public DataProcessed() {
     }
 }

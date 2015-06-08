@@ -28,17 +28,21 @@ public class CurrentGameDAO {
 
     public static int numberOfGamesAnalyzed = 3;
     public static void loadStatisticsDetailed(Summoner summoner) {
-        //Load images of mostPlayedChampions
-        loadMostPlayedChampionsImages(summoner);
+        if(!summoner.getDataProcessed().isDetailedStats()) {
+            //Load images of mostPlayedChampions
+            loadMostPlayedChampionsImages(summoner);
 
-        JSONArray matchHistory = getMatchHistory(summoner, numberOfGamesAnalyzed);
-        if(matchHistory != null ) {
-            getSummonerFavoriteBuild(summoner, matchHistory);
-            getCreepChartInfo(summoner, matchHistory);
-        }
+            JSONArray matchHistory = getMatchHistory(summoner, numberOfGamesAnalyzed);
+            if(matchHistory != null ) {
+                getSummonerFavoriteBuild(summoner, matchHistory);
+                getCreepChartInfo(summoner, matchHistory);
+            }
 
-        while(!summoner.areImagesMostPlayedChampionsLoaded() || !summoner.getChampion().areImagesBuildLoaded()){
-            SystemClock.sleep(500);
+            while(!summoner.areImagesMostPlayedChampionsLoaded() || !summoner.getChampion().areImagesBuildLoaded()){
+                SystemClock.sleep(500);
+            }
+
+            summoner.getDataProcessed().setDetailedStats(true);
         }
     }
 

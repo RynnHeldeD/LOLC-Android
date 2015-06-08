@@ -27,6 +27,7 @@
     <string name="title_activity_pending_room">PendingRoomActivity</string>
     <string name="pending">Pending Room</string>
     <string name="pending_description">The application will start automatically with your online game</string>
+    <string name="pending_alert">If the game is not detected, you will be redirected to the home page in :</string>
 
     <!-- Timer room -->
     <string name="title_activity_timer">TimerActivity</string>

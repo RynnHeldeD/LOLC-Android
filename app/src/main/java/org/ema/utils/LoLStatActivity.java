@@ -61,13 +61,13 @@ public class LoLStatActivity extends Fragment {
 
         //Setting the color and value of the Performance BAr
         if (performance < low) {
-            summonerPerf.setProgressDrawable(getResources().getDrawable(R.drawable.progress_green));
+            summonerPerf.setProgressDrawable(getResources().getDrawable(R.drawable.progress_red));
             //summonerPerf.getProgressDrawable().setColorFilter(getResources().getColor(R.color.performance_bar_normal), PorterDuff.Mode.DST);
         } else if (performance >= low && performance < mid) {
             summonerPerf.setProgressDrawable(getResources().getDrawable(R.drawable.progress_yellow));
             //summonerPerf.getProgressDrawable().setColorFilter(getResources().getColor(R.color.performance_bar_avg), PorterDuff.Mode.DST);
         } else if (performance >= mid) {
-            summonerPerf.setProgressDrawable(getResources().getDrawable(R.drawable.progress_red));
+            summonerPerf.setProgressDrawable(getResources().getDrawable(R.drawable.progress_green));
             //summonerPerf.getProgressDrawable().setColorFilter(getResources().getColor(R.color.performance_bar_danger), PorterDuff.Mode.DST);
         }
         //We set a new ID so the progressBar is Unique for each summoner and don't reset

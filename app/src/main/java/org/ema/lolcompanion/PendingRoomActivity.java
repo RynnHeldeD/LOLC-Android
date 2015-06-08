@@ -3,6 +3,7 @@ package org.ema.lolcompanion;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -33,6 +34,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 
 public class PendingRoomActivity extends Activity {
 
@@ -88,6 +90,24 @@ public class PendingRoomActivity extends Activity {
         TextView summonerName = (TextView) findViewById(R.id.pending_summoner_name);
         summonerName.setTypeface(font);
         summonerName.setText(summonerNameFromPreviousView);
+
+        //set the countdown timer
+        final TextView pendingCountdown = (TextView) findViewById(R.id.pending_counter);
+        int maxCount = getResources().getInteger(R.integer.pending_room_countdown) * 1000;//multiply for millisecond
+        new CountDownTimer(maxCount, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                pendingCountdown.setText(""+String.format("%02d:%02d",
+                        TimeUnit.MILLISECONDS.toMinutes( millisUntilFinished),
+                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
+            }
+
+            public void onFinish() {
+                pendingCountdown.setText("done!");
+            }
+        }.start();
+
 
         //settings the textViews with the font
         TextView pending = (TextView) findViewById(R.id.pending);
@@ -172,7 +192,7 @@ public class PendingRoomActivity extends Activity {
     public boolean loadData() {
 
         count ++;
-        if(count == 60)
+        if(count == getResources().getInteger(R.integer.pending_room_countdown))
         {
             Log.v("Error", "Interrupted");
             stopThread();

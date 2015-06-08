@@ -235,25 +235,7 @@ public class WsEventHandling {
                             if (!s.getName().equals(user.getName()) && s.getTeamId() ==  user.getTeamId() && s.getChampion().getIconName().equals(iconeSummonerName)) {
                                 Log.v("Websocket", "On ajoute l'icone du joueur:" + s.getName());
                                 final Bitmap summonerIconName = s.getChampion().getIcon();
-
-                                class TimerUpdatePlayerList implements Runnable {
-                                    public Bitmap iconeName;
-
-                                    public TimerUpdatePlayerList(Bitmap iconeName){
-                                        this.iconeName = iconeName;
-                                    }
-
-                                    public void run(){
-                                        CompanionActivity.instance.appendPlayerIconToChannelSummary(iconeName);
-                                    }
-                                }
-
-                                new Thread(){
-                                    public void run(){
-                                        CompanionActivity.instanceCompanion.runOnUiThread(new TimerUpdatePlayerList(summonerIconName));
-                                    }
-                                }.start();
-                                break;
+                                 CompanionActivity.instance.appendPlayerIconToChannelSummary(summonerIconName);
                             }
                         }
                     }

@@ -79,8 +79,10 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
         // Changement des bitmap
         this.setTimerButtonsImage(teamSummonersList);
 
+        if (summonersList.size() == 10){
         //Chargement des timers
-        this.buildTimerTable(teamSummonersList);
+            this.buildTimerTable(teamSummonersList);
+        }
     }
 
     public void cleanChannelSummary(){
@@ -90,6 +92,7 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
 
     //This functions adds dynamically a player icon in the channel summary so user can know who is connected
     public void appendPlayerIconToChannelSummary(Bitmap playerIcon){
+        Log.v("Websocket", "On passe dans la fonction AppendPlayer");
         LinearLayout channelSummary = (LinearLayout) getActivity().findViewById(R.id.channel_summary);
         RoundedImageView riv = new RoundedImageView(getActivity());
         riv.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -130,9 +133,11 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
     }
 
     public void setTimerButtonsImage(ArrayList<Summoner> teamSummonersList){
-        this.setChampionTimerButtonsImage(teamSummonersList);
-        this.setUltimateTimerButtonsImage(teamSummonersList);
-        this.setSpellsTimerButtonsImage(teamSummonersList);
+        if (teamSummonersList.size() == 5){
+            this.setChampionTimerButtonsImage(teamSummonersList);
+            this.setUltimateTimerButtonsImage(teamSummonersList);
+            this.setSpellsTimerButtonsImage(teamSummonersList);
+        }
     }
 
     public void setChampionTimerButtonsImage(ArrayList<Summoner> summonersList){
@@ -191,8 +196,8 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
         List<String> summonerSpellButtons = Arrays.asList("b13", "b14", "b23", "b24", "b33", "b34", "b43", "b44", "b53", "b54");
         List<String> ultimateButtons = Arrays.asList("b12", "b22", "b32", "b42", "b52");
 
-        timerMap.put("b01",(long)700);
-        timerMap.put("b02",(long)600);
+        timerMap.put("b01",(long)420);
+        timerMap.put("b02",(long)300);
 
         int spellIndex = 0;
         int summonerIndex = 0;

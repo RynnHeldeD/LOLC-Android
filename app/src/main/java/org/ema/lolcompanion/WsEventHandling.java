@@ -301,18 +301,16 @@ public class WsEventHandling {
         String[][] timersTableToShare = CompanionActivity.instance.shareTimers();
         int tableSize = timersTableToShare.length;
 
-        if(tableSize > 0){
-            String requestToSend = "{\"action\":\"sentTimers\",\"timers\":[";
-            for (int i = 0;i< tableSize;i++){
-                requestToSend += "[\"" + timersTableToShare[i][0] + "\",\"" + timersTableToShare[i][1] + "\"],";
-            }
-            requestToSend = requestToSend.substring(0, requestToSend.length() - 1);
-
-            long serverTime = GameTimestamp.getServerTimestamp();
-            requestToSend += "],\"timestamp\":" + serverTime + "}";
-
-            sendMessage(requestToSend);
+        String requestToSend = "{\"action\":\"sentTimers\",\"timers\":[";
+        for (int i = 0;i< tableSize;i++){
+            requestToSend += "[\"" + timersTableToShare[i][0] + "\",\"" + timersTableToShare[i][1] + "\"],";
         }
+        requestToSend = requestToSend.substring(0, requestToSend.length() - 1);
+
+        long serverTime = GameTimestamp.getServerTimestamp();
+        requestToSend += "],\"timestamp\":" + serverTime + "}";
+
+        sendMessage(requestToSend);
     }
 
     public static void updateTimers(JSONArray timerTable,String timestampEnvoi){

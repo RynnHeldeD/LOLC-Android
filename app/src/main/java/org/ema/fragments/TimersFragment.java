@@ -212,7 +212,7 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
         List<String> ultimateButtons = Arrays.asList("b12", "b22", "b32", "b42", "b52");
 
         timerMap.put("b01",(long)420);
-        timerMap.put("b02",(long)300);
+        timerMap.put("b02",(long)360);
 
         int spellIndex = 0;
         int summonerIndex = 0;
@@ -389,12 +389,12 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
     public String[][] shareTimers(){
 
 
-        List<String> timerButtons = Arrays.asList("b12","b13", "b14", "b22","b23", "b24", "b32","b33", "b34","b42", "b43", "b44", "b52","b53", "b54");
+        List<String> timerButtons = Arrays.asList("b01","b02","b12","b13", "b14", "b22","b23", "b24", "b32","b33", "b34","b42", "b43", "b44", "b52","b53", "b54");
 
-        String[][] timersTableToShare = new String[15][2];
+        String[][] timersTableToShare = new String[17][2];
         int count = 0;
 
-        for(int i = 0; i < 15;i++){
+        for(int i = 0; i < 17;i++){
             String buttonID = timerButtons.get(i);
             TimerButton tbtn = getButtonFromIdString(buttonID);
 
@@ -422,9 +422,9 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
 
         this.getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                List<String> timerButtons = Arrays.asList("b12", "b13", "b14", "b22", "b23", "b24", "b32", "b33", "b34", "b42", "b43", "b44", "b52", "b53", "b54");
+                List<String> timerButtons = Arrays.asList("b01","b02","b12", "b13", "b14", "b22", "b23", "b24", "b32", "b33", "b34", "b42", "b43", "b44", "b52", "b53", "b54");
 
-                for(int i = 0; i < 15;i++){
+                for(int i = 0; i < 17;i++){
                     String buttonID = timerButtons.get(i);
                     TimerButton tbtn = getButtonFromIdString(buttonID);
                     //Si le timer est présent et qu'il est en marche

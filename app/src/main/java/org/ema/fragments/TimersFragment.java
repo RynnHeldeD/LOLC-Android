@@ -37,11 +37,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class TimersFragment extends LoLStatActivity implements SecureDialogFragment.NoticeDialogListener, CooldownTimersDialogFragment.NoticeDialogListener {
     public static TimersFragment instance = null;
     public HashMap<String,Long> timerMap;
+    public HashMap<String,Integer> timerCdrMap;
     public static SettingsManager settingsManager = null;
 
     @Override
@@ -49,6 +51,15 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
         // Inflate the layout resource that'll be returned
         View rootView = inflater.inflate(R.layout.activity_timer, container, false);
         timerMap = new HashMap<String,Long>();
+
+        //On créer
+        timerCdrMap = new HashMap<String,Integer>();
+        timerCdrMap.put("b12",0);
+        timerCdrMap.put("b22",0);
+        timerCdrMap.put("b32",0);
+        timerCdrMap.put("b42",0);
+        timerCdrMap.put("b52", 0);
+
         Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
         TextView timers = (TextView) rootView.findViewById(R.id.timers);
         timers.setTypeface(font);
@@ -139,8 +150,20 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
     //function that handles cooldown dialod
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, int cooldown, String ennemy_button_id) {
-        // Websocket - secure channel
         Log.v("MIC", "Cooldown For " + ennemy_button_id + " reduced by " + cooldown + "%");
+        Log.v("Websocket","Taille hashpmap: " + timerCdrMap.entrySet().size());
+        for(Map.Entry<String,Integer> button : timerCdrMap.entrySet()){
+            String buttonUltimateId = ennemy_button_id.substring(0,2) + "2";
+            Log.v("Websocket","Button renvoye: " + buttonUltimateId + " button.getKey " + button.getKey() );
+            if(button.getKey().equals(buttonUltimateId)){
+                timerCdrMap.put(button.getKey(), cooldown);
+                //TODO envoyer message ws
+                Log.v("Websocket","Cdr de " + button.getKey()  + " a " + timerCdrMap.get(button.getKey()));
+                break;
+            }
+        }
+
+
     }
 
     @Override
@@ -254,8 +277,27 @@ public class TimersFragment extends LoLStatActivity implements SecureDialogFragm
         //Timer is null and has never been instancied
         if (tbtn.getTimer() == null && doTimerActivation) {
             long timerDelayToUse;
+
+            //Si le cooldown est supérieur au temps de transfert
             if (timerMap.get(buttonID) * 1000 > delayOfTransfert) {
-                timerDelayToUse = (timerMap.get(buttonID) * 1000) - delayOfTransfert;
+                //Si c'est un ulti, on applique la cdr
+                if(timerCdrMap.containsKey(buttonID)){
+                    Log.v("Websocket","Cest un ulti");
+                    //on calcule le temps que va afficher le timer , en prenant en compte la cdr
+                    try{
+                        Double cdr = ((double) timerCdrMap.get(buttonID)) / 100;
+                        Log.v("Websocket","CDR" + cdr);
+                        Double timerDelayWithCdr = timerMap.get(buttonID) * 1000 - (timerMap.get(buttonID) * 1000) * cdr;
+                        Log.v("Websocket","timerdelay avec cdr " + timerDelayWithCdr);
+                        timerDelayToUse = Math.round(timerDelayWithCdr);
+                        Log.v("Websocket","timerDelayToUse " + timerDelayToUse);
+                    } catch (Exception e){
+                        timerDelayToUse = timerMap.get(buttonID) * 1000 - delayOfTransfert;
+                    }
+                } else {
+                    //Sinon si c'est un sort d'invocateur, on récupère seulement de cooldown depuis le hashmap
+                    timerDelayToUse = timerMap.get(buttonID) * 1000 - delayOfTransfert;
+                }
             } else {
                 timerDelayToUse = 1000;
             }

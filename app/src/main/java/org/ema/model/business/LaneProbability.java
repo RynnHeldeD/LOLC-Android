@@ -8,6 +8,24 @@ public class LaneProbability {
     private String lane;
     private int spellId1;
     private int spellId2;
+    private int nbOccurences;
+    private float proba;
+
+    public float getProba() {
+        return proba;
+    }
+
+    public void setProba(float proba) {
+        this.proba = proba;
+    }
+
+    public int getNbOccurences() {
+        return nbOccurences;
+    }
+
+    public void setNbOccurences(int nbOccurences) {
+        this.nbOccurences = nbOccurences;
+    }
 
     public String getRole() {
         return role;

@@ -24,6 +24,15 @@ public class Champion implements ISettableIcon, Parcelable {
     private Item[] build;
     private ArrayList<LaneProbability> lanesProbabilities = new ArrayList<LaneProbability>();
     private LanesEnum lane = LanesEnum.UNKNOWN;
+    private LaneProbabilitySummary[] summary = new LaneProbabilitySummary[5];
+
+    public LaneProbabilitySummary[] getSummary() {
+        return summary;
+    }
+
+    public void setSummary(LaneProbabilitySummary[] summary) {
+        this.summary = summary;
+    }
 
     public LanesEnum getLane() {
         return lane;
@@ -122,6 +131,11 @@ public class Champion implements ISettableIcon, Parcelable {
     }
 
     public Champion() {
+        summary[0] = new LaneProbabilitySummary(LanesEnum.TOP,0);
+        summary[1] = new LaneProbabilitySummary(LanesEnum.JUNGLER,0);
+        summary[2] = new LaneProbabilitySummary(LanesEnum.MID,0);
+        summary[3] = new LaneProbabilitySummary(LanesEnum.ADC,0);
+        summary[4] = new LaneProbabilitySummary(LanesEnum.SUPPORT,0);
     }
 
     public Champion(int id, String name, Spell spell, String iconName, Bitmap icon, String allyTips, String enemyTips, Statistic statistic, boolean isMain, Item[] build) {
@@ -135,6 +149,12 @@ public class Champion implements ISettableIcon, Parcelable {
         this.statistic = statistic;
         this.isMain = isMain;
         this.build = build;
+
+        summary[0] = new LaneProbabilitySummary(LanesEnum.TOP,0);
+        summary[1] = new LaneProbabilitySummary(LanesEnum.JUNGLER,0);
+        summary[2] = new LaneProbabilitySummary(LanesEnum.MID,0);
+        summary[3] = new LaneProbabilitySummary(LanesEnum.ADC,0);
+        summary[4] = new LaneProbabilitySummary(LanesEnum.SUPPORT,0);
     }
 
     public Champion(Champion c){
@@ -219,6 +239,10 @@ public class Champion implements ISettableIcon, Parcelable {
     }
 
     public boolean areImagesBuildLoaded() {
+        if(this.getBuild() == null) {
+            return true;
+        }
+
         for(int i = 0; i < this.getBuild().length; i++) {
             if(this.getBuild()[i].getIcon() == null) {
                 Log.v("IMAGES_ITEMS", this.getBuild()[i].getIconName() + " not loaded");

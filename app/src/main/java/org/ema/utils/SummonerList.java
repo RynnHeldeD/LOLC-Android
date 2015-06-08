@@ -1,8 +1,12 @@
 package org.ema.utils;
 
+import android.util.Log;
+
 import org.ema.model.business.Summoner;
+import org.ema.model.business.SummonerSorted;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by romain on 03/06/2015.
@@ -47,5 +51,82 @@ public class SummonerList {
         }
 
         return true;
+    }
+
+    public static ArrayList<Summoner> sortSummonersByTeamAndLanes(ArrayList<Summoner> summonersList) {
+        ArrayList<Summoner> team100 = new ArrayList<>();
+        ArrayList<Summoner> team200 = new ArrayList<>();
+
+        for(Summoner summoner : summonersList) {
+            if(summoner.getTeamId() == 100) {
+                team100.add(summoner);
+            }
+            else {
+                team200.add(summoner);
+            }
+        }
+
+        team100 = sortSummonersByLanes(team100);
+        team200 = sortSummonersByLanes(team200);
+
+        ArrayList<Summoner> summonersSorted = new ArrayList<>();
+
+        for(Summoner summoner : team100) {
+            summonersSorted.add(summoner);
+        }
+        for(Summoner summoner : team200) {
+            summonersSorted.add(summoner);
+        }
+
+        return summonersSorted;
+    }
+
+    public static ArrayList<Summoner> sortSummonersByLanes(ArrayList<Summoner> summonersList) {
+        ArrayList<SummonerSorted> summonersSorted = new ArrayList<>();
+        for(Summoner summoner : summonersList) {
+            summonersSorted.add(new SummonerSorted(summoner,getPosition(summoner)));
+        }
+
+        Summoner[] list = new Summoner[summonersList.size()];
+        for(SummonerSorted summoner : summonersSorted) {
+            if(summoner.getRank() < list.length) {
+                list[summoner.getRank()] = summoner.getSummoner();
+                summoner.setFiltred(true);
+            }
+        }
+
+        for(SummonerSorted summoner : summonersSorted) {
+            if(!summoner.isFiltred()) {
+                summoner.setFiltred(true);
+                list[getNextEmptyIndex(list)] = summoner.getSummoner();
+            }
+        }
+
+        ArrayList<Summoner> result = new ArrayList<>();
+        for(int i = 0; i < list.length;i++) {
+            result.add(list[i]);
+        }
+
+        return result;
+    }
+
+    public static int getPosition(Summoner summoner) {
+        for(int i = 0; i < summoner.getChampion().getSummary().length;i++) {
+            if(summoner.getChampion().getLane().equals(summoner.getChampion().getSummary()[i].getLane())) {
+                return i;
+            }
+        }
+
+        return 5;
+    }
+
+    public static int getNextEmptyIndex(Summoner[] summoners) {
+        for(int i =0; i<summoners.length;i++) {
+            if(summoners[i] == null) {
+                return i;
+            }
+        }
+
+        return summoners.length;
     }
 }

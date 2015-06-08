@@ -177,6 +177,7 @@ public class PendingRoomActivity extends Activity {
             Log.v("Error", "Interrupted");
             stopThread();
             launchMainActivity();
+            count = 0;
             return false;
         }
         int id = user.getId();

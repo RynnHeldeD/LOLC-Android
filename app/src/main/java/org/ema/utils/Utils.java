@@ -136,7 +136,9 @@ public class Utils {
                     connection.connect();
                     InputStream input = connection.getInputStream();
                     bitmap = BitmapFactory.decodeStream(input);
-                    //bitmap = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.poro_unknown);
+                    if(objectClass.equals("Item")){
+                        bitmap = Bitmap.createScaledBitmap(bitmap, 64, 64, false);
+                    }
                     ((ISettableIcon) params[0]).setIcon(bitmap);
                 } catch (MalformedURLException e1) {
                     e1.printStackTrace();

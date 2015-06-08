@@ -185,8 +185,8 @@ public class TimerButton extends RoundedImageView {
         try {
             currentTimestamp = Long.parseLong(timerDelayString) * 1000;
         } catch (NumberFormatException e){
-            //Si on a appuyer sur un timer qui était a une seconde, il se peux que le temps du traitement, il n'ai plus rien comme valeur
-            //Du coup on le passe a delayToRetrench pour que a la création du timer il soit à 0
+            //Si on a appuyer sur un timer qui etait a une seconde, il se peux que le temps du traitement, il n'ai plus rien comme valeur
+            //Du coup on le passe a delayToRetrench pour que a la creation du timer il soit a 0
             currentTimestamp = delayToRetrench;
         }
 

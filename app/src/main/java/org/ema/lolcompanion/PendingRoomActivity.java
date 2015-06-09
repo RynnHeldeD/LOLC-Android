@@ -48,6 +48,7 @@ public class PendingRoomActivity extends Activity {
     private int IDRessource;
     private boolean isAllowedToBack = true;
     public final Object signal = new Object();
+    public int websocketSleepTime = 0;
 
     private final Handler handler = new Handler() {
         public void handleMessage(Message msg) {
@@ -77,6 +78,7 @@ public class PendingRoomActivity extends Activity {
         //Clear cache
         Utils.cache.clear();
         Utils.nbRequests = 0;
+        websocketSleepTime = getResources().getInteger(R.integer.pending_room_websocket_waiting_time_seconds);
         // Get the summoner_name from the intent
         Intent intent = getIntent();
         setContentView(R.layout.activity_pending_room);
@@ -93,7 +95,7 @@ public class PendingRoomActivity extends Activity {
 
         //set the countdown timer
         final TextView pendingCountdown = (TextView) findViewById(R.id.pending_counter);
-        int maxCount = getResources().getInteger(R.integer.pending_room_countdown) * 1000;//multiply for millisecond
+        int maxCount = (getResources().getInteger(R.integer.pending_room_countdown_seconds) * 1000);//multiply for millisecond
         new CountDownTimer(maxCount, 1000) {
 
             public void onTick(long millisUntilFinished) {
@@ -104,7 +106,7 @@ public class PendingRoomActivity extends Activity {
             }
 
             public void onFinish() {
-                pendingCountdown.setText("done!");
+                pendingCountdown.setText("");
             }
         }.start();
 
@@ -139,7 +141,7 @@ public class PendingRoomActivity extends Activity {
                         Message msg = handler.obtainMessage();
                         
                         if (!loadData()) {
-                            SystemClock.sleep(10000);
+                            SystemClock.sleep(websocketSleepTime*1000); //sleep and wait for game detection
                         }
                     }
                 }
@@ -192,12 +194,15 @@ public class PendingRoomActivity extends Activity {
     public boolean loadData() {
 
         count ++;
-        if(count == getResources().getInteger(R.integer.pending_room_countdown))
+        // divided by 10 ==> 600 (seconde given by xml) / 10 = 60 tours ;
+        // 60 tours de boucle x 10000( 10 secondes) = 600 000 milliseconde;
+        // 600 000 / 60 000 (1 minute)=  10min
+        if(count > (getResources().getInteger(R.integer.pending_room_countdown_seconds)/10))
         {
-            Log.v("Error", "Interrupted");
+            //Log.v("Error", "Interrupted");
             stopThread();
             launchMainActivity();
-            count = 0;
+            count = 0; //count begins at -1 to make the good number of loops (10 loops so count from 0 to 10)
             return false;
         }
         int id = user.getId();
@@ -205,7 +210,7 @@ public class PendingRoomActivity extends Activity {
         Message msgInGame = handler.obtainMessage();
         msgInGame.arg1 = 2;
         handler.sendMessage(msgInGame);
-        Log.v("DAO", "Is in game: " + isInGame);
+        //Log.v("DAO", "Is in game: " + isInGame);
 
         if (isInGame) {
 
@@ -217,14 +222,14 @@ public class PendingRoomActivity extends Activity {
 
             summonersList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
             if (summonersList != null) {
-                Log.v("DAO", "SummonerList: " + summonersList.toString());
+                //Log.v("DAO", "SummonerList: " + summonersList.toString());
                 while(!this.areAllImagesLoaded(summonersList)){
                     SystemClock.sleep(500);
                 }
                 launchTimerActivity();
             }
 			else {
-                Log.v("DAO", "FATAL : summonersList is NULL. Summoner :" + summonerNameFromPreviousView);
+                //Log.v("DAO", "FATAL : summonersList is NULL. Summoner :" + summonerNameFromPreviousView);
                 shouldContinue = false;
                 launchMainActivity();
             }
@@ -233,7 +238,7 @@ public class PendingRoomActivity extends Activity {
             isAllowedToBack = true;
             return true;
         } else {
-            Log.v("Error", "User not in game");
+            //Log.v("Error", "User not in game");
             shouldContinue = true;
         }
         return false;
@@ -264,7 +269,7 @@ public class PendingRoomActivity extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(isAllowedToBack) {
-            Log.v("Back", "Going back");
+            //Log.v("Back", "Going back");
             if (keyCode == KeyEvent.KEYCODE_BACK) {
                 shouldContinue = false;
                 launchMainActivity();

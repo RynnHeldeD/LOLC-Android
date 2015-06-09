@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <integer name="pending_room_countdown">600</integer>
+    <integer name="pending_room_countdown_seconds">30</integer>
+    <integer name="pending_room_websocket_waiting_time_seconds">10</integer>
+
     <integer name="max_champion_name_character_lenght">10</integer>
     <integer name="max_cooldown_reduction">40</integer>
     <integer name="cooldown_reduction_steps">5</integer>

@@ -24,22 +24,19 @@ import org.ema.lolcompanion.WsEventHandling;
 import org.ema.model.business.Summoner;
 import org.ema.utils.GameTimestamp;
 import org.ema.utils.GlobalDataManager;
-import org.ema.utils.LoLStatActivity;
 import org.ema.dialogs.SecureDialogFragment;
 import org.ema.utils.SettingsManager;
-import org.ema.utils.SortSummonerId;
 import org.ema.utils.Timer;
 import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 
-public class TimersFragment extends LoLStatActivity implements SecureDialogFragment.NoticeDialogListener, CooldownTimersDialogFragment.NoticeDialogListener {
+public class TimersFragment extends SummonersListFragment implements SecureDialogFragment.NoticeDialogListener, CooldownTimersDialogFragment.NoticeDialogListener {
     public HashMap<String,Long> timerMap;
     public static SettingsManager settingsManager = null;
 

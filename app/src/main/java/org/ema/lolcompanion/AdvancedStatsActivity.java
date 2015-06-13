@@ -1,20 +1,29 @@
 package org.ema.lolcompanion;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Legend;
@@ -29,10 +38,13 @@ import com.github.mikephil.charting.utils.ValueFormatter;
 
 import org.ema.dialogs.ChampionTipAdvStatsDialogFragment;
 import org.ema.dialogs.ChampionTipDialogFragment;
+import org.ema.dialogs.LolCompanionProgressDialog;
 import org.ema.model.DAO.CurrentGameDAO;
+import org.ema.model.DAO.SummonerDAO;
 import org.ema.model.business.Champion;
 import org.ema.model.business.Item;
 import org.ema.model.business.Summoner;
+import org.ema.utils.Constant;
 import org.ema.utils.GlobalDataManager;
 import org.ema.utils.VerticalProgressBar;
 
@@ -538,5 +550,6 @@ public class AdvancedStatsActivity extends FragmentActivity implements OnChartVa
     public void onNothingSelected() {
 
     }
+
 }
 

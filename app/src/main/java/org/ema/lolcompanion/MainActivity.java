@@ -2,9 +2,14 @@ package org.ema.lolcompanion;
 
 
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Typeface;
 
 import android.os.*;
@@ -29,6 +34,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.ema.dialogs.LolCompanionProgressDialog;
 import org.ema.model.business.Summoner;
 import org.ema.utils.CallbackMatcher;
 import org.ema.utils.SettingsManager;
@@ -44,7 +50,6 @@ import java.util.regex.Pattern;
 
 public class MainActivity extends Activity {
     public final static String SUMMONER_NAME = "";
-    public static Summoner user = null;
 
     // Preferences
     public static SettingsManager settingsManager = null;
@@ -96,52 +101,79 @@ public class MainActivity extends Activity {
 
     public void lauchSummonerSearch(View view) {
 
-        //button will show a progress roll
-        Button buttonSubmit = (Button) findViewById(R.id.login_submit);
-        buttonSubmit.setVisibility(View.GONE);
-        ProgressBar buttonRoll = (ProgressBar) findViewById(R.id.login_submit_progress);
-        buttonRoll.setVisibility(View.VISIBLE);
-
+        //setting the toast
         LayoutInflater inflater = getLayoutInflater();
         View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
         TextView text = (TextView) layout.findViewById(R.id.text);
+        text.setText(getResources().getString(R.string.pending_logging));
         Toast toast = new Toast(getApplicationContext());
         toast.setGravity(Gravity.BOTTOM, 0, 40);
         toast.setDuration(Toast.LENGTH_SHORT);
         toast.setView(layout);
-
-        Intent intent = new Intent(this, PendingRoomActivity.class);
-        EditText summoner_name = (EditText) findViewById(R.id.summoner_name);
-        String message = summoner_name.getText().toString();
-        Spinner spinner = (Spinner) findViewById(R.id.region_spinner);
-        int position = spinner.getSelectedItemPosition();
-
-        Constant.setRegion(Constant.regionsFromViewHashtable.get(spinner.getSelectedItem().toString()));
-        text.setText(getResources().getString(R.string.pending_logging));
         toast.show();
-        user = SummonerDAO.getSummoner(message);
-        if(user != null){
-            intent.putExtra(SUMMONER_NAME, message);
-            intent.putExtra("USER",user);
-            MainActivity.settingsManager.set(this, "summonerName", message);
-            MainActivity.settingsManager.set(this, "summonerRegion", String.valueOf(position));
-            startActivity(intent);
-        }
-        else {
-            text.setText("Player not found on " + spinner.getSelectedItem().toString().split(" ")[0]);
-            toast.show();
-            buttonRoll.setVisibility(View.GONE);
-            buttonSubmit.setVisibility(View.VISIBLE);
-        }
+
+
+        new CheckUserBackgroundTask(this).execute();
+
     }
 
+    class CheckUserBackgroundTask extends AsyncTask<Void, Void, Boolean> {
 
-    @Override
-    public void onResume() {
-        super.onResume();  // Always call the superclass method first
-        Button buttonSubmit = (Button) findViewById(R.id.login_submit);
-        buttonSubmit.setVisibility(View.VISIBLE);
-        ProgressBar buttonRoll = (ProgressBar) findViewById(R.id.login_submit_progress);
-        buttonRoll.setVisibility(View.GONE);
+        private ProgressDialog progressDialog;
+        private Summoner user = null;
+
+        public CheckUserBackgroundTask(Context ctx) {
+            progressDialog = LolCompanionProgressDialog.getCompanionProgressDialog(ctx);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+
+            Spinner spinner = (Spinner) findViewById(R.id.region_spinner);
+            int position = spinner.getSelectedItemPosition();
+
+            //Init Pending Room
+            Intent intent = new Intent(MainActivity.this, PendingRoomActivity.class);
+
+            if(result){
+                intent.putExtra(SUMMONER_NAME, user.getName());
+                intent.putExtra("USER",user);
+                MainActivity.settingsManager.set(MainActivity.this, "summonerName", user.getName());
+                MainActivity.settingsManager.set(MainActivity.this, "summonerRegion", String.valueOf(position));
+                startActivity(intent);
+            }
+            else {
+                //setting the toast
+                LayoutInflater inflater = getLayoutInflater();
+                View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
+                TextView text = (TextView) layout.findViewById(R.id.text);
+                text.setText("Player not found on " + spinner.getSelectedItem().toString().split(" ")[0]);
+                Toast toast = new Toast(getApplicationContext());
+                toast.setGravity(Gravity.BOTTOM, 0, 40);
+                toast.setDuration(Toast.LENGTH_SHORT);
+                toast.setView(layout);
+                toast.show();
+            }
+
+            progressDialog.hide();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            EditText summonerTextView = (EditText) MainActivity.this.findViewById(R.id.summoner_name);
+            String summonerName = summonerTextView.getText().toString();
+
+            //saving the region for further connections
+            Spinner spinner = (Spinner) findViewById(R.id.region_spinner);
+            int position = spinner.getSelectedItemPosition();
+            Constant.setRegion(Constant.regionsFromViewHashtable.get(spinner.getSelectedItem().toString()));
+            user = SummonerDAO.getSummoner(summonerName);
+            return (user != null);
+        }
     }
 }

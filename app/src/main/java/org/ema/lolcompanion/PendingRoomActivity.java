@@ -17,6 +17,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import android.util.Log;
@@ -57,7 +60,7 @@ public class PendingRoomActivity extends Activity {
             TextView text = (TextView) layout.findViewById(R.id.text);
             Toast toast = new Toast(getApplicationContext());
             toast.setDuration(Toast.LENGTH_SHORT);
-            switch(msg.arg1) {
+            switch (msg.arg1) {
                 case 2:
                     text.setText(getResources().getString(R.string.pending_waiting_signal));
                     break;
@@ -99,8 +102,8 @@ public class PendingRoomActivity extends Activity {
         new CountDownTimer(maxCount, 1000) {
 
             public void onTick(long millisUntilFinished) {
-                pendingCountdown.setText(""+String.format("%02d:%02d",
-                        TimeUnit.MILLISECONDS.toMinutes( millisUntilFinished),
+                pendingCountdown.setText("" + String.format("%02d:%02d",
+                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
                                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
             }
@@ -118,30 +121,30 @@ public class PendingRoomActivity extends Activity {
         pendingDescription.setTypeface(font);
         //to set the loading off : findViewById(R.id.loadin_panel).setVisibility(View.GONE);
 
-        user = (Summoner)intent.getExtras().get("USER");;
+        user = (Summoner) intent.getExtras().get("USER");
+        ;
 
         //Creating thread
         waitingThread = new Thread(new Runnable() {
             public void run() {
                 while (true) {
-                    if(!shouldContinue)
-                    {
+                    if (!shouldContinue) {
                         try {
                             Log.v("DAO", "Waiting");
-                            synchronized(signal){ signal.wait();}
-                        }catch(Exception e)
-                        {
+                            synchronized (signal) {
+                                signal.wait();
+                            }
+                        } catch (Exception e) {
                             e.printStackTrace();
                             Log.v("Erreur stats", e.getMessage());
                         }
-                    }
-                    else {
+                    } else {
                         //Waiting 10 seconds before make a new request to the server
                         Log.v("DAO", "Loading data");
                         Message msg = handler.obtainMessage();
-                        
+
                         if (!loadData()) {
-                            SystemClock.sleep(websocketSleepTime*1000); //sleep and wait for game detection
+                            SystemClock.sleep(websocketSleepTime * 1000); //sleep and wait for game detection
                         }
                     }
                 }
@@ -152,16 +155,21 @@ public class PendingRoomActivity extends Activity {
 
 
     }
+
     public void stopThread() {
         Log.v("DAO", "Stopping thread");
         shouldContinue = false;
         //synchronized(signal){ signal.notify();}
     }
+
     public void resumeThread() {
         Log.v("DAO", "Resuming thread");
         shouldContinue = true;
-        synchronized(signal){ signal.notify();}
+        synchronized (signal) {
+            signal.notify();
+        }
     }
+
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
@@ -187,18 +195,19 @@ public class PendingRoomActivity extends Activity {
         // MainActivity.settingsManager.set(this, "summonerName", message);
         startActivity(intent);
     }
-    public void launchMainActivity(){
+
+    public void launchMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
+
     public boolean loadData() {
 
-        count ++;
+        count++;
         // divided by 10 ==> 600 (seconde given by xml) / 10 = 60 tours ;
         // 60 tours de boucle x 10000( 10 secondes) = 600 000 milliseconde;
         // 600 000 / 60 000 (1 minute)=  10min
-        if(count > (getResources().getInteger(R.integer.pending_room_countdown_seconds)/10))
-        {
+        if (count > (getResources().getInteger(R.integer.pending_room_countdown_seconds) / 10)) {
             //Log.v("Error", "Interrupted");
             stopThread();
             launchMainActivity();
@@ -216,19 +225,18 @@ public class PendingRoomActivity extends Activity {
 
             resumeThread();
             isAllowedToBack = false;
-			Message msgLoadData = handler.obtainMessage();
+            Message msgLoadData = handler.obtainMessage();
             msgLoadData.arg1 = 3;
             handler.sendMessage(msgLoadData);
 
             summonersList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
             if (summonersList != null) {
                 //Log.v("DAO", "SummonerList: " + summonersList.toString());
-                while(!this.areAllImagesLoaded(summonersList)){
+                while (!this.areAllImagesLoaded(summonersList)) {
                     SystemClock.sleep(500);
                 }
                 launchTimerActivity();
-            }
-			else {
+            } else {
                 //Log.v("DAO", "FATAL : summonersList is NULL. Summoner :" + summonerNameFromPreviousView);
                 shouldContinue = false;
                 launchMainActivity();
@@ -252,10 +260,10 @@ public class PendingRoomActivity extends Activity {
         this.summonersList = summonersList;
     }
 
-    public boolean areAllImagesLoaded(ArrayList<Summoner> notReadySummoners){
+    public boolean areAllImagesLoaded(ArrayList<Summoner> notReadySummoners) {
         boolean areImagesLoaded = true;
 
-        for (Iterator<Summoner> it = notReadySummoners.iterator() ; it.hasNext();) {
+        for (Iterator<Summoner> it = notReadySummoners.iterator(); it.hasNext(); ) {
             Summoner s = it.next();
             if (!s.areImagesLoaded()) {
                 areImagesLoaded = false;
@@ -264,11 +272,11 @@ public class PendingRoomActivity extends Activity {
         }
 
         return areImagesLoaded;
-	}
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(isAllowedToBack) {
+        if (isAllowedToBack) {
             //Log.v("Back", "Going back");
             if (keyCode == KeyEvent.KEYCODE_BACK) {
                 shouldContinue = false;

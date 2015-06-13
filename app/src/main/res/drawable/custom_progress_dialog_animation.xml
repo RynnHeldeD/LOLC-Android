@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<animation-list xmlns:android="http://schemas.android.com/apk/res/android" android:oneshot="false">
+    <item android:drawable="@drawable/stars_1" android:duration="120" />
+    <item android:drawable="@drawable/stars_2" android:duration="120" />
+    <item android:drawable="@drawable/stars_3" android:duration="120" />
+    <item android:drawable="@drawable/stars_4" android:duration="120" />
+    <item android:drawable="@drawable/stars_5" android:duration="120" />
+    <item android:drawable="@drawable/stars_6" android:duration="120" />
+    <item android:drawable="@drawable/stars_7" android:duration="120" />
+    <item android:drawable="@drawable/stars_8" android:duration="120" />
+</animation-list>-->
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android" android:oneshot="false">
+<item android:drawable="@drawable/lazers_1" android:duration="120" />
+<item android:drawable="@drawable/lazers_2" android:duration="120" />
+<item android:drawable="@drawable/lazers_3" android:duration="120" />
+<item android:drawable="@drawable/lazers_4" android:duration="120" />
+<item android:drawable="@drawable/lazers_5" android:duration="120" />
+<item android:drawable="@drawable/lazers_6" android:duration="120" />
+<item android:drawable="@drawable/lazers_7" android:duration="120" />
+<item android:drawable="@drawable/lazers_8" android:duration="120" />
+</animation-list>

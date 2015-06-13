@@ -1,42 +1,94 @@
-package org.ema.utils;
+package org.ema.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.util.Log;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.ema.fragments.EnnemiesFragment;
+import org.ema.dialogs.ChampionTipDialogFragment;
+import org.ema.dialogs.LolCompanionProgressDialog;
 import org.ema.lolcompanion.AdvancedStatsActivity;
-import org.ema.lolcompanion.CompanionActivity;
 import org.ema.lolcompanion.MainActivity;
-import org.ema.lolcompanion.PendingRoomActivity;
 import org.ema.lolcompanion.R;
-import org.ema.model.DAO.SummonerDAO;
+import org.ema.model.DAO.CurrentGameDAO;
 import org.ema.model.business.Summoner;
+import org.ema.utils.GlobalDataManager;
+import org.ema.utils.VerticalProgressBar;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 
-public class LoLStatActivity extends Fragment {
+/**
+ * Created by Parreno on 13/06/2015.
+ */
+public class SummonersListFragment extends Fragment implements ChampionTipDialogFragment.NoticeDialogListener{
 
-    //Ressources (name) of all summoners Views
-    protected List<String> textRessourcesSummoner = Arrays.asList("s1name", "s1K", "s1Kv", "s1D", "s1Dv", "s1A", "s1Av", "s1DmDv", "s1DmRv", "s1Wins", "s1Defs", "s1LP");
-    protected List<String> imageRessourcesSummoner = Arrays.asList("s1tips", "s1Img", "s1Perf", "s1Main", "s1Team", "s1Rank");
+    //all summoners
+    protected ArrayList<Summoner> summonersList = new ArrayList<Summoner>();
+    //summoner to show advstats
+    private Summoner summonerToShow;
+
+    public ArrayList<Summoner> getSummonersList() {
+        return summonersList;
+    }
+
+    public void setSummonersList(ArrayList<Summoner> summonersList) {
+        this.summonersList = summonersList;
+    }
+
+    public void launchMainActivity(){
+        Intent intent = new Intent(this.getActivity(), MainActivity.class);
+        startActivity(intent);
+    }
+
+    public void showChampionTips(View v) {
+        DialogFragment dialog = new ChampionTipDialogFragment();
+        Bundle args = new Bundle();
+        //We give to the dialog the summoners info to display
+        args.putString("name", summonersList.get(v.getId()).getChampion().getName());
+        args.putString("tips", summonersList.get(v.getId()).getChampion().getAllyTips());
+        //the next value for the (Next) Button of the dialog. If it's the last item which is clicked, go back to first item, else go tho next
+        args.putInt("next", (v.getId() == (summonersList.size() - 1)) ? 0 : v.getId() + 1);
+        dialog.setArguments(args);
+        dialog.show(getFragmentManager(), "tips");
+    }
+
+    // The dialog fragment receives a reference to this Activity through the
+    // Fragment.onAttach() callback, which it uses to call the following methods
+    // defined by the NoticeDialogFragment.NoticeDialogListener interface
+    // Handle the (Next) Button to show the next tip
+    @Override
+    public void onDialogNeutralClick(DialogFragment dialog, int next) {
+        // User touched the dialog's positive button
+        DialogFragment dialog_next = new ChampionTipDialogFragment();
+        Bundle args = new Bundle();
+        args.putString("name", summonersList.get(next).getChampion().getName());
+        args.putString("tips", summonersList.get(next).getChampion().getAllyTips());
+        //If it's the last item which is clicked, go back to first item, else go tho next
+        args.putInt("next", next == summonersList.size()-1 ? 0 : next+1);
+        dialog_next.setArguments(args);
+        dialog_next.show(getFragmentManager(), "tips");
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+
+    }
 
     //This function will fill the statistics of one summoner - has to be called in the foreach using the summoner list retrieve by DAO
     public void fillSummonerInformations(LinearLayout containerView, int idForLine, Summoner summoner, int minPerformance, int maxPerformance) {
@@ -216,7 +268,45 @@ public class LoLStatActivity extends Fragment {
             lp.setText(summoner.getLeague().getDivision().toUpperCase() + " " + String.valueOf(summoner.getLeague().getLeaguePoints()) + " LP");
         }
 
-        //add the line to the rootview as the FIRST child
-        containerView.addView(rootview, 0);
+        //add the line to the rootview
+        containerView.addView(rootview);
+    }
+
+
+    //This function handle the advanced statistic goto
+    public void showAdvancedStatistics(View v, Boolean isEnnemy) {
+        summonerToShow = summonersList.get(v.getId());
+        new loadAdvStatsBackgroundTask(this.getActivity()).execute();
+    }
+
+    class loadAdvStatsBackgroundTask extends AsyncTask<Void, Void, Boolean> {
+
+        private ProgressDialog progressDialog;
+        private Summoner user = null;
+
+        public loadAdvStatsBackgroundTask(Context ctx) {
+            progressDialog = LolCompanionProgressDialog.getCompanionProgressDialog(ctx);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            progressDialog.hide();
+            Intent intent = new Intent(getActivity(), AdvancedStatsActivity.class);
+            startActivity(intent);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            //Load detailed statistics directly in the summoner
+            CurrentGameDAO.loadStatisticsDetailed(summonerToShow);
+            GlobalDataManager.add("summonerForAdvStats", summonerToShow);
+            return true;
+        }
+
     }
 }

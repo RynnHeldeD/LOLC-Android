@@ -96,24 +96,6 @@ public class PendingRoomActivity extends Activity {
         summonerName.setTypeface(font);
         summonerName.setText(summonerNameFromPreviousView);
 
-        //set the countdown timer
-        final TextView pendingCountdown = (TextView) findViewById(R.id.pending_counter);
-        int maxCount = (getResources().getInteger(R.integer.pending_room_countdown_seconds) * 1000);//multiply for millisecond
-        new CountDownTimer(maxCount, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                pendingCountdown.setText("" + String.format("%02d:%02d",
-                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
-                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
-                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
-            }
-
-            public void onFinish() {
-                pendingCountdown.setText("");
-            }
-        }.start();
-
-
         //settings the textViews with the font
         TextView pending = (TextView) findViewById(R.id.pending);
         pending.setTypeface(font);

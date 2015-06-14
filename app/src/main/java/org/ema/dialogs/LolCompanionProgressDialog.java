@@ -35,7 +35,6 @@ public class LolCompanionProgressDialog extends ProgressDialog {
         ImageView poroImage = (ImageView) findViewById(R.id.animation);
         poroImage.setBackgroundResource(R.drawable.custom_progress_dialog_animation);
         animation = (AnimationDrawable) poroImage.getBackground();
-
     }
 
     @Override

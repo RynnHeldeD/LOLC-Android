@@ -23,6 +23,7 @@ public class LolCompanionProgressDialog extends ProgressDialog {
         LolCompanionProgressDialog dialog = new LolCompanionProgressDialog(context);
         dialog.setIndeterminate(true);
         dialog.setCancelable(false);
+        dialog.getWindow().setBackgroundDrawable(context.getApplicationContext().getResources().getDrawable(R.color.transparent));
         return dialog;
     }
 

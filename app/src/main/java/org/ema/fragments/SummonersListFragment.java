@@ -286,7 +286,6 @@ public class SummonersListFragment extends Fragment implements ChampionTipDialog
 
         public loadAdvStatsBackgroundTask(Context ctx) {
             progressDialog = LolCompanionProgressDialog.getCompanionProgressDialog(ctx);
-            progressDialog.getWindow().setBackgroundDrawable(getResources().getDrawable(R.color.transparent));
         }
 
         @Override

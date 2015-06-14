@@ -103,16 +103,20 @@
         android:layout_marginRight="@dimen/activity_horizontal_high_margin"
         android:layout_marginTop="10dp"
         android:orientation="vertical"
+        android:gravity="center"
         android:paddingBottom="@dimen/activity_horizontal_margin"
         android:paddingLeft="@dimen/activity_vertical_margin"
         android:paddingRight="@dimen/activity_vertical_margin"
         android:paddingTop="@dimen/activity_horizontal_margin"
         tools:context=".PendingRoomActivity">
 
-        <ProgressBar
-            android:layout_width="fill_parent"
+        <ImageView
+            android:id="@+id/animation"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
             android:gravity="center"
-            android:indeterminate="true" />
+            android:background="@color/transparent"/>
     </LinearLayout>
 </LinearLayout>

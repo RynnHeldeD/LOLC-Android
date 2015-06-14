@@ -3,6 +3,7 @@ package org.ema.lolcompanion;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -103,8 +105,14 @@ public class PendingRoomActivity extends Activity {
         pendingDescription.setTypeface(font);
         //to set the loading off : findViewById(R.id.loadin_panel).setVisibility(View.GONE);
 
+        //set the poro animation
+        //setting the animation list for the GIF animation
+        ImageView poroImage = (ImageView) findViewById(R.id.animation);
+        poroImage.setBackgroundResource(R.drawable.custom_progress_dialog_animation);
+        AnimationDrawable animation = (AnimationDrawable) poroImage.getBackground();
+        animation.start();
+
         user = (Summoner) intent.getExtras().get("USER");
-        ;
 
         //Creating thread
         waitingThread = new Thread(new Runnable() {

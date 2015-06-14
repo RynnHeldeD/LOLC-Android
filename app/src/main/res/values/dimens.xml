@@ -42,6 +42,10 @@
     <dimen name="tips_champion_font_title">26sp</dimen>
     <dimen name="tips_champion_font">8sp</dimen>
 
+    <!-- dialog about champion -->
+    <dimen name="about_font_title">24sp</dimen>
+    <dimen name="about_font">18sp</dimen>
+
     <!-- cooldown dialog -->
     <dimen name="font_cooldown_text">8sp</dimen>
     <dimen name="font_cooldown_seekbar_value">14sp</dimen>

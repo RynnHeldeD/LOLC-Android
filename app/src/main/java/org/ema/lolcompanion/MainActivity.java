@@ -2,50 +2,33 @@ package org.ema.lolcompanion;
 
 
 import android.app.Activity;
-import android.app.LoaderManager;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
-import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Typeface;
 
 import android.os.*;
 import android.os.StrictMode;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.ema.dialogs.AboutDialogFragment;
 import org.ema.dialogs.LolCompanionProgressDialog;
 import org.ema.model.business.Summoner;
-import org.ema.utils.CallbackMatcher;
 import org.ema.utils.SettingsManager;
 import org.ema.utils.Utils;
 import org.ema.utils.Constant;
 import org.ema.model.DAO.*;
-import android.view.KeyEvent;
-import java.util.ArrayList;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class MainActivity extends Activity {
@@ -99,6 +82,12 @@ public class MainActivity extends Activity {
 
     }
 
+    public void showAbout(View v){
+        DialogFragment dialog = new AboutDialogFragment();
+        dialog.show(getFragmentManager(), "about");
+    }
+
+    //Lauch the summoner search in LOL API and check validity
     public void lauchSummonerSearch(View view) {
 
         //setting the toast

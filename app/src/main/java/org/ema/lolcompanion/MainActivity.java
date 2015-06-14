@@ -124,6 +124,7 @@ public class MainActivity extends Activity {
 
         public CheckUserBackgroundTask(Context ctx) {
             progressDialog = LolCompanionProgressDialog.getCompanionProgressDialog(ctx);
+            progressDialog.getWindow().setBackgroundDrawable(getDrawable(R.color.transparent));
         }
 
         @Override

@@ -73,12 +73,16 @@ public class SummonersListFragment extends Fragment implements ChampionTipDialog
         startActivity(intent);
     }
 
-    public void showChampionTips(View v) {
+    public void showChampionTips(View v, Boolean isEnnemy) {
         DialogFragment dialog = new ChampionTipDialogFragment();
         Bundle args = new Bundle();
         //We give to the dialog the summoners info to display
         args.putString("name", summonersList.get(v.getId()).getChampion().getName());
-        args.putString("tips", summonersList.get(v.getId()).getChampion().getAllyTips());
+        if(isEnnemy){
+            args.putString("tips", summonersList.get(v.getId()).getChampion().getEnemyTips());
+        }else {
+            args.putString("tips", summonersList.get(v.getId()).getChampion().getAllyTips());
+        }
         //the next value for the (Next) Button of the dialog. If it's the last item which is clicked, go back to first item, else go tho next
         args.putInt("next", (v.getId() == (summonersList.size() - 1)) ? 0 : v.getId() + 1);
         dialog.setArguments(args);

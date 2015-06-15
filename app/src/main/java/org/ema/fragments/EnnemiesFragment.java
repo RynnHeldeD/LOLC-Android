@@ -86,14 +86,7 @@ public class EnnemiesFragment extends SummonersListFragment {
         return rootView;
     }
 
-    /*
-    @Override
-    public void onResume() {
-        super.onResume();
-        ScrollView view_ally = (ScrollView) getActivity().findViewById(R.id.root_scroll_ennemies);
-        LinearLayout loader = (LinearLayout) getActivity().findViewById(R.id.loading_advstats);
-        loader.setVisibility(View.GONE);
-        view_ally.setVisibility(View.VISIBLE);
-    }*/
-
+    public void showChampionTips(View v) {
+        super.showChampionTips(v, true);
+    }
 }

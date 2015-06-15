@@ -71,7 +71,6 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         cpAdapter = new CompanionAdapter(getSupportFragmentManager());
         mPager = (ViewPager) findViewById(R.id.companion_pager);
         mPager.setAdapter(cpAdapter);
-        mPager.setCurrentItem(2);
         tab_strp = (PagerTabStrip) findViewById(R.id.companion_title_strip);
         tab_strp.setTextColor(Color.WHITE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -95,11 +94,11 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return alliesFragment;
+                    return ennemiesFragment;
                 case 1:
                     return timerFragment;
                 case 2:
-                    return ennemiesFragment;
+                    return alliesFragment;
                 default:
                     return ennemiesFragment;
             }
@@ -178,10 +177,10 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
     public void showChampionTips(View v) {
         switch (mPager.getCurrentItem()) {
             case 0:
-                alliesFragment.showChampionTips(v);
+                ennemiesFragment.showChampionTips(v);
                 break;
             case 2:
-                ennemiesFragment.showChampionTips(v);
+                alliesFragment.showChampionTips(v);
                 break;
         }
     }
@@ -218,10 +217,10 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
     public void showAdvancedStatistics(View v) {
         switch (mPager.getCurrentItem()) {
             case 0:
-                alliesFragment.showAdvancedStatistics(v, true);
+                ennemiesFragment.showAdvancedStatistics(v, true);
                 break;
             case 2:
-                ennemiesFragment.showAdvancedStatistics(v, false);
+                alliesFragment.showAdvancedStatistics(v, false);
                 break;
         }
     }
@@ -231,10 +230,10 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
 
         switch (mPager.getCurrentItem()) {
             case 0:
-                alliesFragment.onDialogNeutralClick(dialog, idRessource);
+                ennemiesFragment.onDialogNeutralClick(dialog, idRessource);
                 break;
             case 2:
-                ennemiesFragment.onDialogNeutralClick(dialog, idRessource);
+                alliesFragment.onDialogNeutralClick(dialog, idRessource);
                 break;
         }
     }
@@ -253,10 +252,10 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
     public void onDialogNegativeClick(DialogFragment dialog) {
         switch (mPager.getCurrentItem()) {
             case 0:
-                alliesFragment.onDialogNegativeClick(dialog);
+                ennemiesFragment.onDialogNegativeClick(dialog);
                 break;
             case 2:
-                ennemiesFragment.onDialogNegativeClick(dialog);
+                alliesFragment.onDialogNegativeClick(dialog);
                 break;
         }
     }

@@ -24,4 +24,7 @@
     <integer name="max_champion_name_character_lenght">10</integer>
     <integer name="max_cooldown_reduction">40</integer>
     <integer name="cooldown_reduction_steps">5</integer>
+
+    <integer name="max_champion_level_ulti">3</integer>
+    <integer name="champion_level_steps">1</integer>
 </resources>

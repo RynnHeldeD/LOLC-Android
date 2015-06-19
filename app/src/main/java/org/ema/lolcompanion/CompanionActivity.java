@@ -244,8 +244,8 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog, int cooldown, String ennemy_button_id) {
-        timerFragment.onDialogPositiveClick(dialog, cooldown, ennemy_button_id);
+    public void onDialogPositiveClick(DialogFragment dialog, int cooldown, int ultiLvl, String ennemy_button_id) {
+        timerFragment.onDialogPositiveClick(dialog, cooldown, ultiLvl, ennemy_button_id);
     }
 
     @Override

@@ -37,7 +37,7 @@ import org.ema.lolcompanion.R;
 public class CooldownTimersDialogFragment extends DialogFragment {
 
     public interface NoticeDialogListener {
-        public void onDialogPositiveClick(DialogFragment dialog, int cooldown, String ennemy);
+        public void onDialogPositiveClick(DialogFragment dialog, int cooldown, int ultiLvl, String ennemy);
 
         public void onDialogNegativeClick(DialogFragment dialog);
     }
@@ -81,11 +81,39 @@ public class CooldownTimersDialogFragment extends DialogFragment {
 
         //Description of the dialog
         TextView tv = new TextView(this.getActivity());
-        tv.setText("Set the cooldown reduction of this champion");
+        tv.setText("Set the actual level of this champion ultimate spell");
         tv.setPadding(5, 10, 5, 10);
         tv.setTextSize(getResources().getDimension(R.dimen.font_cooldown_text));
         tv.setTextColor(getResources().getColor(R.color.black_font));
         layout.addView(tv, tvParams);
+
+        //Seekbar LVL ULTI
+        final SeekBar skLvlUlti = new SeekBar(this.getActivity());
+        //Seekbar cannot increment by 5 to 5, Solution : for example max is 16 and step is 5 ==> We set the max at 3 and step 1 and then add 5 to the % given by the seekbar
+        int seekBarMax = getResources().getInteger(R.integer.max_champion_level_ulti);
+        skLvlUlti.setMax(seekBarMax);
+        skLvlUlti.setPadding(50, 5, 50, 5);
+        skLvlUlti.setProgress(0);
+        skLvlUlti.incrementProgressBy(1);
+        layout.addView(skLvlUlti, tvParams);
+
+        //Seekbar LVL ULTI result
+        final TextView skLvlUltiValue = new TextView(this.getActivity());
+        skLvlUltiValue.setPadding(5, 50, 5, 0);
+        skLvlUltiValue.setText("LEVEL 6");
+        skLvlUltiValue.setTextSize(getResources().getDimension(R.dimen.font_cooldown_seekbar_value));
+        skLvlUltiValue.setTextColor(getResources().getColor(R.color.black_font));
+        skLvlUltiValue.setGravity(Gravity.CENTER_HORIZONTAL);
+        skLvlUltiValue.setTypeface(font);
+        layout.addView(skLvlUltiValue, tvParams);
+
+        //Description of the dialog
+        TextView tv2 = new TextView(this.getActivity());
+        tv2.setText("Set the cooldown reduction of this champion");
+        tv2.setPadding(5, 10, 5, 10);
+        tv2.setTextSize(getResources().getDimension(R.dimen.font_cooldown_text));
+        tv2.setTextColor(getResources().getColor(R.color.black_font));
+        layout.addView(tv2, tvParams);
 
         //Seekbar
         final SeekBar sk = new SeekBar(this.getActivity());
@@ -106,6 +134,7 @@ public class CooldownTimersDialogFragment extends DialogFragment {
         seekBarValue.setGravity(Gravity.CENTER_HORIZONTAL);
         seekBarValue.setTypeface(font);
         layout.addView(seekBarValue, tvParams);
+
 
         //Seekbar listener to handle result display
         sk.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -130,12 +159,39 @@ public class CooldownTimersDialogFragment extends DialogFragment {
             }
         });
 
+        //Seekbar listener to handle result display
+        skLvlUlti.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,
+                                          boolean fromUser) {
+                // TODO Auto-generated method stub
+                //multiply the progress by the step to get the right value in the display
+                if (progress < 1) {
+                    seekBar.setProgress(1);
+                    progress = 1;
+                }
+                int step = getResources().getInteger(R.integer.cooldown_reduction_steps);
+                skLvlUltiValue.setText(getResources().getString(R.string.summoner_level) + " " + String.valueOf(progress * step + 1));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+        });
+
         builder.setView(dialogLayout);
 
         builder.setPositiveButton(R.string.confirm_dialog, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 int step = getResources().getInteger(R.integer.cooldown_reduction_steps);
-                mListener.onDialogPositiveClick(CooldownTimersDialogFragment.this, sk.getProgress() *step , ennemy_button_id);
+                mListener.onDialogPositiveClick(CooldownTimersDialogFragment.this, sk.getProgress() * step, skLvlUlti.getProgress() * step + 1, ennemy_button_id);
             }
         });
 

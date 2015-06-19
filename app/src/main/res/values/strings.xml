@@ -93,7 +93,6 @@
     <string name="advstats_winrates_global_title">Global</string>
     <string name="advstats_winrates_champion_title">With</string>
 
-
     <string name="advstats_chart_mpc_played_game">Played Games</string>
     <string name="advstats_chart_mpc_winned_games">Wins</string>
     <string name="advstats_chart_mpc_losed_games">Loses</string>

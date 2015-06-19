@@ -162,7 +162,9 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
 
     //function that handles cooldown dialog
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog, int cooldown, String ennemy_button_id) {
+    public void onDialogPositiveClick(DialogFragment dialog, int cooldown, int ultiLvl,String ennemy_button_id) {
+        Log.v("MIC", "Ulti LVL For " + ennemy_button_id + " is now " + ultiLvl);
+
         for(Map.Entry<String,Integer> button : timerCdrMap.entrySet()){
             String buttonUltimateId = ennemy_button_id.substring(0,2) + "2";
             if(button.getKey().equals(buttonUltimateId)){

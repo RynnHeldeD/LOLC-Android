@@ -37,12 +37,12 @@ import android.widget.TextView;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.ema.dialogs.CooldownTimersDialogFragment;
+import org.ema.dialogs.SecureDialogFragment;
 import org.ema.lolcompanion.R;
 import org.ema.lolcompanion.WsEventHandling;
 import org.ema.model.business.Summoner;
 import org.ema.utils.GameTimestamp;
 import org.ema.utils.GlobalDataManager;
-import org.ema.dialogs.SecureDialogFragment;
 import org.ema.utils.SettingsManager;
 import org.ema.utils.Timer;
 import org.ema.utils.TimerButton;
@@ -52,10 +52,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class TimersFragment extends SummonersListFragment implements SecureDialogFragment.NoticeDialogListener, CooldownTimersDialogFragment.NoticeDialogListener {
     public HashMap<String,Long> timerMap;
+    public HashMap<String,Integer> timerCdrMap;
     public static SettingsManager settingsManager = null;
 
     @Override
@@ -63,6 +65,15 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         // Inflate the layout resource that'll be returned
         View rootView = inflater.inflate(R.layout.activity_timer, container, false);
         timerMap = new HashMap<String,Long>();
+
+        //Set the cooldown to 0 for all champ
+        timerCdrMap = new HashMap<String,Integer>();
+        timerCdrMap.put("b12",0);
+        timerCdrMap.put("b22",0);
+        timerCdrMap.put("b32",0);
+        timerCdrMap.put("b42",0);
+        timerCdrMap.put("b52", 0);
+
         Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
         TextView timers = (TextView) rootView.findViewById(R.id.timers);
         timers.setTypeface(font);
@@ -149,11 +160,17 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         }
     }
 
-    //function that handles cooldown dialod
+    //function that handles cooldown dialog
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, int cooldown, String ennemy_button_id) {
-        // Websocket - secure channel
-        Log.v("MIC", "Cooldown For " + ennemy_button_id + " reduced by " + cooldown + "%");
+        for(Map.Entry<String,Integer> button : timerCdrMap.entrySet()){
+            String buttonUltimateId = ennemy_button_id.substring(0,2) + "2";
+            if(button.getKey().equals(buttonUltimateId)){
+                timerCdrMap.put(button.getKey(), cooldown);
+                WsEventHandling.sendCdr(button.getKey(), cooldown);
+                break;
+            }
+        }
     }
 
     @Override
@@ -267,8 +284,25 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         //Timer is null and has never been instancied
         if (tbtn.getTimer() == null && doTimerActivation) {
             long timerDelayToUse;
+            //If the cooldown is lower than the delay of transfert, we set the timer to 1 second
             if (timerMap.get(buttonID) * 1000 > delayOfTransfert) {
-                timerDelayToUse = (timerMap.get(buttonID) * 1000) - delayOfTransfert;
+                //If it's an utimate, we use the CDR
+                if(timerCdrMap.containsKey(buttonID)){
+                    //Calculation of the timer time by applying the CDR
+                    try{
+                        //Divided by 100 to get a number between 0 and 1 for the next multiplication
+                        Double cdr = ((double) timerCdrMap.get(buttonID)) / 100;
+                        Log.v("Websocket","CDR de : " + cdr);
+                        //Spell cooldown without cdr% of this spell
+                        Double timerDelayWithCdr = timerMap.get(buttonID) * 1000 - (timerMap.get(buttonID) * 1000) * cdr;
+                        timerDelayToUse = Math.round(timerDelayWithCdr);
+                    } catch (Exception e){
+                        timerDelayToUse = timerMap.get(buttonID) * 1000 - delayOfTransfert;
+                    }
+                } else {
+                    //Else if it's a summoner spell, we get the cooldown from hashmap without CDR
+                    timerDelayToUse = timerMap.get(buttonID) * 1000 - delayOfTransfert;
+                }
             } else {
                 timerDelayToUse = 1000;
             }
@@ -402,8 +436,6 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
 */
 
     public String[][] shareTimers(){
-
-
         List<String> timerButtons = Arrays.asList("b01","b02","b12","b13", "b14", "b22","b23", "b24", "b32","b33", "b34","b42", "b43", "b44", "b52","b53", "b54");
 
         String[][] timersTableToShare = new String[17][2];
@@ -449,10 +481,10 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
                 }
             }
         });
+    }
 
-
-
-
+    public void setCdr(String buttonId, Integer cdr){
+        timerCdrMap.put(buttonId,cdr);
     }
 
 }

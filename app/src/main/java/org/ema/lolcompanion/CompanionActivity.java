@@ -19,10 +19,7 @@
 package org.ema.lolcompanion;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -38,12 +35,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import org.ema.dialogs.ChampionTipDialogFragment;
 import org.ema.dialogs.CooldownTimersDialogFragment;
+import org.ema.dialogs.SecureDialogFragment;
 import org.ema.fragments.AlliesFragment;
 import org.ema.fragments.EnnemiesFragment;
 import org.ema.fragments.TimersFragment;
-import org.ema.dialogs.ChampionTipDialogFragment;
-import org.ema.dialogs.SecureDialogFragment;
 import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
 
@@ -110,14 +107,8 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         }
     }
 
-    //On creer une deuxieme fonction avec un parametre en plus car on ne peut pas passer de parametres depuis la vue
-    public void timerListener(View tbt) {
-        timerListener(tbt, false, 0);
-    }
-
-
     //This function handle the onclick (short) events for all buttons on the timer view
-    public void timerListener(View tbt, boolean fromWebSocket, long delayOfTransfert) {
+    public void timerListener(View tbt) {
         TimerButton tbtn = (TimerButton) tbt;
         //Name of the clicked button => example : b21
         String IDButton = getResources().getResourceName(tbtn.getId());
@@ -192,22 +183,27 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
             case R.id.b11:
                 args.putString("name", ennemiesFragment.getSummonersList().get(0).getChampion().getName());
                 args.putString("ennemy", "b11");
+                args.putInt("cdr",timerFragment.timerCdrMap.get("b12"));
                 break;
             case R.id.b21:
                 args.putString("name", ennemiesFragment.getSummonersList().get(1).getChampion().getName());
                 args.putString("ennemy", "b21");
+                args.putInt("cdr",timerFragment.timerCdrMap.get("b22"));
                 break;
             case R.id.b31:
                 args.putString("name", ennemiesFragment.getSummonersList().get(2).getChampion().getName());
                 args.putString("ennemy", "b31");
+                args.putInt("cdr",timerFragment.timerCdrMap.get("b32"));
                 break;
             case R.id.b41:
                 args.putString("name", ennemiesFragment.getSummonersList().get(3).getChampion().getName());
                 args.putString("ennemy", "b41");
+                args.putInt("cdr",timerFragment.timerCdrMap.get("b42"));
                 break;
             case R.id.b51:
                 args.putString("name", ennemiesFragment.getSummonersList().get(4).getChampion().getName());
                 args.putString("ennemy", "b51");
+                args.putInt("cdr",timerFragment.timerCdrMap.get("b52"));
                 break;
         }
         timerFragment.showCooldownReducers(v, args);

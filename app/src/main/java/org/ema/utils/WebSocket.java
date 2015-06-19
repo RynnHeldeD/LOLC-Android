@@ -9,7 +9,6 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ServerHandshake;
 
-import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -24,7 +23,6 @@ public class WebSocket {
     public static void connectWebSocket() {
         URI uri;
         try {
-            //    uri = new URI("ws://10.0.2.2:12345/");
             uri = new URI("ws://5.135.153.45:8080/");
 
         } catch (URISyntaxException e) {

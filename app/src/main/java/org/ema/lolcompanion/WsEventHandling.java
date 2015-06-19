@@ -1,15 +1,11 @@
 package org.ema.lolcompanion;
 
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.util.Log;
-import android.widget.TextView;
 
 import org.ema.model.business.Summoner;
 import org.ema.utils.GameTimestamp;
 import org.ema.utils.GlobalDataManager;
-import org.ema.utils.Timer;
-import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,6 +67,9 @@ public class WsEventHandling {
                         } catch (JSONException e){
                             Log.v("Websocket","Erreur parsage:" + e.getMessage());
                         }
+                        break;
+                    case "sharedCooldown":
+                        setCdr(obj.getString("champUlti"), obj.getInt("cdr"));
                         break;
                     default:
                         break;
@@ -318,6 +317,9 @@ public class WsEventHandling {
 
     }
 
+    public  static void setCdr(String buttonId, Integer cooldown){
+        CompanionActivity.instance.setCdr(buttonId,cooldown);
+    }
 
     public static void getErrorFromJson(JSONObject obj) {
         try {
@@ -326,6 +328,7 @@ public class WsEventHandling {
             Log.v("Websocket:","Error : During message parsing error message: " +e.getMessage());
         }
     }
+
 
     private static void sendMessage(String msg) {
         WebSocket.send(msg);
@@ -353,6 +356,10 @@ public class WsEventHandling {
 
     public static void stopTimer(String gridSpellId) {
         sendMessage("{\"action\":\"stopTimer\",\"idSortGrille\":\"" + gridSpellId + "\"}");
+    }
+
+    public static void sendCdr(String timerButton,Integer cdr){
+        sendMessage("{\"action\":\"sentCooldown\",\"champUlti\":\"" + timerButton + "\",\"cdr\":\"" + cdr + "\"}");
     }
 
     public static void disconnect() {

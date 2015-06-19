@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -49,6 +48,24 @@ public class CooldownTimersDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         final String ennemy_button_id = (String) this.getArguments().get("ennemy");
+
+        //CDR argument recuperation
+        int cdr  = (Integer) this.getArguments().get("cdr");
+        String textCdr = String.valueOf(cdr);
+        //An integer between 0 to 8 to feed the seekbar
+        int numberOfBarIncrement;
+        if (cdr == 0){
+            numberOfBarIncrement = 0;
+        } else {
+            //if the CDR is divisable by 5
+            if(cdr % 5 == 0){
+                numberOfBarIncrement = cdr/5;
+            } else {
+                //Else we substract the modulo to get a number divisable by 5
+                numberOfBarIncrement = cdr - (cdr % 5) == 0 ? 0 : cdr - (cdr % 5) / 5 ;
+            }
+        }
+
         // Get the layout inflater and set the view with custom layout
         View dialogLayout = getActivity().getLayoutInflater().inflate(R.layout.custom_dialog, null);
 
@@ -76,13 +93,13 @@ public class CooldownTimersDialogFragment extends DialogFragment {
         sk.setMax(seekBarMaximum);
         sk.setPadding(50, 5, 50, 5);
         sk.setProgress(0);
-        sk.incrementProgressBy(1);
+        sk.incrementProgressBy(numberOfBarIncrement);
         layout.addView(sk, tvParams);
 
         //Seekbar result
         final TextView seekBarValue = new TextView(this.getActivity());
         seekBarValue.setPadding(5, 50, 5, 0);
-        seekBarValue.setText("0" + getResources().getString(R.string.purcent));
+        seekBarValue.setText(textCdr + getResources().getString(R.string.purcent));
         seekBarValue.setTextSize(getResources().getDimension(R.dimen.font_cooldown_seekbar_value));
         seekBarValue.setTextColor(getResources().getColor(R.color.black_font));
         seekBarValue.setGravity(Gravity.CENTER_HORIZONTAL);

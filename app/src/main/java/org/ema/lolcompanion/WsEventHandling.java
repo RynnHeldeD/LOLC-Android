@@ -81,11 +81,8 @@ public class WsEventHandling {
     }
 
     public static void activateTimer(final String buttonIdGrid, Long activationTimestamp){
-        Log.v("Websocket", "Timer activation received");
         long delayOfTransfert = 0;
-
         delayOfTransfert = GameTimestamp.transfertDelay(activationTimestamp);
-        Log.v("Websocket","Delay of transfert: " + delayOfTransfert);
 
         final long DoT = delayOfTransfert;
         class WebSocketAction implements Runnable {

@@ -92,14 +92,8 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         }
     }
 
-    //On cr�er une deuxi�me fonction avec un param�tre en plus car on ne peut pas passer de param�tres depuis la vue
-    public void timerListener(View tbt) {
-        timerListener(tbt, false, 0);
-    }
-
-
     //This function handle the onclick (short) events for all buttons on the timer view
-    public void timerListener(View tbt, boolean fromWebSocket, long delayOfTransfert) {
+    public void timerListener(View tbt) {
         TimerButton tbtn = (TimerButton) tbt;
         //Name of the clicked button => example : b21
         String IDButton = getResources().getResourceName(tbtn.getId());

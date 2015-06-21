@@ -316,7 +316,7 @@ public class WsEventHandling {
         requestToSend += "\"cdr\":[";
 
         for(Map.Entry<String,Integer> CDR : CompanionActivity.instance.timerCdrMap.entrySet()){
-            requestToSend += "[\"" + CDR.getKey() + "\",\"" + CDR.getClass()  + "\"],";
+            requestToSend += "[\"" + CDR.getKey() + "\",\"" + CDR.getValue()  + "\"],";
         }
         //remove the last comma
         requestToSend = requestToSend.substring(0, requestToSend.length() - 1);
@@ -328,7 +328,7 @@ public class WsEventHandling {
         requestToSend += "\"ultiLevel\":[";
 
         for(Map.Entry<String,Integer> ultiLevel : CompanionActivity.instance.timerUltiLvlMap.entrySet()){
-            requestToSend += "[\"" + ultiLevel.getKey() + "\",\"" + ultiLevel.getClass()  + "\"],";
+            requestToSend += "[\"" + ultiLevel.getKey() + "\",\"" + ultiLevel.getValue()  + "\"],";
         }
         //remove the last comma
         requestToSend = requestToSend.substring(0, requestToSend.length() - 1);

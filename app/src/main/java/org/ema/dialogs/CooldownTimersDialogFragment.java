@@ -1,19 +1,19 @@
-/* Copyright © 2015
+/* Copyright ï¿½ 2015
  * GHARBI Eddy
  * PARRENO Michel
  * VELTRI Constantin
  * NGUYEN Remy
  * GALLI Romain
  *
- * Cette œuvre est protégée par le droit d’auteur et strictement réservée à l’usage privé du
- * client. Toute reproduction ou diffusion au profit de tiers, à titre
- * gratuit ou onéreux, de
- * tout ou partie de cette œuvre est strictement interdite et constitue une contrefaçon prévue
- * par les articles L 335-2 et suivants du Code de la propriété
+ * Cette ï¿½uvre est protï¿½gï¿½e par le droit dï¿½auteur et strictement rï¿½servï¿½e ï¿½ lï¿½usage privï¿½ du
+ * client. Toute reproduction ou diffusion au profit de tiers, ï¿½ titre
+ * gratuit ou onï¿½reux, de
+ * tout ou partie de cette ï¿½uvre est strictement interdite et constitue une contrefaï¿½on prï¿½vue
+ * par les articles L 335-2 et suivants du Code de la propriï¿½tï¿½
  * intellectuelle. Les ayants-droits se
- * réservent le droit de poursuivre toute atteinte à leurs droits de
- * propriété intellectuelle devant les
- * juridictions civiles ou pénales.
+ * rï¿½servent le droit de poursuivre toute atteinte ï¿½ leurs droits de
+ * propriï¿½tï¿½ intellectuelle devant les
+ * juridictions civiles ou pï¿½nales.
  */
 
 package org.ema.dialogs;
@@ -84,6 +84,24 @@ public class CooldownTimersDialogFragment extends DialogFragment {
             }
         }
 
+        //Ultimate level argument recuperation
+        int ultiLvl  = (Integer) this.getArguments().get("ultiLvl");
+        int numberOfUltimateLevelBarIncrement;
+        switch (ultiLvl){
+            case 6:
+                numberOfUltimateLevelBarIncrement = 0;
+                break;
+            case 11:
+                numberOfUltimateLevelBarIncrement = 1;
+                break;
+            case 16:
+                numberOfUltimateLevelBarIncrement = 2;
+                break;
+            default:
+                numberOfUltimateLevelBarIncrement = 0;
+                break;
+        }
+
         // Get the layout inflater and set the view with custom layout
         View dialogLayout = getActivity().getLayoutInflater().inflate(R.layout.custom_dialog, null);
 
@@ -110,14 +128,14 @@ public class CooldownTimersDialogFragment extends DialogFragment {
         int seekBarMax = getResources().getInteger(R.integer.max_champion_level_ulti);
         skLvlUlti.setMax(seekBarMax);
         skLvlUlti.setPadding(50, 5, 50, 5);
-        skLvlUlti.setProgress(0);
+        skLvlUlti.setProgress(numberOfUltimateLevelBarIncrement);
         skLvlUlti.incrementProgressBy(1);
         layout.addView(skLvlUlti, tvParams);
 
         //Seekbar LVL ULTI result
         final TextView skLvlUltiValue = new TextView(this.getActivity());
         skLvlUltiValue.setPadding(5, 50, 5, 0);
-        skLvlUltiValue.setText("LEVEL 6");
+        skLvlUltiValue.setText("LEVEL " + ultiLvl);
         skLvlUltiValue.setTextSize(getResources().getDimension(R.dimen.font_cooldown_seekbar_value));
         skLvlUltiValue.setTextColor(getResources().getColor(R.color.black_font));
         skLvlUltiValue.setGravity(Gravity.CENTER_HORIZONTAL);

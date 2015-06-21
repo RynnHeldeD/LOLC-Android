@@ -89,6 +89,9 @@ public class WsEventHandling {
                     case "sharedCooldown":
                         setCdr(obj.getString("champUlti"), obj.getInt("cdr"));
                         break;
+                    case "sharedUltimateLevel":
+                        setLevelUlti(obj.getString("buttonId"), obj.getInt("ultiLevel"));
+                        break;
                     default:
                         break;
                 }
@@ -336,6 +339,10 @@ public class WsEventHandling {
         CompanionActivity.instance.setCdr(buttonId,cooldown);
     }
 
+    public  static void setLevelUlti(String buttonId, Integer ultiLevel){
+        CompanionActivity.instance.setUltimateLevel(buttonId,ultiLevel);
+    }
+
     public static void getErrorFromJson(JSONObject obj) {
         try {
             Log.v("Websocket","Error : server return error during action -" + obj.getString("action") + "- message : " + obj.getString("message"));
@@ -375,6 +382,10 @@ public class WsEventHandling {
 
     public static void sendCdr(String timerButton,Integer cdr){
         sendMessage("{\"action\":\"sentCooldown\",\"champUlti\":\"" + timerButton + "\",\"cdr\":\"" + cdr + "\"}");
+    }
+
+    public static void sendUltiLevel(String timerButton,Integer ultiLevel){
+        sendMessage("{\"action\":\"shareUltimateLevel\",\"buttonId\":\"" + timerButton + "\",\"ultiLevel\":\"" + ultiLevel + "\"}");
     }
 
     public static void disconnect() {

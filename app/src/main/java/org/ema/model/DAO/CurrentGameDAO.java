@@ -662,7 +662,7 @@ public class CurrentGameDAO {
     }
 
     public static void getDamageDealtAndDamageTaken(Summoner summoner, JSONArray jsonMatches){
-        int idGame = 0;
+        long idGame = 0;
         int teamID = 0;
         int totalDamageDealtByUserTeamInCurrentGame = 0;
         int toalDamageDealtByUserInCurrentGame = 0;
@@ -680,7 +680,7 @@ public class CurrentGameDAO {
                 if (!jsonMatches.getJSONObject(i).isNull("season") && (jsonMatches.getJSONObject(i).getString("season").equals("SEASON2015") )) {
                     numberOfGames++;
                     JSONObject test = jsonMatches.getJSONObject(i);
-                    idGame = jsonMatches.getJSONObject(i).getInt("matchId");
+                    idGame = jsonMatches.getJSONObject(i).getLong("matchId");
                     teamID = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getInt("teamId");
                     toalDamageDealtByUserInCurrentGame = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getJSONObject("stats").getInt("totalDamageDealtToChampions");
                     totalDamageTakenByUserInCurrentGame = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getJSONObject("stats").getInt("totalDamageTaken");

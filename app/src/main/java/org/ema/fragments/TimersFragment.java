@@ -173,20 +173,6 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
     public void onDialogPositiveClick(DialogFragment dialog, int cooldown, int ultiLvl,String ennemy_button_id) {
         Log.v("MIC", "Ulti LVL For " + ennemy_button_id + " is now " + ultiLvl);
 
-        /*//For each champion (on line by champ in timerCdrMap)
-        for(Map.Entry<String,Integer> button : timerCdrMap.entrySet()){
-            //Concatain and substring to get the identifier of the ultimate button to compare with timerCdrMap
-            String buttonUltimateId = ennemy_button_id.substring(0,2) + "2";
-            if(button.getKey().equals(buttonUltimateId)){
-                //Updating the CDR only if it's a different number
-                if(timerCdrMap.get(button.getKey()) != cooldown){
-                    timerCdrMap.put(button.getKey(), cooldown);
-                    WsEventHandling.sendCdr(button.getKey(), cooldown);
-                }
-                break;
-            }
-        }*/
-
         //Concatain and substring to get the identifier of the ultimate button to compare with timerCdrMap
         String buttonUltimateId = ennemy_button_id.substring(0,2) + "2";
 
@@ -203,19 +189,6 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             WsEventHandling.sendUltiLevel(buttonUltimateId, ultiLvl);
         }
 
-        //For each timer button
-       /* for(Map.Entry<String,Long> button : timerUltiLvlMap.entrySet()){
-            //Concatain and substring to get the identifier of the ultimate button to compare with timerMap
-            String buttonUltimateId = ennemy_button_id.substring(0,2) + "2";
-            if(button.getKey().equals(buttonUltimateId)){
-
-                //Updating the ultimate level
-                setUltimateLevel(button.getKey(),ultiLvl);
-                WsEventHandling.sendUltiLevel(button.getKey(),ultiLvl);
-                break;
-            }
-        }
-*/
 
     }
 

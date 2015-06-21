@@ -30,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by Constantin on 19/05/2015.
@@ -81,7 +82,7 @@ public class WsEventHandling {
                         break;
                     case "sharedTimers":
                         try {
-                            updateTimers(obj.getJSONArray("timers"),obj.getString("timestamp"));
+                            updateTimers(obj.getJSONArray("timers"),obj.getJSONArray("cdr"),obj.getJSONArray("ultiLevel"),obj.getString("timestamp"));
                         } catch (JSONException e){
                             Log.v("Websocket","Erreur parsage:" + e.getMessage());
                         }
@@ -300,6 +301,7 @@ public class WsEventHandling {
         String[][] timersTableToShare = CompanionActivity.instance.shareTimers();
         int tableSize = timersTableToShare.length;
 
+        //Sharing current activated timers
         String requestToSend = "{\"action\":\"sentTimers\",\"timers\":[";
         for (int i = 0;i< tableSize;i++){
             requestToSend += "[\"" + timersTableToShare[i][0] + "\",\"" + timersTableToShare[i][1] + "\"],";
@@ -308,20 +310,43 @@ public class WsEventHandling {
             requestToSend = requestToSend.substring(0, requestToSend.length() - 1);
         }
 
+        requestToSend += "],";
+
+        //Sharing CDR
+        requestToSend += "\"cdr\":[";
+
+        for(Map.Entry<String,Integer> CDR : CompanionActivity.instance.timerCdrMap.entrySet()){
+            requestToSend += "[\"" + CDR.getKey() + "\",\"" + CDR.getClass()  + "\"],";
+        }
+        //remove the last comma
+        requestToSend = requestToSend.substring(0, requestToSend.length() - 1);
+        requestToSend += "],";
+
+
+
+        //Sharing ultimates level
+        requestToSend += "\"ultiLevel\":[";
+
+        for(Map.Entry<String,Integer> ultiLevel : CompanionActivity.instance.timerUltiLvlMap.entrySet()){
+            requestToSend += "[\"" + ultiLevel.getKey() + "\",\"" + ultiLevel.getClass()  + "\"],";
+        }
+        //remove the last comma
+        requestToSend = requestToSend.substring(0, requestToSend.length() - 1);
+        requestToSend += "],";
+
+
 
         long serverTime = GameTimestamp.getServerTimestamp();
-        requestToSend += "],\"timestamp\":" + serverTime + "}";
-
+        requestToSend += "\"timestamp\":" + serverTime + "}";
         sendMessage(requestToSend);
     }
 
-    public static void updateTimers(JSONArray timerTable,String timestampEnvoi){
+    public static void updateTimers(JSONArray timerTable,JSONArray cdrTable,JSONArray ultiLevelTable,String timestampEnvoi){
         CompanionActivity.instance.cancelAllTimers();
 
         long delayOfTransfert = GameTimestamp.transfertDelay(Long.parseLong(timestampEnvoi));
         try {
-            //HashMap<String,String> timerHaspmap = (HashMap<String,String>) timerTable.get(0);
-
+            //Updating timers
             for(int i = 0; i < timerTable.length();i++){
                 JSONArray buttonAndCooldown = (JSONArray) timerTable.get(i);
                 if((Long.parseLong(buttonAndCooldown.getString(1)) - delayOfTransfert) > 0) {
@@ -329,6 +354,22 @@ public class WsEventHandling {
                     CompanionActivity.instance.activateTimer(buttonAndCooldown.getString(0),cooldown);
                 }
             }
+
+            //Update timer cdr hashmap
+            for(int i = 0; i < cdrTable.length();i++){
+                JSONArray buttonAndCdr = (JSONArray) cdrTable.get(i);
+                CompanionActivity.instance.timerCdrMap.put(buttonAndCdr.getString(0),Integer.parseInt(buttonAndCdr.getString(1)));
+            }
+
+            //Update timer ulti Level hashmap
+            for(int i = 0; i < ultiLevelTable.length();i++){
+                JSONArray buttonAndUltiLevel = (JSONArray) ultiLevelTable.get(i);
+                //Update in hashmap of ulti level (used to get and set the dialog
+                CompanionActivity.instance.timerUltiLvlMap.put(buttonAndUltiLevel.getString(0),Integer.parseInt(buttonAndUltiLevel.getString(1)));
+                //Update the hashmap of cooldown (used when a timer is activated)
+                CompanionActivity.instance.updateCooldownWithNewUltimateLevel(buttonAndUltiLevel.getString(0),Integer.parseInt(buttonAndUltiLevel.getString(1)));
+            }
+
         } catch (JSONException e){
             Log.v("Websocket","Erreur lors de la reception des timers partagés");
         }

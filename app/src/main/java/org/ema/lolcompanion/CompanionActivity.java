@@ -184,26 +184,31 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                 args.putString("name", ennemiesFragment.getSummonersList().get(0).getChampion().getName());
                 args.putString("ennemy", "b11");
                 args.putInt("cdr",timerFragment.timerCdrMap.get("b12"));
+                args.putInt("ultiLvl",timerFragment.timerUltiLvlMap.get("b12"));
                 break;
             case R.id.b21:
                 args.putString("name", ennemiesFragment.getSummonersList().get(1).getChampion().getName());
                 args.putString("ennemy", "b21");
                 args.putInt("cdr",timerFragment.timerCdrMap.get("b22"));
+                args.putInt("ultiLvl",timerFragment.timerUltiLvlMap.get("b22"));
                 break;
             case R.id.b31:
                 args.putString("name", ennemiesFragment.getSummonersList().get(2).getChampion().getName());
                 args.putString("ennemy", "b31");
                 args.putInt("cdr",timerFragment.timerCdrMap.get("b32"));
+                args.putInt("ultiLvl",timerFragment.timerUltiLvlMap.get("b32"));
                 break;
             case R.id.b41:
                 args.putString("name", ennemiesFragment.getSummonersList().get(3).getChampion().getName());
                 args.putString("ennemy", "b41");
                 args.putInt("cdr",timerFragment.timerCdrMap.get("b42"));
+                args.putInt("ultiLvl",timerFragment.timerUltiLvlMap.get("b42"));
                 break;
             case R.id.b51:
                 args.putString("name", ennemiesFragment.getSummonersList().get(4).getChampion().getName());
                 args.putString("ennemy", "b51");
                 args.putInt("cdr",timerFragment.timerCdrMap.get("b52"));
+                args.putInt("ultiLvl",timerFragment.timerUltiLvlMap.get("b52"));
                 break;
         }
         timerFragment.showCooldownReducers(v, args);

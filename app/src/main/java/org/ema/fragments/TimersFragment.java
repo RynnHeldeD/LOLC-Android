@@ -52,12 +52,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class TimersFragment extends SummonersListFragment implements SecureDialogFragment.NoticeDialogListener, CooldownTimersDialogFragment.NoticeDialogListener {
     public HashMap<String,Long> timerMap;
     public HashMap<String,Integer> timerCdrMap;
+    public HashMap<String,Integer> timerUltiLvlMap;
     public static SettingsManager settingsManager = null;
 
     @Override
@@ -73,6 +73,14 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         timerCdrMap.put("b32",0);
         timerCdrMap.put("b42",0);
         timerCdrMap.put("b52", 0);
+
+        //Set the ultimate level to 6 for all champ
+        timerUltiLvlMap = new HashMap<String,Integer>();
+        timerUltiLvlMap.put("b12",6);
+        timerUltiLvlMap.put("b22",6);
+        timerUltiLvlMap.put("b32",6);
+        timerUltiLvlMap.put("b42",6);
+        timerUltiLvlMap.put("b52",6);
 
         Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
         TextView timers = (TextView) rootView.findViewById(R.id.timers);
@@ -165,14 +173,23 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
     public void onDialogPositiveClick(DialogFragment dialog, int cooldown, int ultiLvl,String ennemy_button_id) {
         Log.v("MIC", "Ulti LVL For " + ennemy_button_id + " is now " + ultiLvl);
 
-        for(Map.Entry<String,Integer> button : timerCdrMap.entrySet()){
-            String buttonUltimateId = ennemy_button_id.substring(0,2) + "2";
-            if(button.getKey().equals(buttonUltimateId)){
-                timerCdrMap.put(button.getKey(), cooldown);
-                WsEventHandling.sendCdr(button.getKey(), cooldown);
-                break;
-            }
+        //Concatain and substring to get the identifier of the ultimate button to compare with timerCdrMap
+        String buttonUltimateId = ennemy_button_id.substring(0,2) + "2";
+
+        //Updating the CDR only if it's a different number
+        if(timerCdrMap.get(buttonUltimateId) != cooldown){
+            timerCdrMap.put(buttonUltimateId, cooldown);
+            WsEventHandling.sendCdr(buttonUltimateId, cooldown);
         }
+
+        //Updating the ultimate level only if it's a different number
+        if(timerUltiLvlMap.get(buttonUltimateId) != ultiLvl){
+            timerUltiLvlMap.put(buttonUltimateId, ultiLvl);
+            updateCooldownWithNewUltimateLevel(buttonUltimateId,ultiLvl);
+            WsEventHandling.sendUltiLevel(buttonUltimateId, ultiLvl);
+        }
+
+
     }
 
     @Override
@@ -487,6 +504,45 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
 
     public void setCdr(String buttonId, Integer cdr){
         timerCdrMap.put(buttonId,cdr);
+    }
+
+    public void setUltimateLevel(String buttonId, Integer ultiLvl){
+        timerUltiLvlMap.put(buttonId,ultiLvl);
+        updateCooldownWithNewUltimateLevel(buttonId,ultiLvl);
+    }
+
+
+
+    public void updateCooldownWithNewUltimateLevel(String buttonId, Integer ultiLevel){
+        // Summoner user = (Summoner) GlobalDataManager.get("user");
+        ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
+
+        //Parsing button name to get the summoner index. We retrench 1 because the index start at 0 whereas buttons start at 1
+        int summonerIndex = Integer.parseInt( buttonId.substring(1,2)) - 1;
+
+        //Parsing ultiLevel to get the index in cooldown list
+        int indexCooldown;
+
+        switch (ultiLevel){
+            case 6:
+                indexCooldown = 0;
+                break;
+            case 11:
+                indexCooldown = 1;
+                break;
+            case 16:
+                indexCooldown = 2;
+                break;
+            default:
+                indexCooldown = 0;
+                break;
+        }
+
+        float cdSummonerSpell = summonersList.get(summonerIndex).getChampion().getSpell().getCooldown()[indexCooldown];
+
+        Log.v("Websocket","Update champ " + summonerIndex + " to level " + ultiLevel + " so index cooldown " + indexCooldown);
+
+        timerMap.put(buttonId, (long) cdSummonerSpell);
     }
 
 }

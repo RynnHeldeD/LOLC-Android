@@ -61,8 +61,8 @@ public class WebSocket {
 
                 //mWebSocketClient.send("{\"action\":\"pickedChampion\",\"gameId\":\"0\",\"teamId\":\"0\",\"championIconId\":\"0\",\"passphrase\":\""+ passphrase +"\"}");
 
-                mWebSocketClient.send("{\"action\":\"pickedChampion\",\"gameId\":\"" + user.getGameId() + "\",\"teamId\":\"" + user.getTeamId() + "\",\"championIconId\":\"" + user.getChampion().getIconName() + "\",\"passphrase\":\"" + passphrase + "\"}");
-                Log.v("Websocket", "{\"action\":\"pickedChampion\",\"gameId\":\"" + user.getGameId() + "\",\"teamId\":\"" + user.getTeamId() + "\",\"championIconId\":\"" + user.getChampion().getIconName() + "\",\"passphrase\":\"" + passphrase + "\"}");
+               // mWebSocketClient.send("{\"action\":\"pickedChampion\",\"gameId\":\"" + user.getGameId() + "\",\"teamId\":\"" + user.getTeamId() + "\",\"championIconId\":\"" + user.getChampion().getIconName() + "\",\"passphrase\":\"" + passphrase + "\"}");
+                //Log.v("Websocket", "{\"action\":\"pickedChampion\",\"gameId\":\"" + user.getGameId() + "\",\"teamId\":\"" + user.getTeamId() + "\",\"championIconId\":\"" + user.getChampion().getIconName() + "\",\"passphrase\":\"" + passphrase + "\"}");
 
             }
 

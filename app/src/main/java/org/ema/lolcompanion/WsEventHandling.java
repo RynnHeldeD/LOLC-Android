@@ -93,6 +93,9 @@ public class WsEventHandling {
                     case "sharedUltimateLevel":
                         setLevelUlti(obj.getString("buttonId"), obj.getInt("ultiLevel"));
                         break;
+                    case "requestChampion":
+                        pickedChampion();
+                        break;
                     default:
                         break;
                 }
@@ -397,7 +400,13 @@ public class WsEventHandling {
         WebSocket.send(msg);
     }
 
-    public static void pickedChampion(Integer gameId, Integer teamId, String championIconName, String channel) {
+    public static void pickedChampion() {
+        Summoner user = (Summoner) GlobalDataManager.get("user");
+        Integer gameId = user.getGameId();
+        Integer teamId = user.getTeamId();
+        String championIconName = user.getChampion().getIconName();
+        String channel = CompanionActivity.instance.settingsManager.get(CompanionActivity.instance.getActivity(),"passphrase");
+
         sendMessage("{\"action\":\"pickedChampion\",\"gameId\":\"" + gameId + "\",\"teamId\":\"" + teamId + "\",\"championIconId\":\"" + championIconName + "\",\"passphrase\":\"" + channel + "\"}");
     }
 

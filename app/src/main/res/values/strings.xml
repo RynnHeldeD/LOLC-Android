@@ -102,6 +102,7 @@
 
     <!-- TOASTS -->
     <string name="pending_logging">logging&#8230;</string>
+    <string name="pending_network_error">Please connect to WiFi or Mobile Network</string>
     <string name="pending_waiting_signal">waiting for game signal&#8230;</string>
     <string name="pending_loading_game">loading game data&#8230;</string>
     <string name="disconnected_from_ws">disconnected from server</string>

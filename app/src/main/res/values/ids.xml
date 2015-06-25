@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      Copyright © 2015
      GHARBI Eddy
      PARRENO Michel
@@ -18,7 +17,83 @@
      juridictions civiles ou pénales.
 -->
 <resources>
+    <item name="secure_channel_edit" type="id" />
 
-    <item name="secure_channel_edit" type="id"/>
+     <!-- Timer Buttons from 0 to 6 players -->
+     <item name="b01" type="id" />
+     <item name="b02" type="id" />
 
+     <id-array name="timers_ids">
+          <item name="b11" type="id"/>
+          <item name="b12" type="id"/>
+          <item name="b12t" type="id"/>
+          <item name="b13" type="id"/>
+          <item name="b13t" type="id"/>
+          <item name="b14" type="id"/>
+          <item name="b14t" type="id"/>
+
+          <item name="b21" type="id"/>
+          <item name="b22" type="id"/>
+          <item name="b22t" type="id"/>
+          <item name="b23" type="id"/>
+          <item name="b23t" type="id"/>
+          <item name="b24" type="id"/>
+          <item name="b24t" type="id"/>
+
+          <item name="b31" type="id"/>
+          <item name="b32" type="id"/>
+          <item name="b32t" type="id"/>
+          <item name="b33" type="id"/>
+          <item name="b33t" type="id"/>
+          <item name="b34" type="id"/>
+          <item name="b34t" type="id"/>
+
+          <item name="b41" type="id"/>
+          <item name="b42" type="id"/>
+          <item name="b42t" type="id"/>
+          <item name="b43" type="id"/>
+          <item name="b43t" type="id"/>
+          <item name="b44" type="id"/>
+          <item name="b44t" type="id"/>
+
+          <item name="b51" type="id"/>
+          <item name="b52" type="id"/>
+          <item name="b52t" type="id"/>
+          <item name="b53" type="id"/>
+          <item name="b53t" type="id"/>
+          <item name="b54" type="id"/>
+          <item name="b54t" type="id"/>
+
+          <item name="b61" type="id"/>
+          <item name="b62" type="id"/>
+          <item name="b62t" type="id"/>
+          <item name="b63" type="id"/>
+          <item name="b63t" type="id"/>
+          <item name="b64" type="id"/>
+          <item name="b64t" type="id"/>
+
+          <item name="b71" type="id"/>
+          <item name="b72" type="id"/>
+          <item name="b72t" type="id"/>
+          <item name="b73" type="id"/>
+          <item name="b73t" type="id"/>
+          <item name="b74" type="id"/>
+          <item name="b74t" type="id"/>
+
+          <item name="b81" type="id"/>
+          <item name="b82" type="id"/>
+          <item name="b82t" type="id"/>
+          <item name="b83" type="id"/>
+          <item name="b83t" type="id"/>
+          <item name="b84" type="id"/>
+          <item name="b84t" type="id"/>
+
+          <item name="b91" type="id"/>
+          <item name="b92" type="id"/>
+          <item name="b92t" type="id"/>
+          <item name="b93" type="id"/>
+          <item name="b93t" type="id"/>
+          <item name="b94" type="id"/>
+          <item name="b94t" type="id"/>
+     </id-array>
 </resources>

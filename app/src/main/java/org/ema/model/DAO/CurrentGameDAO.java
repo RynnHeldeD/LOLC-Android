@@ -237,6 +237,7 @@ public class CurrentGameDAO {
             }
 
             for(Summoner current : summonersList) {
+                current.getCooldownPerLevelAndCalculCooldowns();
                 calculUserPerformance(current);
             }
 

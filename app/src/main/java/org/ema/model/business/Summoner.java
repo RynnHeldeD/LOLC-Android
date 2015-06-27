@@ -47,7 +47,7 @@ public class Summoner implements Parcelable {
     private DataProcessed dataProcessed = new DataProcessed();
     private ArrayList<Mastery> masteries = new ArrayList<>();
     private ArrayList<Rune> runes = new ArrayList<>();
-    private HashMap<String,Double> cooldownsRatios;
+    private double cooldownsRatioPerLevel = -1;
 
     public ArrayList<Mastery> getMasteries() {
         return masteries;
@@ -296,8 +296,8 @@ public class Summoner implements Parcelable {
         return true;
     }
 
-    public HashMap<String,Double> getCooldownsFromMasteriesAndRunes() {
-        if(cooldownsRatios == null) {
+    public Double getCooldownPerLevelAndCalculCooldowns() {
+        if(cooldownsRatioPerLevel == -1) {
             double cooldownRatio = 1;
             double cooldownRatioPerLevel = 1;
             double cooldownSummunerSpells = 1;
@@ -329,12 +329,24 @@ public class Summoner implements Parcelable {
                 }
             }
 
-            cooldownsRatios = new HashMap<>();
-            cooldownsRatios.put("cooldownRatio",cooldownRatio);
-            cooldownsRatios.put("cooldownRatioPerLevel",cooldownRatioPerLevel);
-            cooldownsRatios.put("cooldownSummunerSpells",cooldownSummunerSpells);
+            //Update summoner spells
+            for(Spell spell : this.getSpells()) {
+                float cooldowns[] = spell.getCooldown();
+                for(int x = 0; x < cooldowns.length; x++) {
+                        cooldowns[x] = Math.round(cooldowns[x] * cooldownSummunerSpells);
+                }
+            }
+
+            //Update ultimate spell
+            Spell spell = this.getChampion().getSpell();
+            float cooldowns[] = spell.getCooldown();
+            for(int x = 0; x < cooldowns.length; x++) {
+                cooldowns[x] = Math.round(cooldowns[x] * cooldownRatio);
+            }
+
+            cooldownsRatioPerLevel = cooldownRatioPerLevel;
         }
 
-        return cooldownsRatios;
+        return cooldownsRatioPerLevel;
     }
 }

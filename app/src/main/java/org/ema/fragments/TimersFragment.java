@@ -538,7 +538,8 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
                 break;
         }
 
-        float cdSummonerSpell = summonersList.get(summonerIndex).getChampion().getSpell().getCooldown()[indexCooldown];
+        float cooldownRatioByLevel = (float)1 - (float)((float)( (float)1 - (new Float(summonersList.get(summonerIndex).getCooldownPerLevelAndCalculCooldowns()))) * (float)ultiLevel);
+        float cdSummonerSpell = summonersList.get(summonerIndex).getChampion().getSpell().getCooldown()[indexCooldown] * cooldownRatioByLevel;
 
         Log.v("Websocket","Update champ " + summonerIndex + " to level " + ultiLevel + " so index cooldown " + indexCooldown);
 

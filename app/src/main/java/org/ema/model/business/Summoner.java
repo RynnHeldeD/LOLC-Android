@@ -24,6 +24,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Created by romain on 01/05/2015.
@@ -46,6 +47,7 @@ public class Summoner implements Parcelable {
     private DataProcessed dataProcessed = new DataProcessed();
     private ArrayList<Mastery> masteries = new ArrayList<>();
     private ArrayList<Rune> runes = new ArrayList<>();
+    private HashMap<String,Double> cooldownsRatios;
 
     public ArrayList<Mastery> getMasteries() {
         return masteries;
@@ -292,5 +294,47 @@ public class Summoner implements Parcelable {
         }
         Log.v("IMAGES_MOST", "loaded");
         return true;
+    }
+
+    public HashMap<String,Double> getCooldownsFromMasteriesAndRunes() {
+        if(cooldownsRatios == null) {
+            double cooldownRatio = 1;
+            double cooldownRatioPerLevel = 1;
+            double cooldownSummunerSpells = 1;
+
+            for(int i = 0; i < this.getRunes().size(); i++) {
+                Rune rune = this.getRunes().get(i);
+
+                if(rune.getStats().get("rPercentCooldownMod") != null) {
+                    cooldownRatio += Double.parseDouble(rune.getStats().get("rPercentCooldownMod"));
+                }
+                else if(rune.getStats().get("rPercentCooldownModPerLevel") != null) {
+                    cooldownRatioPerLevel += Double.parseDouble(rune.getStats().get("rPercentCooldownModPerLevel"));
+                }
+            }
+
+            for(int i = 0; i < this.getMasteries().size(); i++) {
+                Mastery mastery = this.getMasteries().get(i);
+
+                //Cooldown of champion spells
+                if(mastery.getDescription().contains("Cooldown Reduction")){
+                    String stat = mastery.getDescription().replaceAll("\\+","").split("\\%")[0];
+                    cooldownRatio -= (Double.parseDouble(stat) / 100);
+                }
+                //Cooldowns of summuner spells
+                else if(mastery.getDescription().contains("cooldown")) {
+                    String stats[] = mastery.getDescription().replaceAll("\\%","").split(" ");
+                    String stat = stats[stats.length-1];
+                    cooldownSummunerSpells -= (Double.parseDouble(stat) / 100);
+                }
+            }
+
+            cooldownsRatios = new HashMap<>();
+            cooldownsRatios.put("cooldownRatio",cooldownRatio);
+            cooldownsRatios.put("cooldownRatioPerLevel",cooldownRatioPerLevel);
+            cooldownsRatios.put("cooldownSummunerSpells",cooldownSummunerSpells);
+        }
+
+        return cooldownsRatios;
     }
 }

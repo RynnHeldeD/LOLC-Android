@@ -24,6 +24,8 @@ import android.util.Log;
 import org.ema.model.business.Champion;
 import org.ema.model.business.LaneProbability;
 import org.ema.model.business.League;
+import org.ema.model.business.Mastery;
+import org.ema.model.business.Rune;
 import org.ema.model.business.Spell;
 import org.ema.model.business.Statistic;
 import org.ema.model.business.Summoner;
@@ -35,6 +37,7 @@ import org.ema.utils.SortSummonerByTeamAndPerf;
 import org.ema.utils.SummonerList;
 import org.ema.utils.Utils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -62,6 +65,50 @@ public class CurrentGameDAO {
 
             summoner.getDataProcessed().setDetailedStats(true);
         }
+    }
+
+    public static ArrayList<Mastery> getSummunerMasteries(Summoner summuner, JSONArray jsonMasteries) {
+        ArrayList<Mastery> masteries = new ArrayList<>();
+
+        for(int i = 0; i < jsonMasteries.length(); i++) {
+            try {
+                JSONObject jsonMastery = jsonMasteries.getJSONObject(i);
+
+                Mastery mastery = new Mastery();
+                mastery.setId(jsonMastery.getInt("masteryId"));
+                mastery.setRank(jsonMastery.getInt("rank"));
+
+                masteries.add(mastery);
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+            return masteries;
+    }
+
+    public static ArrayList<Rune> getSummunerRunes(Summoner summuner, JSONArray jsonRunes) {
+        ArrayList<Rune> runes = new ArrayList<>();
+
+        for(int i = 0; i < jsonRunes.length(); i++) {
+            try {
+                JSONObject jsonRune = jsonRunes.getJSONObject(i);
+
+                Rune rune = new Rune();
+                rune.setId(jsonRune.getInt("runeId"));
+                rune.setCount(jsonRune.getInt("count"));
+
+                runes.add(rune);
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+        return runes;
     }
 
     public static ArrayList<Summoner> getSummunerListInGameFromCurrentUser(Summoner user) {
@@ -116,6 +163,12 @@ public class CurrentGameDAO {
                     user.setTeamId(summoner.getTeamId());
                     user.setChampion(summoner.getChampion());
                 }
+
+                //get runes
+                summoner.setRunes(getSummunerRunes(summoner, jsonParticipant.getJSONArray("runes")));
+
+                //get masteries
+                summoner.setMasteries(getSummunerMasteries(summoner, jsonParticipant.getJSONArray("masteries")));
 
                 summonersList.add(summoner);
             }

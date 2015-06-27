@@ -33,6 +33,8 @@ public class Constant {
     public static String API_SUMMONER_SPELLS = CACHE_SERVER_URI + API_STATIC_DNS + "api/lol/static-data/euw/v1.2/summoner-spell?dataById=true&spellData=cooldown,image";
     public static String API_ITEMS = CACHE_SERVER_URI + API_STATIC_DNS + "api/lol/static-data/euw/v1.2/item";
     public static String API_MATCHS = CACHE_SERVER_URI + API_DNS + "api/lol/euw/v2.2/match/";
+    public static String API_RUNES = CACHE_SERVER_URI + API_STATIC_DNS + "api/lol/static-data/euw/v1.2/rune?runeListData=stats";
+    public static String API_MASTERIES = CACHE_SERVER_URI + API_STATIC_DNS + "api/lol/static-data/euw/v1.2/mastery?masteryListData=masteryTree,ranks";
 
     //Need to add "/recent" after the summoner id
     public static String API_SUMMONER_GAMES = CACHE_SERVER_URI + API_DNS + "api/lol/euw/v1.3/game/by-summoner/";
@@ -107,6 +109,8 @@ public class Constant {
         API_SUMMONER_GAMES = setRequestRegion(API_SUMMONER_GAMES,region);
         API_ITEMS = setRequestRegion(API_ITEMS,region);
         API_MATCHS = setRequestRegion(API_MATCHS,region);
+        API_RUNES = setRequestRegion(API_RUNES,region);
+        API_MASTERIES = setRequestRegion(API_MASTERIES,region);
 
         localRegion = region;
     }

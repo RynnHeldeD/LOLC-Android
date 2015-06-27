@@ -43,6 +43,26 @@ public class SummonerList {
         return true;
     }
 
+    public static boolean areSummenersRunesLoaded(ArrayList<Summoner> summoners) {
+        for(Summoner current : summoners) {
+            if(!current.getDataProcessed().isRunes()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean areSummenersMasteriesLoaded(ArrayList<Summoner> summoners) {
+        for(Summoner current : summoners) {
+            if(!current.getDataProcessed().isMasteries()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static boolean areSummenersPremadesLoaded(ArrayList<Summoner> summoners) {
         for(Summoner current : summoners) {
             if(!current.getDataProcessed().isPremades()) {

@@ -297,7 +297,29 @@ public class Utils {
         protected Integer doInBackground(Object... params) {
             Summoner summoner = (Summoner)params[0];
             ArrayList<Summoner> summonerList = (ArrayList<Summoner>)params[1];
-            CurrentGameDAO.getPremades(summoner,summonerList);
+            CurrentGameDAO.getPremades(summoner, summonerList);
+            return new Integer(1);
+        }
+    }
+
+    public static class getRunesDetailled extends AsyncTask<Object, Void, Integer> {
+        private String path = "";
+
+        @Override
+        protected Integer doInBackground(Object... params) {
+            ArrayList<Summoner> summoners = (ArrayList<Summoner>)params[0];
+            CurrentGameDAO.getRunesDetailled(summoners);
+            return new Integer(1);
+        }
+    }
+
+    public static class getMasteriesDetailled extends AsyncTask<Object, Void, Integer> {
+        private String path = "";
+
+        @Override
+        protected Integer doInBackground(Object... params) {
+            ArrayList<Summoner> summoners = (ArrayList<Summoner>)params[0];
+            CurrentGameDAO.getMasteriesDetailled(summoners);
             return new Integer(1);
         }
     }

@@ -1,19 +1,19 @@
-/* Copyright © 2015
+/* Copyright ï¿½ 2015
  * GHARBI Eddy
  * PARRENO Michel
  * VELTRI Constantin
  * NGUYEN Remy
  * GALLI Romain
  *
- * Cette œuvre est protégée par le droit d’auteur et strictement réservée à l’usage privé du
- * client. Toute reproduction ou diffusion au profit de tiers, à titre
- * gratuit ou onéreux, de
- * tout ou partie de cette œuvre est strictement interdite et constitue une contrefaçon prévue
- * par les articles L 335-2 et suivants du Code de la propriété
+ * Cette ï¿½uvre est protï¿½gï¿½e par le droit dï¿½auteur et strictement rï¿½servï¿½e ï¿½ lï¿½usage privï¿½ du
+ * client. Toute reproduction ou diffusion au profit de tiers, ï¿½ titre
+ * gratuit ou onï¿½reux, de
+ * tout ou partie de cette ï¿½uvre est strictement interdite et constitue une contrefaï¿½on prï¿½vue
+ * par les articles L 335-2 et suivants du Code de la propriï¿½tï¿½
  * intellectuelle. Les ayants-droits se
- * réservent le droit de poursuivre toute atteinte à leurs droits de
- * propriété intellectuelle devant les
- * juridictions civiles ou pénales.
+ * rï¿½servent le droit de poursuivre toute atteinte ï¿½ leurs droits de
+ * propriï¿½tï¿½ intellectuelle devant les
+ * juridictions civiles ou pï¿½nales.
  */
 
 package org.ema.model.DAO;
@@ -77,6 +77,7 @@ public class CurrentGameDAO {
                 Mastery mastery = new Mastery();
                 mastery.setId(jsonMastery.getInt("masteryId"));
                 mastery.setRank(jsonMastery.getInt("rank"));
+                mastery.setIconUrl(mastery.getId() + ".png");
 
                 masteries.add(mastery);
             }
@@ -99,7 +100,7 @@ public class CurrentGameDAO {
                 Rune rune = new Rune();
                 rune.setId(jsonRune.getInt("runeId"));
                 rune.setCount(jsonRune.getInt("count"));
-
+                rune.setIconUrl(rune.getId() + ".png");
                 runes.add(rune);
             }
             catch (JSONException e) {
@@ -173,6 +174,10 @@ public class CurrentGameDAO {
                 summonersList.add(summoner);
             }
 
+            //Async thread to get detailles runes and masteries (images, descriptions, effects)
+            new Utils.getRunesDetailled().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, summonersList);
+            new Utils.getMasteriesDetailled().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, summonersList);
+
             getLevels(summonersList);
 
             JSONObject jsonSummonerSpells = new JSONObject(Utils.getDocumentAndCheck(Constant.API_SUMMONER_SPELLS,2));
@@ -224,7 +229,10 @@ public class CurrentGameDAO {
                 new Utils.getStats().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current);
             }
 
-            while(!SummonerList.areSummenersPremadesLoaded(summonersList) || !SummonerList.areSummenersStatsLoaded(summonersList)){
+            while(!SummonerList.areSummenersPremadesLoaded(summonersList) ||
+                  !SummonerList.areSummenersStatsLoaded(summonersList) ||
+                  !SummonerList.areSummenersRunesLoaded(summonersList) ||
+                  !SummonerList.areSummenersMasteriesLoaded(summonersList)) {
                 SystemClock.sleep(500);
             }
 
@@ -986,6 +994,69 @@ public class CurrentGameDAO {
 
             if(user2 != null && user2.getChampion().getSummary()[i].getProba() != new Float(0)) {
                 user2.getChampion().setLane(user.getChampion().getSummary()[i].getLane());
+            }
+        }
+    }
+
+    public static void getRunesDetailled(ArrayList<Summoner> summoners) {
+        try {
+            JSONObject jsonRunes = (new JSONObject(Utils.getDocumentAndCheck(Constant.API_RUNES,4))).getJSONObject("data");
+
+            for(Summoner summoner : summoners) {
+                for(int i = 0; i < summoner.getRunes().size(); i++) {
+                    Rune rune = summoner.getRunes().get(i);
+                    JSONObject jsonRune = jsonRunes.getJSONObject(String.valueOf(rune.getId()));
+                    rune.setName(jsonRune.getString("name"));
+                    rune.setDescription(jsonRune.getString("description"));
+
+                    String stats = jsonRune.getString("stats");
+
+                    //replace '{' and '}'
+                    stats = stats.substring(1,stats.length()-1);
+
+                    stats = stats.replaceAll("\"","").replace(" ","");
+                    String statsSplitter[] = stats.split(",");
+
+                    for(int j = 0; j < statsSplitter.length; j++) {
+                        String stat[] = statsSplitter[j].split(":");
+
+                        rune.getStats().put(stat[0],stat[1]);
+                    }
+                }
+
+                summoner.getDataProcessed().setRunes(true);
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+
+            for(Summoner summoner : summoners) {
+                summoner.getDataProcessed().setRunes(true);
+            }
+        }
+    }
+
+    public static void getMasteriesDetailled(ArrayList<Summoner> summoners) {
+        try {
+            JSONObject jsonMasteries = (new JSONObject(Utils.getDocumentAndCheck(Constant.API_MASTERIES,4))).getJSONObject("data");
+
+            for(Summoner summoner : summoners) {
+                for(int i = 0; i < summoner.getMasteries().size(); i++) {
+                    Mastery mastery = summoner.getMasteries().get(i);
+
+                    JSONObject jsonMastery = jsonMasteries.getJSONObject(String.valueOf(mastery.getId()));
+                    mastery.setName(jsonMastery.getString("name"));
+                    mastery.setDescription(jsonMastery.getJSONArray("description").getString(mastery.getRank()-1));
+                }
+
+                summoner.getDataProcessed().setMasteries(true);
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+
+            for(Summoner summoner : summoners) {
+                summoner.getDataProcessed().setMasteries(true);
             }
         }
     }

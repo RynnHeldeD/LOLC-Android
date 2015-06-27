@@ -14,7 +14,7 @@ public class Mastery {
     private String description;
     private String iconUrl;
     private Bitmap icon;
-    private HashMap<String,String> stats;
+    private HashMap<String,String> stats = new HashMap<>();
 
     public int getId() {
         return id;

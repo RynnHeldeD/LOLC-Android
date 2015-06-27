@@ -22,6 +22,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -43,6 +44,24 @@ public class Summoner implements Parcelable {
     //size between 1 and 3
     private Champion[] mostChampionsPlayed;
     private DataProcessed dataProcessed = new DataProcessed();
+    private ArrayList<Mastery> masteries = new ArrayList<>();
+    private ArrayList<Rune> runes = new ArrayList<>();
+
+    public ArrayList<Mastery> getMasteries() {
+        return masteries;
+    }
+
+    public void setMasteries(ArrayList<Mastery> masteries) {
+        this.masteries = masteries;
+    }
+
+    public ArrayList<Rune> getRunes() {
+        return runes;
+    }
+
+    public void setRunes(ArrayList<Rune> runes) {
+        this.runes = runes;
+    }
 
     public DataProcessed getDataProcessed() {
         return dataProcessed;

@@ -18,7 +18,7 @@ public class Constant {
     public static String DDRAGON_ITEMS_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/item/";
     public static String DDRAGON_SCOREBOARD_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/ui/";
 
-    private static String CACHE_SERVER_URI = "http://devtoolbox.fr/?url=";
+    private static String CACHE_SERVER_URI = "http://devtoolbox.fr:1337/?url=";
     private static String API_DNS = "https://euw.api.pvp.net/";
     private static String API_STATIC_DNS = "https://global.api.pvp.net/";
     //Default EUW

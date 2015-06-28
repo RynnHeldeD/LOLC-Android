@@ -107,21 +107,31 @@ public class MainActivity extends Activity {
 
     //Lauch the summoner search in LOL API and check validity
     public void lauchSummonerSearch(View view) {
-
-        //setting the toast
         LayoutInflater inflater = getLayoutInflater();
         View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
-        TextView text = (TextView) layout.findViewById(R.id.text);
-        text.setText(getResources().getString(R.string.pending_logging));
-        Toast toast = new Toast(getApplicationContext());
-        toast.setGravity(Gravity.BOTTOM, 0, 40);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        toast.setView(layout);
-        toast.show();
+
+        if((System.currentTimeMillis() / 1000) > 1441091736) {
+            TextView text = (TextView) layout.findViewById(R.id.text);
+            text.setText("This beta version is no longer available");
+            Toast toast = new Toast(getApplicationContext());
+            toast.setGravity(Gravity.BOTTOM, 0, 40);
+            toast.setDuration(Toast.LENGTH_SHORT);
+            toast.setView(layout);
+            toast.show();
+        }
+        else {
+            //setting the toast
+            TextView text = (TextView) layout.findViewById(R.id.text);
+            text.setText(getResources().getString(R.string.pending_logging));
+            Toast toast = new Toast(getApplicationContext());
+            toast.setGravity(Gravity.BOTTOM, 0, 40);
+            toast.setDuration(Toast.LENGTH_SHORT);
+            toast.setView(layout);
+            toast.show();
 
 
-        new CheckUserBackgroundTask(this).execute();
-
+            new CheckUserBackgroundTask(this).execute();
+        }
     }
 
     class CheckUserBackgroundTask extends AsyncTask<Void, Void, Boolean> {

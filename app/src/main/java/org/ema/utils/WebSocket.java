@@ -16,7 +16,9 @@ import java.util.ArrayList;
 public class WebSocket {
 
     public static WebSocketClient mWebSocketClient;
+    //used to don't display "Disconnected from server" each time the user press a timer if he is disconnected
     public static Boolean alreadyDisconnected = false;
+    public static Boolean onCompanionActivity = true;
 
 
 
@@ -36,13 +38,14 @@ public class WebSocket {
             public void onOpen(ServerHandshake serverHandshake) {
                 Log.v("Websocket", "Opened");
 
-                if (alreadyDisconnected) {
+                if (alreadyDisconnected && onCompanionActivity) {
                     try{
                         CompanionActivity.instanceCompanion.reconnectionNotification();
                     } catch (Exception e){
                         Log.v("Websocket","Erreur on Websocket open :" + e.getMessage());
                     }
                 }
+                WebSocket.onCompanionActivity = true;
 
                 String userNickname = ((Summoner) GlobalDataManager.get("user")).getName();
                 ArrayList<Summoner> summonersList = (ArrayList<Summoner>) GlobalDataManager.get("summonersList");

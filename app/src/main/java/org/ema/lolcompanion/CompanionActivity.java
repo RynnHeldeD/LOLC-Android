@@ -74,6 +74,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
 
         instance = timerFragment;
         instanceCompanion = this;
+
     }
 
     //Permet de Switcher entre les fragments
@@ -272,6 +273,9 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                 }
             });
 
+            //Used to not show the toast with "deconnected" and "reconnection" as long as we stay on the home page
+            WebSocket.onCompanionActivity = false;
+
             disconnectThread.start();
             launchMainActivity();
             return true;
@@ -284,7 +288,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         this.runOnUiThread(new Runnable() {
                                @Override
                                public void run() {
-               if (!WebSocket.alreadyDisconnected) {
+               if (!WebSocket.alreadyDisconnected && WebSocket.onCompanionActivity) {
                    Toast.makeText(CompanionActivity.this, "Disconnected from server", Toast.LENGTH_SHORT).show();
                }
                try{

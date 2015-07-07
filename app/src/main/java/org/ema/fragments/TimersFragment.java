@@ -66,6 +66,8 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         View rootView = inflater.inflate(R.layout.activity_timer, container, false);
         timerMap = new HashMap<String,Long>();
 
+        WebSocket.alreadyDisconnected = false;
+
         //Set the cooldown to 0 for all champ
         timerCdrMap = new HashMap<String,Integer>();
         timerCdrMap.put("b12",0);
@@ -88,7 +90,9 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
 
         TimersFragment.settingsManager = new SettingsManager();
         PreferenceManager.getDefaultSharedPreferences(this.getActivity().getApplicationContext());
+
         WebSocket.connectWebSocket();
+
         return rootView;
     }
 

@@ -89,11 +89,11 @@ public class WebSocket {
             public void onError(Exception e) {
                 Log.v("Websocket", "Error :" + e.getMessage());
               /*  try{
-                    CompanionActivity.instanceCompanion.handleDisconnection();
-                } catch (NullPointerException ex){
-                    Log.v("Websocket","Erreur dans le try catch du websocketOnError " + ex.getMessage());
-                }*/
-            }
+                    Companion            Activity.instanceCompanion.handleDisconnection();
+        } catch (NullPointerException ex){
+            Log.v("Websocket","Erreur dans le try catch du websocketOnError " + ex.getMessage());
+        }*/
+    }
 
         };
     } catch (Exception ex){

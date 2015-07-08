@@ -49,7 +49,6 @@ import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -60,29 +59,18 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
     public HashMap<String,Integer> timerUltiLvlMap;
     public static SettingsManager settingsManager = null;
 
+   public static Integer numberOfPlayersPerTeam;
+   public  static Integer numberOfTimers;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout resource that'll be returned
         View rootView = inflater.inflate(R.layout.activity_timer, container, false);
         timerMap = new HashMap<String,Long>();
 
+        //Say to the websocket that we are not disconnected from the server
         WebSocket.alreadyDisconnected = false;
-
-        //Set the cooldown to 0 for all champ
-        timerCdrMap = new HashMap<String,Integer>();
-        timerCdrMap.put("b12",0);
-        timerCdrMap.put("b22",0);
-        timerCdrMap.put("b32",0);
-        timerCdrMap.put("b42",0);
-        timerCdrMap.put("b52", 0);
-
-        //Set the ultimate level to 6 for all champ
-        timerUltiLvlMap = new HashMap<String,Integer>();
-        timerUltiLvlMap.put("b12",6);
-        timerUltiLvlMap.put("b22",6);
-        timerUltiLvlMap.put("b32",6);
-        timerUltiLvlMap.put("b42",6);
-        timerUltiLvlMap.put("b52",6);
 
         Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
         TextView timers = (TextView) rootView.findViewById(R.id.timers);
@@ -112,12 +100,34 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             }
         }
 
+        numberOfPlayersPerTeam = teamSummonersList.size();
+
+        //Set the cooldown to 0 and the ultimate level to 6 for all champ
+        InitializeTimerCdrMapAndTimerUltiLvlMap();
+        numberOfTimers = numberOfPlayersPerTeam * 3;
+
+        if (numberOfPlayersPerTeam == 5) {
+            numberOfTimers += 2;
+        } else if (numberOfPlayersPerTeam == 3) {
+            numberOfTimers += 1;
+        }
+
         // Changement des bitmap
         this.setTimerButtonsImage(teamSummonersList);
 
         if (summonersList.size() == 10){
         //Chargement des timers
             this.buildTimerTable(teamSummonersList);
+        }
+    }
+
+    public void InitializeTimerCdrMapAndTimerUltiLvlMap(){
+        timerCdrMap = new HashMap<String,Integer>();
+        timerUltiLvlMap = new HashMap<String,Integer>();
+
+        for(int i = 1;i < numberOfPlayersPerTeam +1;i++){
+            timerCdrMap.put("b" + i + "2",0);
+            timerUltiLvlMap.put("b" + i + "2",6);
         }
     }
 
@@ -163,11 +173,11 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String passphrase) {
         // Websocket - secure channel
-        String oldChannel = this.settingsManager.get(this.getActivity(),"passphrase");
+        String oldChannel = TimersFragment.settingsManager.get(this.getActivity(),"passphrase");
 
         //Si la nouvelle passphrase est differente de l'ancienne
         if (!oldChannel.equals(passphrase)) {
-            this.settingsManager.set(this.getActivity(), "passphrase", passphrase);
+            TimersFragment.settingsManager.set(this.getActivity(), "passphrase", passphrase);
             WsEventHandling.switchChannel(passphrase);
         }
     }
@@ -211,9 +221,13 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
     }
 
     public void setChampionTimerButtonsImage(ArrayList<Summoner> summonersList){
-        List<String> ids = Arrays.asList("b11", "b21", "b31", "b41", "b51");
+        List<String> ids = new ArrayList<>();
         RoundedImageView tb;
         int IDRessource;
+
+        for(int i = 1;i < numberOfPlayersPerTeam +1;i++){
+            ids.add("b" + i + "1");
+        }
 
         int i = 0;
         for (String s : ids){
@@ -226,7 +240,12 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
     }
 
     public void setUltimateTimerButtonsImage(ArrayList<Summoner> summonersList){
-        List<String> ids = Arrays.asList("b12", "b22", "b32", "b42", "b52");
+        List<String> ids = new ArrayList<>();
+
+        for(int i = 1;i < numberOfPlayersPerTeam +1;i++){
+            ids.add("b" + i + "2");
+        }
+
         TimerButton tb;
         int IDRessource;
 
@@ -240,7 +259,12 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
     }
 
     public void setSpellsTimerButtonsImage(ArrayList<Summoner> summonersList){
-        List<String> ids = Arrays.asList("b13", "b23", "b33", "b43", "b53");
+        List<String> ids = new ArrayList<>();
+
+        for(int i = 1;i < numberOfPlayersPerTeam +1;i++){
+            ids.add("b" + i + "3");
+        }
+
         TimerButton tb;
         int IDRessource;
 
@@ -252,7 +276,12 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             i++;
         }
 
-        ids = Arrays.asList("b14", "b24", "b34", "b44", "b54");
+        ids.removeAll(ids);
+
+        for(int j = 1;j < numberOfPlayersPerTeam +1;j++){
+            ids.add("b" + j + "4");
+        }
+
         i = 0;
         for (String s : ids){
             IDRessource = getResources().getIdentifier(s, "id",  getActivity().getBaseContext().getPackageName());
@@ -263,11 +292,21 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
     }
 
     public void buildTimerTable(ArrayList<Summoner> teamSummonersList){
-        List<String> summonerSpellButtons = Arrays.asList("b13", "b14", "b23", "b24", "b33", "b34", "b43", "b44", "b53", "b54");
-        List<String> ultimateButtons = Arrays.asList("b12", "b22", "b32", "b42", "b52");
+        List<String> summonerSpellButtons = new ArrayList<>();
+        List<String> ultimateButtons = new ArrayList<>();
 
-        timerMap.put("b01",(long)420);
-        timerMap.put("b02",(long)360);
+        for(int i = 1;i < numberOfPlayersPerTeam +1;i++){
+            summonerSpellButtons.add("b" + i + "3");
+            summonerSpellButtons.add("b" + i + "4");
+            ultimateButtons.add("b" + i + "2");
+        }
+
+        if(numberOfPlayersPerTeam == 5) {
+            timerMap.put("b01",(long)420);
+            timerMap.put("b02",(long)360);
+        } else if (numberOfPlayersPerTeam == 3) {
+            timerMap.put("b01",(long)300);
+        }
 
         int spellIndex = 0;
         int summonerIndex = 0;
@@ -348,7 +387,7 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             tbtn.setTimer(new Timer(timerDelayToUse, 1000, tbtn.getTimer().getTimerTextView(), tbtn));
             tbtn.getTimer().start();
             tbtn.getTimer().setVisible(true);
-        } else if (tbtn.getTimer() != null && doTimerActivation != true) {
+        } else if (tbtn.getTimer() != null && !doTimerActivation) {
             //On transmet le message
             if (!fromWebSocket) {
                 WsEventHandling.timerDelay(buttonID);
@@ -434,37 +473,35 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             }
         });
     }
-/*
-    public void activateTimer(String buttonID, long timerDelay) {
 
+    //Initialize the timerButton table. This table is used to share timers and cancel all timers
+    public ArrayList<String> initializeTimerButtonsTable() {
 
-        class activateTimer implements Runnable {
-            String buttonID;
-            long timerDelay;
+        ArrayList<String> timerButtons= new ArrayList<>();
 
-            public activateTimer(String buttonID, long timerDelay){
-                this.buttonID = buttonID;
-                this.timerDelay = timerDelay;
-            }
-
-            @Override
-            public void run(){
-
-            }
+        if(numberOfPlayersPerTeam == 5) {
+            timerButtons.add("b01");
+            timerButtons.add("b02");
+        } else if (numberOfPlayersPerTeam == 3) {
+            timerButtons.add("b01");
         }
 
-        Handler h = new Handler();
-        h.post(new activateTimer(buttonID, timerDelay));
-     }
-*/
+        for(int i = 1;i < numberOfPlayersPerTeam +1;i++){
+            timerButtons.add("b" + i + "2");
+            timerButtons.add("b" + i + "3");
+            timerButtons.add("b" + i + "4");
+        }
+
+        return timerButtons;
+    }
 
     public String[][] shareTimers(){
-        List<String> timerButtons = Arrays.asList("b01","b02","b12","b13", "b14", "b22","b23", "b24", "b32","b33", "b34","b42", "b43", "b44", "b52","b53", "b54");
+        List<String> timerButtons = initializeTimerButtonsTable();
 
-        String[][] timersTableToShare = new String[17][2];
+        String[][] timersTableToShare = new String[numberOfTimers][2];
         int count = 0;
 
-        for(int i = 0; i < 17;i++){
+        for(int i = 0; i < numberOfTimers;i++){
             String buttonID = timerButtons.get(i);
             TimerButton tbtn = getButtonFromIdString(buttonID);
 
@@ -492,9 +529,9 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
 
         this.getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                List<String> timerButtons = Arrays.asList("b01","b02","b12", "b13", "b14", "b22", "b23", "b24", "b32", "b33", "b34", "b42", "b43", "b44", "b52", "b53", "b54");
+                List<String> timerButtons = initializeTimerButtonsTable();
 
-                for(int i = 0; i < 17;i++){
+                for(int i = 0; i < numberOfTimers;i++){
                     String buttonID = timerButtons.get(i);
                     TimerButton tbtn = getButtonFromIdString(buttonID);
                     //Si le timer est présent et qu'il est en marche

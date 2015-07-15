@@ -284,6 +284,8 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         return super.onKeyDown(keyCode, event);
     }
 
+    //Called when the websocket is disconnected.
+    //This function clean the channel summary and display a message to the user
     public void handleDisconnection() {
         this.runOnUiThread(new Runnable() {
                                @Override
@@ -304,6 +306,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         );
     }
 
+    //Display a message to say that the user is reconnected
     public void reconnectionNotification() {
         this.runOnUiThread(new Runnable() {
                @Override

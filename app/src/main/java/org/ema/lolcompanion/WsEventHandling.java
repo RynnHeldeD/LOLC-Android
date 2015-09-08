@@ -218,26 +218,6 @@ public class WsEventHandling {
         }.start();
     }
 
-    public static void cancelTimer(final String buttonIdGrid){
-        class WebSocketAction implements Runnable {
-            public String buttonIdGrid;
-
-            public WebSocketAction(String buttonIdGrid){
-                this.buttonIdGrid = buttonIdGrid;
-            }
-
-            public void run(){
-                CompanionActivity.instance.stopTimer(buttonIdGrid, true);
-            }
-        }
-
-        new Thread(){
-            public void run(){
-                CompanionActivity.instanceCompanion.runOnUiThread(new WebSocketAction(buttonIdGrid));
-            }
-        }.start();
-    }
-
     public static void updateChannelPlayersThread(final JSONArray playersInChannelJson) {
         CompanionActivity.instance.getActivity().runOnUiThread(new Runnable() {
             public void run() {

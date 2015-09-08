@@ -1,19 +1,19 @@
-/* Copyright © 2015
+/* Copyright ï¿½ 2015
  * GHARBI Eddy
  * PARRENO Michel
  * VELTRI Constantin
  * NGUYEN Remy
  * GALLI Romain
  *
- * Cette œuvre est protégée par le droit d’auteur et strictement réservée à l’usage privé du
- * client. Toute reproduction ou diffusion au profit de tiers, à titre
- * gratuit ou onéreux, de
- * tout ou partie de cette œuvre est strictement interdite et constitue une contrefaçon prévue
- * par les articles L 335-2 et suivants du Code de la propriété
+ * Cette ï¿½uvre est protï¿½gï¿½e par le droit dï¿½auteur et strictement rï¿½servï¿½e ï¿½ lï¿½usage privï¿½ du
+ * client. Toute reproduction ou diffusion au profit de tiers, ï¿½ titre
+ * gratuit ou onï¿½reux, de
+ * tout ou partie de cette ï¿½uvre est strictement interdite et constitue une contrefaï¿½on prï¿½vue
+ * par les articles L 335-2 et suivants du Code de la propriï¿½tï¿½
  * intellectuelle. Les ayants-droits se
- * réservent le droit de poursuivre toute atteinte à leurs droits de
- * propriété intellectuelle devant les
- * juridictions civiles ou pénales.
+ * rï¿½servent le droit de poursuivre toute atteinte ï¿½ leurs droits de
+ * propriï¿½tï¿½ intellectuelle devant les
+ * juridictions civiles ou pï¿½nales.
  */
 
 package org.ema.lolcompanion;
@@ -119,7 +119,7 @@ public class MainActivity extends Activity {
         View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
         TextView text = (TextView) layout.findViewById(R.id.text);
 
-		if((System.currentTimeMillis() / 1000) > 1441091736){
+		if((System.currentTimeMillis() / 1000) > 1444867200){
 			text.setText(getResources().getString(R.string.beta_test_version_end));
             Toast toast = new Toast(getApplicationContext());
             toast.setGravity(Gravity.BOTTOM, 0, 40);

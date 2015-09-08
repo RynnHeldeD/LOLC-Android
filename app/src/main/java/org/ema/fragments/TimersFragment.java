@@ -49,7 +49,6 @@ import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -60,29 +59,18 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
     public HashMap<String,Integer> timerUltiLvlMap;
     public static SettingsManager settingsManager = null;
 
+   public static Integer numberOfPlayersPerTeam;
+   public  static Integer numberOfTimers;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout resource that'll be returned
         View rootView = inflater.inflate(R.layout.activity_timer, container, false);
         timerMap = new HashMap<String,Long>();
 
+        //Say to the websocket that we are not disconnected from the server
         WebSocket.alreadyDisconnected = false;
-
-        //Set the cooldown to 0 for all champ
-        timerCdrMap = new HashMap<String,Integer>();
-        timerCdrMap.put("b12",0);
-        timerCdrMap.put("b22",0);
-        timerCdrMap.put("b32",0);
-        timerCdrMap.put("b42",0);
-        timerCdrMap.put("b52", 0);
-
-        //Set the ultimate level to 6 for all champ
-        timerUltiLvlMap = new HashMap<String,Integer>();
-        timerUltiLvlMap.put("b12",6);
-        timerUltiLvlMap.put("b22",6);
-        timerUltiLvlMap.put("b32",6);
-        timerUltiLvlMap.put("b42",6);
-        timerUltiLvlMap.put("b52",6);
 
         Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
         TextView timers = (TextView) rootView.findViewById(R.id.timers);
@@ -91,6 +79,7 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         TimersFragment.settingsManager = new SettingsManager();
         PreferenceManager.getDefaultSharedPreferences(this.getActivity().getApplicationContext());
 
+        //Connect the websocket and send the picked champion to the server
         WebSocket.connectWebSocket();
 
         return rootView;
@@ -101,9 +90,11 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
     public void onStart() {
         super.onStart();
 
+        //Get the summoner list
         Summoner user = (Summoner) GlobalDataManager.get("user");
         ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
 
+        //Filtering to get the list of the team of the player
         // Recuperation et tri des summoners de l'equipe du joueur
         ArrayList<Summoner> teamSummonersList = new ArrayList<Summoner>();
         for(Summoner s : summonersList){
@@ -112,15 +103,55 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             }
         }
 
-        // Changement des bitmap
+        //Used to initialize the good number of timers on the timer page
+        numberOfPlayersPerTeam = teamSummonersList.size();
+
+        //Set the cooldown to 0 and the ultimate level to 6 for all champ in the two hashmap
+        InitializeTimerCdrMapAndTimerUltiLvlMap();
+
+        //Used to initialize timers
+        numberOfTimers = numberOfPlayersPerTeam * 3;
+
+        //We had 2 more timer if we are in 5v5 for the nash and drake, and 1 timer in 3v3 for the spider
+        if (numberOfPlayersPerTeam == 5) {
+            numberOfTimers += 2;
+        } else if (numberOfPlayersPerTeam == 3) {
+            numberOfTimers += 1;
+            //We hide the two last views b41 and b51
+            LinearLayout layoutb41 = (LinearLayout) getActivity().findViewById(R.id.b41).getParent().getParent();
+            LinearLayout layoutb51 = (LinearLayout) getActivity().findViewById(R.id.b51).getParent().getParent();
+            layoutb41.setVisibility(View.INVISIBLE);
+            layoutb51.setVisibility(View.INVISIBLE);
+        }
+
+        // Bitmap loading
         this.setTimerButtonsImage(teamSummonersList);
 
+        //ACHTUNG !!! Du bist eine grosse Wurst.
+        //For the moment, if the number of the player is different of 10 we don't loading timers because the DAO is not ready
         if (summonersList.size() == 10){
-        //Chargement des timers
+        //Creation of the hashmap where the index of the timer (ex: b12) and the cooldown are listed. (Ex : b12:23sec, b13:45sec...)
             this.buildTimerTable(teamSummonersList);
         }
     }
 
+    public void InitializeTimerCdrMapAndTimerUltiLvlMap(){
+
+        //Theses hashmap are used to calculate the timer cooldown.
+        //To calculate the timer cooldown we take the cooldown from the timerMap , and we retranch the CDR from timerCdrMap.
+        timerCdrMap = new HashMap<String,Integer>();
+
+        //In this hashmap we store the ultimate level of the champ. It's used to get the good cooldown from the DAO.
+        timerUltiLvlMap = new HashMap<String,Integer>();
+
+        //For each players in the enemy team we add the
+        for(int i = 1;i < numberOfPlayersPerTeam +1;i++){
+            timerCdrMap.put("b" + i + "2",0);
+            timerUltiLvlMap.put("b" + i + "2",6);
+        }
+    }
+
+    //Clean the view where there is the icon list of the mates in the same channel
     public void cleanChannelSummary(){
         LinearLayout channelSummary = (LinearLayout) getActivity().findViewById(R.id.channel_summary);
         channelSummary.removeAllViewsInLayout();
@@ -163,11 +194,12 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String passphrase) {
         // Websocket - secure channel
-        String oldChannel = this.settingsManager.get(this.getActivity(),"passphrase");
+        String oldChannel = TimersFragment.settingsManager.get(this.getActivity(),"passphrase");
 
-        //Si la nouvelle passphrase est differente de l'ancienne
+        //If the old passphrase is different, we save the new
         if (!oldChannel.equals(passphrase)) {
-            this.settingsManager.set(this.getActivity(), "passphrase", passphrase);
+            TimersFragment.settingsManager.set(this.getActivity(), "passphrase", passphrase);
+            //Switching channel
             WsEventHandling.switchChannel(passphrase);
         }
     }
@@ -182,14 +214,16 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
 
         //Updating the CDR only if it's a different number
         if(timerCdrMap.get(buttonUltimateId) != cooldown){
+            //Update the hashmap
             timerCdrMap.put(buttonUltimateId, cooldown);
             WsEventHandling.sendCdr(buttonUltimateId, cooldown);
         }
 
         //Updating the ultimate level only if it's a different number
         if(timerUltiLvlMap.get(buttonUltimateId) != ultiLvl){
+            //Update the hashmap
             timerUltiLvlMap.put(buttonUltimateId, ultiLvl);
-            updateCooldownWithNewUltimateLevel(buttonUltimateId,ultiLvl);
+            updateCooldownWithNewUltimateLevel(buttonUltimateId, ultiLvl);
             WsEventHandling.sendUltiLevel(buttonUltimateId, ultiLvl);
         }
 
@@ -202,7 +236,10 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
 
     }
 
+    //Loading images for all timers
     public void setTimerButtonsImage(ArrayList<Summoner> teamSummonersList){
+        //ACHTUNG !!! Du bist eine grosse Wurst.
+        //For the moment, if the number of the player in a team is different of 5 we don't loading timers because the DAO is not ready
         if (teamSummonersList.size() == 5){
             this.setChampionTimerButtonsImage(teamSummonersList);
             this.setUltimateTimerButtonsImage(teamSummonersList);
@@ -210,12 +247,19 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         }
     }
 
+    //Load the champions icons
     public void setChampionTimerButtonsImage(ArrayList<Summoner> summonersList){
-        List<String> ids = Arrays.asList("b11", "b21", "b31", "b41", "b51");
+        List<String> ids = new ArrayList<>();
         RoundedImageView tb;
         int IDRessource;
 
+        //For each players in the enemy team, we had the reference to the champion icon (ex: b11,b21,b31...)
+        for(int i = 1;i < numberOfPlayersPerTeam +1;i++){
+            ids.add("b" + i + "1");
+        }
+
         int i = 0;
+        //For each references we had before, we load the images in the referenced element in the view
         for (String s : ids){
             IDRessource = getResources().getIdentifier(s, "id", getActivity().getBaseContext().getPackageName());
             tb = (RoundedImageView) getActivity().findViewById(IDRessource);
@@ -225,12 +269,20 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         }
     }
 
+    //Load the champions ultimate icons
     public void setUltimateTimerButtonsImage(ArrayList<Summoner> summonersList){
-        List<String> ids = Arrays.asList("b12", "b22", "b32", "b42", "b52");
+        List<String> ids = new ArrayList<>();
+
+        //For each players in the enemy team, we had the reference to the ultimate icon (ex: b12,b22,b32...)
+        for(int i = 1;i < numberOfPlayersPerTeam +1;i++){
+            ids.add("b" + i + "2");
+        }
+
         TimerButton tb;
         int IDRessource;
 
         int i = 0;
+        //For each references we had before, we load the images in the referenced element in the view
         for (String s : ids){
             IDRessource = getResources().getIdentifier(s, "id",  getActivity().getBaseContext().getPackageName());
             tb = (TimerButton)  getActivity().findViewById(IDRessource);
@@ -239,12 +291,20 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         }
     }
 
+    //Load the champions summoner spells icons
     public void setSpellsTimerButtonsImage(ArrayList<Summoner> summonersList){
-        List<String> ids = Arrays.asList("b13", "b23", "b33", "b43", "b53");
+        List<String> ids = new ArrayList<>();
+
+        //For each players in the enemy team, we had the reference to the first summoner spell icon (ex: b13,b23,b33...)
+        for(int i = 1;i < numberOfPlayersPerTeam +1;i++){
+            ids.add("b" + i + "3");
+        }
+
         TimerButton tb;
         int IDRessource;
 
         int i = 0;
+        //For each references we had before, we load the images in the referenced element in the view
         for (String s : ids){
             IDRessource = getResources().getIdentifier(s, "id",  getActivity().getBaseContext().getPackageName());
             tb = (TimerButton)  getActivity().findViewById(IDRessource);
@@ -252,8 +312,15 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             i++;
         }
 
-        ids = Arrays.asList("b14", "b24", "b34", "b44", "b54");
+        ids.removeAll(ids);
+
+        //For each players in the enemy team, we had the reference to the second summoner spell icon (ex: b14,b24,b34...)
+        for(int j = 1;j < numberOfPlayersPerTeam +1;j++){
+            ids.add("b" + j + "4");
+        }
+
         i = 0;
+        //For each references we had before, we load the images in the referenced element in the view
         for (String s : ids){
             IDRessource = getResources().getIdentifier(s, "id",  getActivity().getBaseContext().getPackageName());
             tb = (TimerButton)  getActivity().findViewById(IDRessource);
@@ -262,16 +329,32 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         }
     }
 
+    //Build the hashMap where cooldown will be stored. This hashmap will be used each time we push a timer
     public void buildTimerTable(ArrayList<Summoner> teamSummonersList){
-        List<String> summonerSpellButtons = Arrays.asList("b13", "b14", "b23", "b24", "b33", "b34", "b43", "b44", "b53", "b54");
-        List<String> ultimateButtons = Arrays.asList("b12", "b22", "b32", "b42", "b52");
+        List<String> summonerSpellButtons = new ArrayList<>();
+        List<String> ultimateButtons = new ArrayList<>();
 
-        timerMap.put("b01",(long)420);
-        timerMap.put("b02",(long)360);
+        //For each line, we reference three buttons in a List (1 for ulti, 2 for summoners spells)
+        for(int i = 1;i < numberOfPlayersPerTeam +1;i++){
+            summonerSpellButtons.add("b" + i + "3");
+            summonerSpellButtons.add("b" + i + "4");
+            ultimateButtons.add("b" + i + "2");
+        }
+
+        //Depending of the number of players, we had a cooldown the drake / nashor or the spider
+        if(numberOfPlayersPerTeam == 5) {
+            timerMap.put("b01",(long)420);
+            timerMap.put("b02",(long)360);
+        } else if (numberOfPlayersPerTeam == 3) {
+            timerMap.put("b01",(long)300);
+        }
 
         int spellIndex = 0;
         int summonerIndex = 0;
 
+        //For each button referenced before, we get the cooldown from the DAO
+
+        //First we start with the two summoners spells
         for (String s : summonerSpellButtons){
             float cdSummonerSpell = teamSummonersList.get(summonerIndex).getSpells()[spellIndex].getCooldown()[0];
             timerMap.put(s,(long)cdSummonerSpell);
@@ -284,15 +367,13 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             }
         }
 
+        //Then with the ultimates spells
         summonerIndex = 0;
         for (String s : ultimateButtons){
             float cdSummonerSpell = teamSummonersList.get(summonerIndex).getChampion().getSpell().getCooldown()[0];
             timerMap.put(s, (long) cdSummonerSpell);
             summonerIndex++;
         }
-
-
-        Log.v("DAO", "Timer des tableau chargement termine");
     }
 
     //Fonctions pour les évènements WS
@@ -348,7 +429,7 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             tbtn.setTimer(new Timer(timerDelayToUse, 1000, tbtn.getTimer().getTimerTextView(), tbtn));
             tbtn.getTimer().start();
             tbtn.getTimer().setVisible(true);
-        } else if (tbtn.getTimer() != null && doTimerActivation != true) {
+        } else if (tbtn.getTimer() != null && !doTimerActivation) {
             //On transmet le message
             if (!fromWebSocket) {
                 WsEventHandling.timerDelay(buttonID);
@@ -377,6 +458,7 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
     }
     */
 
+    //Called from the WsEventHandling to stop a timer
     public void stopTimer(String buttonID, boolean fromWebSocket){
         class TimerAction implements Runnable {
             String buttonID;
@@ -406,10 +488,12 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         h.post(new TimerAction(buttonID, fromWebSocket));
     }
 
+    //Return a TimerButton from the button ID
     public TimerButton getButtonFromIdString(String buttonID){
         return (TimerButton) getActivity().findViewById(getResources().getIdentifier(buttonID, "id", getActivity().getPackageName()));
     }
 
+    //Called from the WsEventHandling to activate a timer
     public void activateTimer(final String buttonID, final long timerDelay) {
         this.getActivity().runOnUiThread(new Runnable() {
             public void run() {
@@ -434,41 +518,42 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             }
         });
     }
-/*
-    public void activateTimer(String buttonID, long timerDelay) {
 
+    //Initialize the timerButton table. This table is used in an other function to share timers with new mate that joined the channel or to cancel all timers
+    public ArrayList<String> initializeTimerButtonsTable() {
 
-        class activateTimer implements Runnable {
-            String buttonID;
-            long timerDelay;
+        ArrayList<String> timerButtons= new ArrayList<>();
 
-            public activateTimer(String buttonID, long timerDelay){
-                this.buttonID = buttonID;
-                this.timerDelay = timerDelay;
-            }
-
-            @Override
-            public void run(){
-
-            }
+        if(numberOfPlayersPerTeam == 5) {
+            timerButtons.add("b01");
+            timerButtons.add("b02");
+        } else if (numberOfPlayersPerTeam == 3) {
+            timerButtons.add("b01");
         }
 
-        Handler h = new Handler();
-        h.post(new activateTimer(buttonID, timerDelay));
-     }
-*/
+        for(int i = 1;i < numberOfPlayersPerTeam +1;i++){
+            timerButtons.add("b" + i + "2");
+            timerButtons.add("b" + i + "3");
+            timerButtons.add("b" + i + "4");
+        }
 
+        return timerButtons;
+    }
+
+    //Called from the WsEventHandling to shareAlLTimers to a new mate that joined the game
     public String[][] shareTimers(){
-        List<String> timerButtons = Arrays.asList("b01","b02","b12","b13", "b14", "b22","b23", "b24", "b32","b33", "b34","b42", "b43", "b44", "b52","b53", "b54");
+        List<String> timerButtons = initializeTimerButtonsTable();
 
-        String[][] timersTableToShare = new String[17][2];
+        String[][] timersTableToShare = new String[numberOfTimers][2];
         int count = 0;
 
-        for(int i = 0; i < 17;i++){
+        //For each timers in the view
+        for(int i = 0; i < numberOfTimers;i++){
+            //Get the timer ID
             String buttonID = timerButtons.get(i);
             TimerButton tbtn = getButtonFromIdString(buttonID);
 
-            //Si le timer est présent et qu'il est en marche
+            //If the timer is ticking, we had it to the share table
             if (tbtn.getTimer() != null && tbtn.getTimer().isTicking() ) {
                 String timerCurrentTime = tbtn.getTimer().getTimerTextView().getText().toString();
                 long currentTimestamp = Long.parseLong(timerCurrentTime) * 1000;
@@ -478,6 +563,7 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             }
         }
 
+        //When the loop before is finish, the table have some blank cases, so we trim the table to get a well formed table
         String[][] trimmedTable = new String[count][2];
 
         for(int k = 0; k< count;k++){
@@ -488,13 +574,14 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         return trimmedTable;
     }
 
+    //Called from the WsEventHandling to cancelAllTimers when you received the shared timers from your mates
     public void cancelAllTimers(){
 
         this.getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                List<String> timerButtons = Arrays.asList("b01","b02","b12", "b13", "b14", "b22", "b23", "b24", "b32", "b33", "b34", "b42", "b43", "b44", "b52", "b53", "b54");
+                List<String> timerButtons = initializeTimerButtonsTable();
 
-                for(int i = 0; i < 17;i++){
+                for(int i = 0; i < numberOfTimers;i++){
                     String buttonID = timerButtons.get(i);
                     TimerButton tbtn = getButtonFromIdString(buttonID);
                     //Si le timer est présent et qu'il est en marche
@@ -506,17 +593,18 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         });
     }
 
+    //Called from the WsEventHandling to set the new cdr to a champion
     public void setCdr(String buttonId, Integer cdr){
         timerCdrMap.put(buttonId,cdr);
     }
 
+    //Called from the WsEventHandling to set the new ultimate level to a champion
     public void setUltimateLevel(String buttonId, Integer ultiLvl){
         timerUltiLvlMap.put(buttonId,ultiLvl);
         updateCooldownWithNewUltimateLevel(buttonId,ultiLvl);
     }
 
-
-
+    //When a ultimate level is update, we need to update the timerMap who contain the cooldown for all timers
     public void updateCooldownWithNewUltimateLevel(String buttonId, Integer ultiLevel){
         // Summoner user = (Summoner) GlobalDataManager.get("user");
         ArrayList<Summoner> summonersList = (ArrayList<Summoner>)GlobalDataManager.get("summonersList");
@@ -527,6 +615,7 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         //Parsing ultiLevel to get the index in cooldown list
         int indexCooldown;
 
+        //We get the index of the cooldown ultimate in the DAO
         switch (ultiLevel){
             case 6:
                 indexCooldown = 0;
@@ -542,6 +631,7 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
                 break;
         }
 
+        //get the cooldown from the DAO
         float cooldownRatioByLevel = (float)1 - (float)((float)( (float)1 - (new Float(summonersList.get(summonerIndex).getCooldownPerLevelAndCalculCooldowns()))) * (float)ultiLevel);
         float cdSummonerSpell = summonersList.get(summonerIndex).getChampion().getSpell().getCooldown()[indexCooldown] * cooldownRatioByLevel;
 

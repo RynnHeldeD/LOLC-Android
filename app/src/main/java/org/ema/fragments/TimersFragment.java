@@ -117,6 +117,11 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             numberOfTimers += 2;
         } else if (numberOfPlayersPerTeam == 3) {
             numberOfTimers += 1;
+            //We hide the two last views b41 and b51
+            LinearLayout layoutb41 = (LinearLayout) getActivity().findViewById(R.id.b41).getParent().getParent();
+            LinearLayout layoutb51 = (LinearLayout) getActivity().findViewById(R.id.b51).getParent().getParent();
+            layoutb41.setVisibility(View.INVISIBLE);
+            layoutb51.setVisibility(View.INVISIBLE);
         }
 
         // Bitmap loading
@@ -218,7 +223,7 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         if(timerUltiLvlMap.get(buttonUltimateId) != ultiLvl){
             //Update the hashmap
             timerUltiLvlMap.put(buttonUltimateId, ultiLvl);
-            updateCooldownWithNewUltimateLevel(buttonUltimateId,ultiLvl);
+            updateCooldownWithNewUltimateLevel(buttonUltimateId, ultiLvl);
             WsEventHandling.sendUltiLevel(buttonUltimateId, ultiLvl);
         }
 

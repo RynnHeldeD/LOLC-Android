@@ -138,11 +138,6 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             numberOfTimers += 2;
         } else if (numberOfPlayersPerTeam == 3) {
             numberOfTimers += 1;
-            //We hide the two last views b41 and b51
-            LinearLayout layoutb41 = (LinearLayout) getActivity().findViewById(R.id.b41).getParent().getParent();
-            LinearLayout layoutb51 = (LinearLayout) getActivity().findViewById(R.id.b51).getParent().getParent();
-            layoutb41.setVisibility(View.INVISIBLE);
-            layoutb51.setVisibility(View.INVISIBLE);
         }
 
         // Bitmap loading
@@ -229,11 +224,11 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
     public void setTimerButtonsImage(ArrayList<Summoner> teamSummonersList) {
         //ACHTUNG !!! Du bist eine grosse Wurst.
         //For the moment, if the number of the player in a team is different of 5 we don't loading timers because the DAO is not ready
-        if (teamSummonersList.size() == 5) {
+        //if (teamSummonersList.size() == 5) {
             this.setChampionTimerButtonsImage(teamSummonersList);
             this.setUltimateTimerButtonsImage(teamSummonersList);
             this.setSpellsTimerButtonsImage(teamSummonersList);
-        }
+        //}
     }
 
     //Load the champions icons

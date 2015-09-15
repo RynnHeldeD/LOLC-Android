@@ -33,10 +33,10 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.ema.dialogs.ChampionTipDialogFragment;
-import org.ema.dialogs.CooldownTimersDialogFragment;
 import org.ema.dialogs.SecureDialogFragment;
 import org.ema.fragments.AlliesFragment;
 import org.ema.fragments.EnnemiesFragment;
@@ -45,7 +45,7 @@ import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
 
 
-public class CompanionActivity extends FragmentActivity implements ChampionTipDialogFragment.NoticeDialogListener, SecureDialogFragment.NoticeDialogListener, CooldownTimersDialogFragment.NoticeDialogListener {
+public class CompanionActivity extends FragmentActivity implements ChampionTipDialogFragment.NoticeDialogListener, SecureDialogFragment.NoticeDialogListener {
 
     static final int NUMBER_OF_TABS = 3;
     private String[] tabs = {"Ennemies", "Timers", "Allies"};
@@ -177,42 +177,120 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         }
     }
 
-    //Show the dialod to set the cooldown reduction for a champion
-    public void showCooldownReducers(View v) {
-        Bundle args = new Bundle();
+    //Handles the changing of lvl champs
+    public void setChampionLVL(View v) {
+        TextView champTxt;
+        int champLvl;
         switch (v.getId()) {
             case R.id.b11:
-                args.putString("name", ennemiesFragment.getSummonersList().get(0).getChampion().getName());
-                args.putString("ennemy", "b11");
-                args.putInt("cdr",timerFragment.timerCdrMap.get("b12"));
-                args.putInt("ultiLvl",timerFragment.timerUltiLvlMap.get("b12"));
+                champTxt = (TextView) findViewById(R.id.b11t);
+                champLvl = Integer.parseInt(champTxt.getText().toString()) + 5;
+                if(champLvl > 16){
+                    champLvl = 6;
+                }
+                timerFragment.timerUltiLvlMap.put("b12", champLvl);
+                WsEventHandling.sendUltiLevel("b12", champLvl);
+                champTxt.setText(String.valueOf(champLvl));
                 break;
             case R.id.b21:
-                args.putString("name", ennemiesFragment.getSummonersList().get(1).getChampion().getName());
-                args.putString("ennemy", "b21");
-                args.putInt("cdr",timerFragment.timerCdrMap.get("b22"));
-                args.putInt("ultiLvl",timerFragment.timerUltiLvlMap.get("b22"));
+                champTxt = (TextView) findViewById(R.id.b21t);
+                champLvl = Integer.parseInt(champTxt.getText().toString()) + 5;
+                if(champLvl > 16){
+                    champLvl = 6;
+                }
+                timerFragment.timerUltiLvlMap.put("b22", champLvl);
+                WsEventHandling.sendUltiLevel("b22", champLvl);
+                champTxt.setText(String.valueOf(champLvl));
                 break;
             case R.id.b31:
-                args.putString("name", ennemiesFragment.getSummonersList().get(2).getChampion().getName());
-                args.putString("ennemy", "b31");
-                args.putInt("cdr",timerFragment.timerCdrMap.get("b32"));
-                args.putInt("ultiLvl",timerFragment.timerUltiLvlMap.get("b32"));
+                champTxt = (TextView) findViewById(R.id.b31t);
+                champLvl = Integer.parseInt(champTxt.getText().toString()) + 5;
+                if(champLvl > 16){
+                    champLvl = 6;
+                }
+                timerFragment.timerUltiLvlMap.put("b32", champLvl);
+                WsEventHandling.sendUltiLevel("b32", champLvl);
+                champTxt.setText(String.valueOf(champLvl));
                 break;
             case R.id.b41:
-                args.putString("name", ennemiesFragment.getSummonersList().get(3).getChampion().getName());
-                args.putString("ennemy", "b41");
-                args.putInt("cdr",timerFragment.timerCdrMap.get("b42"));
-                args.putInt("ultiLvl",timerFragment.timerUltiLvlMap.get("b42"));
+                champTxt = (TextView) findViewById(R.id.b41t);
+                champLvl = Integer.parseInt(champTxt.getText().toString()) + 5;
+                if(champLvl > 16){
+                    champLvl = 6;
+                }
+                timerFragment.timerUltiLvlMap.put("b42", champLvl);
+                WsEventHandling.sendUltiLevel("b42", champLvl);
+                champTxt.setText(String.valueOf(champLvl));
                 break;
             case R.id.b51:
-                args.putString("name", ennemiesFragment.getSummonersList().get(4).getChampion().getName());
-                args.putString("ennemy", "b51");
-                args.putInt("cdr",timerFragment.timerCdrMap.get("b52"));
-                args.putInt("ultiLvl",timerFragment.timerUltiLvlMap.get("b52"));
+                champTxt = (TextView) findViewById(R.id.b51t);
+                champLvl = Integer.parseInt(champTxt.getText().toString()) + 5;
+                if(champLvl > 16){
+                    champLvl = 6;
+                }
+                timerFragment.timerUltiLvlMap.put("b52", champLvl);
+                WsEventHandling.sendUltiLevel("b52", champLvl);
+                champTxt.setText(String.valueOf(champLvl));
                 break;
         }
-        timerFragment.showCooldownReducers(v, args);
+    }
+
+    //Handles the changing of lvl champs
+    public void setChampionCDR(View v) {
+        TextView champTxt;
+        int champCDR;
+        switch (v.getId()) {
+            case R.id.b10:
+                champTxt = (TextView) findViewById(R.id.b10t);
+                champCDR = Integer.parseInt(champTxt.getText().subSequence(0, champTxt.length() - 1).toString()) + 5;
+                if(champCDR > 40){
+                    champCDR = 0;
+                }
+                timerFragment.timerCdrMap.put("b12", champCDR);
+                WsEventHandling.sendCdr("b12", champCDR);
+                champTxt.setText(String.valueOf(champCDR) + "%");
+                break;
+            case R.id.b20:
+                champTxt = (TextView) findViewById(R.id.b20t);
+                champCDR = Integer.parseInt(champTxt.getText().subSequence(0,champTxt.length()-1).toString()) + 5;
+                if(champCDR > 40){
+                    champCDR = 0;
+                }
+                timerFragment.timerCdrMap.put("b22", champCDR);
+                WsEventHandling.sendCdr("b22", champCDR);
+                champTxt.setText(String.valueOf(champCDR) +"%");
+                break;
+            case R.id.b30:
+                champTxt = (TextView) findViewById(R.id.b30t);
+                champCDR = Integer.parseInt(champTxt.getText().subSequence(0, champTxt.length()-1).toString()) + 5;
+                if(champCDR > 40){
+                    champCDR = 0;
+                }
+                timerFragment.timerCdrMap.put("b32", champCDR);
+                WsEventHandling.sendCdr("b32", champCDR);
+                champTxt.setText(String.valueOf(champCDR)+"%");
+                break;
+            case R.id.b40:
+                champTxt = (TextView) findViewById(R.id.b40t);
+                champCDR = Integer.parseInt(champTxt.getText().subSequence(0, champTxt.length()-1).toString()) + 5;
+                if(champCDR > 40){
+                    champCDR = 0;
+                }
+                timerFragment.timerCdrMap.put("b42", champCDR);
+                WsEventHandling.sendCdr("b42", champCDR);
+                champTxt.setText(String.valueOf(champCDR)+"%");
+                break;
+            case R.id.b50:
+                champTxt = (TextView) findViewById(R.id.b50t);
+                champCDR = Integer.parseInt(champTxt.getText().subSequence(0,champTxt.length()-1).toString()) + 5;
+                if(champCDR > 40){
+                    champCDR = 0;
+                }
+                timerFragment.timerCdrMap.put("b52", champCDR);
+                WsEventHandling.sendCdr("b52", champCDR);
+                champTxt.setText(String.valueOf(champCDR)+"%");
+                break;
+        }
     }
 
     //Go to AdvancedStat Activity
@@ -243,11 +321,6 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String passphrase) {
         timerFragment.onDialogPositiveClick(dialog, passphrase);
-    }
-
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog, int cooldown, int ultiLvl, String ennemy_button_id) {
-        timerFragment.onDialogPositiveClick(dialog, cooldown, ultiLvl, ennemy_button_id);
     }
 
     @Override

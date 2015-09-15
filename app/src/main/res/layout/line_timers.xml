@@ -59,7 +59,7 @@
                     android:layout_centerVertical="true"
                     android:layout_gravity="center_vertical"
                     android:clickable="true"
-                    android:onClick="showCooldownReducers"
+                    android:onClick="setChampionLVL"
                     android:src="@drawable/test_round"
                     app:riv_border_color="@color/champions_frame_gold"
                     app:riv_border_width="2dip"
@@ -76,14 +76,10 @@
                     android:layout_alignParentRight="true"
                     android:background="@color/bg_white_transparent"
                     android:gravity="center"
-                    android:shadowColor="#000000"
-                    android:shadowDx="3"
-                    android:shadowDy="-3"
-                    android:shadowRadius="1.5"
-                    android:text=""
+                    android:text="6"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@color/black_font"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
 
             </RelativeLayout>
         </LinearLayout>
@@ -109,7 +105,7 @@
                     android:layout_gravity="center_vertical"
                     android:clickable="true"
                     android:longClickable="true"
-                    android:onClick="timerListener"
+                    android:onClick="setChampionCDR"
                     android:src="@drawable/circle_timer_cdr"
                     app:riv_border_color="@color/champions_frame"
                     app:riv_border_width="2dip"
@@ -125,7 +121,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:gravity="center"
-                    android:text="%"
+                    android:text="0%"
                     android:textAlignment="center"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/light_font"

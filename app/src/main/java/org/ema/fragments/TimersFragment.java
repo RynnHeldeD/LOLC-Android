@@ -37,7 +37,6 @@ import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 
-import org.ema.dialogs.CooldownTimersDialogFragment;
 import org.ema.dialogs.SecureDialogFragment;
 import org.ema.lolcompanion.R;
 import org.ema.lolcompanion.WsEventHandling;
@@ -54,7 +53,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class TimersFragment extends SummonersListFragment implements SecureDialogFragment.NoticeDialogListener, CooldownTimersDialogFragment.NoticeDialogListener {
+public class TimersFragment extends SummonersListFragment implements SecureDialogFragment.NoticeDialogListener {
     public HashMap<String, Long> timerMap;
     public HashMap<String, Integer> timerCdrMap;
     public HashMap<String, Integer> timerUltiLvlMap;
@@ -206,12 +205,6 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         dialog.show(getFragmentManager(), "tips");
     }
 
-    public void showCooldownReducers(View v, Bundle args) {
-        DialogFragment dialog = new CooldownTimersDialogFragment();
-        dialog.show(getFragmentManager(), "cooldowns");
-        dialog.setArguments(args);
-    }
-
     //Function that handles passphrase dialog returned vars
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, String passphrase) {
@@ -224,32 +217,6 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             //Switching channel
             WsEventHandling.switchChannel(passphrase);
         }
-    }
-
-    //function that handles cooldown dialog
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog, int cooldown, int ultiLvl, String ennemy_button_id) {
-        Log.v("MIC", "Ulti LVL For " + ennemy_button_id + " is now " + ultiLvl);
-
-        //Concatain and substring to get the identifier of the ultimate button to compare with timerCdrMap
-        String buttonUltimateId = ennemy_button_id.substring(0, 2) + "2";
-
-        //Updating the CDR only if it's a different number
-        if (timerCdrMap.get(buttonUltimateId) != cooldown) {
-            //Update the hashmap
-            timerCdrMap.put(buttonUltimateId, cooldown);
-            WsEventHandling.sendCdr(buttonUltimateId, cooldown);
-        }
-
-        //Updating the ultimate level only if it's a different number
-        if (timerUltiLvlMap.get(buttonUltimateId) != ultiLvl) {
-            //Update the hashmap
-            timerUltiLvlMap.put(buttonUltimateId, ultiLvl);
-            updateCooldownWithNewUltimateLevel(buttonUltimateId, ultiLvl);
-            WsEventHandling.sendUltiLevel(buttonUltimateId, ultiLvl);
-        }
-
-
     }
 
     @Override

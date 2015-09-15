@@ -27,6 +27,7 @@
     <!-- backgrounds -->
     <color name="bg_black_transparent">#AA000000</color>
     <color name="bg_white_transparent">#88FFFFFF</color>
+    <color name="bg_blue_transparent">#88162f49</color>
     <!-- cadres -->
     <color name="channel_summary_frames">#FFFFFF</color>
     <color name="champions_frame_gold">#ffc952</color>

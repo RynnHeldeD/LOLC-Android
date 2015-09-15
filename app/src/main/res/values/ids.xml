@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
      Copyright © 2015
      GHARBI Eddy
      PARRENO Michel
@@ -19,6 +18,79 @@
 -->
 <resources>
 
-    <item name="secure_channel_edit" type="id"/>
+    <item name="secure_channel_edit" type="id" />
+    <item name="b10" type="id" />
+    <item name="b10t" type="id" />
+    <item name="b11c" type="id" />
+    <item name="b11" type="id" />
+    <item name="b11t" type="id" />
+    <item name="b12c" type="id" />
+    <item name="b12" type="id" />
+    <item name="b12t" type="id" />
+    <item name="b13c" type="id" />
+    <item name="b13" type="id" />
+    <item name="b13t" type="id" />
+    <item name="b14c" type="id" />
+    <item name="b14" type="id" />
+    <item name="b14t" type="id" />
 
+    <item name="b20" type="id" />
+    <item name="b20t" type="id" />
+    <item name="b21c" type="id" />
+    <item name="b21" type="id" />
+    <item name="b21t" type="id" />
+    <item name="b22c" type="id" />
+    <item name="b22" type="id" />
+    <item name="b22t" type="id" />
+    <item name="b23c" type="id" />
+    <item name="b23" type="id" />
+    <item name="b23t" type="id" />
+    <item name="b24c" type="id" />
+    <item name="b24" type="id" />
+    <item name="b24t" type="id" />
+
+    <item name="b30" type="id" />
+    <item name="b30t" type="id" />
+    <item name="b31c" type="id" />
+    <item name="b31" type="id" />
+    <item name="b31t" type="id" />
+    <item name="b32c" type="id" />
+    <item name="b32" type="id" />
+    <item name="b32t" type="id" />
+    <item name="b33c" type="id" />
+    <item name="b33" type="id" />
+    <item name="b33t" type="id" />
+    <item name="b34c" type="id" />
+    <item name="b34" type="id" />
+    <item name="b34t" type="id" />
+
+    <item name="b40" type="id" />
+    <item name="b40t" type="id" />
+    <item name="b41c" type="id" />
+    <item name="b41" type="id" />
+    <item name="b41t" type="id" />
+    <item name="b42c" type="id" />
+    <item name="b42" type="id" />
+    <item name="b42t" type="id" />
+    <item name="b43c" type="id" />
+    <item name="b43" type="id" />
+    <item name="b43t" type="id" />
+    <item name="b44c" type="id" />
+    <item name="b44" type="id" />
+    <item name="b44t" type="id" />
+
+    <item name="b50" type="id" />
+    <item name="b50t" type="id" />
+    <item name="b51c" type="id" />
+    <item name="b51" type="id" />
+    <item name="b51t" type="id" />
+    <item name="b52c" type="id" />
+    <item name="b52" type="id" />
+    <item name="b52t" type="id" />
+    <item name="b53c" type="id" />
+    <item name="b53" type="id" />
+    <item name="b53t" type="id" />
+    <item name="b54c" type="id" />
+    <item name="b54" type="id" />
+    <item name="b54t" type="id" />
 </resources>

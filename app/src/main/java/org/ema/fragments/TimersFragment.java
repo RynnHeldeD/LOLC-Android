@@ -385,10 +385,12 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
                     try {
                         //Divided by 100 to get a number between 0 and 1 for the next multiplication
                         Double cdr = ((double) timerCdrMap.get(buttonID)) / 100;
-                        Log.v("Websocket", "CDR de : " + cdr);
+
                         //Spell cooldown without cdr% of this spell
                         Double timerDelayWithCdr = timerMap.get(buttonID) * 1000 - (timerMap.get(buttonID) * 1000) * cdr;
                         timerDelayToUse = Math.round(timerDelayWithCdr);
+
+                        Log.v("Websocket","Cdr:" + Double.toString(cdr) + ".TimerSpell:" + Double.toString(timerMap.get(buttonID)));
                     } catch (Exception e) {
                         timerDelayToUse = timerMap.get(buttonID) * 1000 - delayOfTransfert;
                     }
@@ -589,7 +591,8 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
 
     //Called from the WsEventHandling to set the new cdr to a champion
     public void setCdr(String buttonId, Integer cdr) {
-        timerCdrMap.put(buttonId, cdr);
+        //The button bx0 is sended from the other device, but we neeed to put in timerUltiLvlMap a button with this form bx2. So we substring
+        timerCdrMap.put(buttonId.substring(0,2) + "2", cdr);
 
         final String cdrString =  cdr.toString() + "%";
         final String buttonIdFinal = buttonId;
@@ -605,8 +608,10 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
 
     //Called from the WsEventHandling to set the new ultimate level to a champion
     public void setUltimateLevel(String buttonId, Integer ultiLvl) {
-        timerUltiLvlMap.put(buttonId, ultiLvl);
-        updateCooldownWithNewUltimateLevel(buttonId, ultiLvl);
+
+        //The button bx1 is sended from the other device, but we neeed to put in timerUltiLvlMap a button with this form bx2. So we substring
+        timerUltiLvlMap.put(buttonId.substring(0,2) + "2", ultiLvl);
+        updateCooldownWithNewUltimateLevel(buttonId.substring(0,2) + "2", ultiLvl);
 
         final String niveauString =  ultiLvl.toString();
         final String buttonIdFinal = buttonId;

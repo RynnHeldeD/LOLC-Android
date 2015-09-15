@@ -188,9 +188,8 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                 if(champLvl > 16){
                     champLvl = 6;
                 }
-                timerFragment.timerUltiLvlMap.put("b12", champLvl);
+                timerFragment.setUltimateLevel("b11",champLvl);
                 WsEventHandling.sendUltiLevel("b11", champLvl);
-                champTxt.setText(String.valueOf(champLvl));
                 break;
             case R.id.b21:
                 champTxt = (TextView) findViewById(R.id.b21t);
@@ -198,9 +197,8 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                 if(champLvl > 16){
                     champLvl = 6;
                 }
-                timerFragment.timerUltiLvlMap.put("b22", champLvl);
+                timerFragment.setUltimateLevel("b21",champLvl);
                 WsEventHandling.sendUltiLevel("b21", champLvl);
-                champTxt.setText(String.valueOf(champLvl));
                 break;
             case R.id.b31:
                 champTxt = (TextView) findViewById(R.id.b31t);
@@ -208,9 +206,8 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                 if(champLvl > 16){
                     champLvl = 6;
                 }
-                timerFragment.timerUltiLvlMap.put("b32", champLvl);
+                timerFragment.setUltimateLevel("b31",champLvl);
                 WsEventHandling.sendUltiLevel("b31", champLvl);
-                champTxt.setText(String.valueOf(champLvl));
                 break;
             case R.id.b41:
                 champTxt = (TextView) findViewById(R.id.b41t);
@@ -218,9 +215,8 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                 if(champLvl > 16){
                     champLvl = 6;
                 }
-                timerFragment.timerUltiLvlMap.put("b42", champLvl);
+                timerFragment.setUltimateLevel("b41",champLvl);
                 WsEventHandling.sendUltiLevel("b41", champLvl);
-                champTxt.setText(String.valueOf(champLvl));
                 break;
             case R.id.b51:
                 champTxt = (TextView) findViewById(R.id.b51t);
@@ -228,9 +224,8 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                 if(champLvl > 16){
                     champLvl = 6;
                 }
-                timerFragment.timerUltiLvlMap.put("b52", champLvl);
+                timerFragment.setUltimateLevel("b51",champLvl);
                 WsEventHandling.sendUltiLevel("b51", champLvl);
-                champTxt.setText(String.valueOf(champLvl));
                 break;
         }
     }

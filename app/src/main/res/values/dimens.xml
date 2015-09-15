@@ -35,12 +35,17 @@
     <dimen name="activity_vertical_vhigh_margin">32dp</dimen>
 
     <!-- Timers size -->
+    <dimen name="timers_summoner_lvl_size">30dp</dimen>
+    <dimen name="timers_summoner_cdr_size">61dp</dimen>
+    <dimen name="timers_summoner_cdr_text_container_height_size">40dp</dimen>
+    <dimen name="timers_summoner_cdr_description_container_height_size">21dp</dimen>
+
     <dimen name="timers_summoner_spell_size">56dp</dimen>
     <dimen name="timers_summoner_ulti_size">66dp</dimen>
     <dimen name="timers_summoner_channel_icon_size">25dp</dimen>
 
     <!-- Timers margin -->
-    <dimen name="timers_summoner_ulti_margin">28dp</dimen>
+    <dimen name="timers_summoner_ulti_margin">34dp</dimen>
 
     <!-- Allies ennemies -->
     <!-- 1dp border x 3 -->

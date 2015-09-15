@@ -208,8 +208,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_high_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_high_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginTop="-10dp"
         android:orientation="vertical"
         tools:context="org.ema.lolcompanion.TimerActivity">
@@ -220,17 +220,26 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:paddingBottom="@dimen/activity_horizontal_margin"
-            android:paddingLeft="@dimen/activity_vertical_margin"
-            android:paddingRight="@dimen/activity_vertical_margin"
             android:paddingTop="@dimen/activity_horizontal_margin"
             tools:context="org.ema.lolcompanion.TimerActivity">
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            xmlns:custom="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/b11c"
+            android:layout_width="@dimen/timers_summoner_ulti_size"
+            android:layout_height="@dimen/timers_summoner_ulti_size"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="@dimen/timers_summoner_ulti_margin"
+            android:layout_marginRight="@dimen/timers_summoner_ulti_margin"
+            >
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/b11"
                 android:layout_width="@dimen/timers_summoner_ulti_size"
                 android:layout_height="@dimen/timers_summoner_ulti_size"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
                 android:clickable="true"
@@ -243,6 +252,92 @@
                 app:riv_oval="false"
                 app:riv_tile_mode="clamp" />
 
+            <TextView
+                android:id="@+id/b11t"
+                android:layout_width="@dimen/timers_summoner_lvl_size"
+                android:layout_height="@dimen/timers_summoner_lvl_size"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:background="@color/bg_white_transparent"
+                android:gravity="center"
+                android:shadowColor="#000000"
+                android:shadowDx="3"
+                android:shadowDy="-3"
+                android:shadowRadius="1.5"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/black_font"
+                android:visibility="gone" />
+
+            </RelativeLayout>
+
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                xmlns:custom="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/b10c"
+                android:layout_width="@dimen/timers_summoner_cdr_size"
+                android:layout_height="@dimen/timers_summoner_cdr_size"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/timers_summoner_ulti_margin"
+                android:layout_marginRight="@dimen/timers_summoner_ulti_margin"
+                android:layout_toLeftOf="@+id/b12c"
+                android:layout_toStartOf="@+id/b12c">
+
+                <org.ema.utils.TimerButton
+                    android:id="@+id/b10"
+                    android:layout_width="@dimen/timers_summoner_cdr_size"
+                    android:layout_height="@dimen/timers_summoner_cdr_size"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    android:longClickable="true"
+                    android:onClick="timerListener"
+                    android:src="@drawable/circle_timer"
+                    app:riv_border_color="@color/champions_frame"
+                    app:riv_border_width="2dip"
+                    app:riv_corner_radius="@dimen/timers_summoner_cdr_size"
+                    app:riv_mutate_background="true"
+                    app:riv_oval="false"
+                    app:riv_tile_mode="clamp" />
+
+                <TextView
+                    android:id="@+id/b10t"
+                    android:layout_width="@dimen/timers_summoner_cdr_size"
+                    android:layout_height="@dimen/timers_summoner_cdr_text_container_height_size"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="0dp"
+                    android:gravity="center"
+                    android:shadowColor="#000000"
+                    android:shadowDx="3"
+                    android:shadowDy="-3"
+                    android:shadowRadius="1.5"
+                    android:text="11%"
+                    android:textAlignment="center"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/black_font"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:layout_width="@dimen/timers_summoner_cdr_size"
+                    android:layout_height="@dimen/timers_summoner_cdr_description_container_height_size"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="0dp"
+                    android:gravity="center"
+                    android:shadowColor="#000000"
+                    android:shadowDx="3"
+                    android:shadowDy="-3"
+                    android:shadowRadius="1.5"
+                    android:text="CDR"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/black_font"
+                    android:visibility="visible" />
+            </RelativeLayout>
+
+
+
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 xmlns:custom="http://schemas.android.com/apk/res-auto"
@@ -250,8 +345,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/timers_summoner_ulti_margin"
-                android:layout_marginRight="@dimen/timers_summoner_ulti_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:layout_toLeftOf="@+id/b13c"
                 android:layout_toStartOf="@+id/b13c">
 
@@ -411,23 +506,53 @@
             android:paddingTop="@dimen/activity_horizontal_margin"
             tools:context="org.ema.lolcompanion.TimerActivity">
 
-            <com.makeramen.roundedimageview.RoundedImageView
-                android:id="@+id/b21"
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                xmlns:custom="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/b21c"
                 android:layout_width="@dimen/timers_summoner_ulti_size"
                 android:layout_height="@dimen/timers_summoner_ulti_size"
+                android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_gravity="center_vertical"
-                android:clickable="true"
-                android:onClick="showCooldownReducers"
-                android:src="@drawable/test_round"
-                app:riv_border_color="@color/champions_frame_gold"
-                app:riv_border_width="2dip"
-                app:riv_corner_radius="0dip"
-                app:riv_mutate_background="true"
-                app:riv_oval="false"
-                app:riv_tile_mode="clamp" />
+                android:layout_marginEnd="@dimen/timers_summoner_ulti_margin"
+                android:layout_marginRight="@dimen/timers_summoner_ulti_margin"
+                >
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/b21"
+                    android:layout_width="@dimen/timers_summoner_ulti_size"
+                    android:layout_height="@dimen/timers_summoner_ulti_size"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    android:onClick="showCooldownReducers"
+                    android:src="@drawable/test_round"
+                    app:riv_border_color="@color/champions_frame_gold"
+                    app:riv_border_width="2dip"
+                    app:riv_corner_radius="0dip"
+                    app:riv_mutate_background="true"
+                    app:riv_oval="false"
+                    app:riv_tile_mode="clamp" />
+
+                <TextView
+                    android:id="@+id/b21t"
+                    android:layout_width="@dimen/timers_summoner_lvl_size"
+                    android:layout_height="@dimen/timers_summoner_lvl_size"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@color/bg_white_transparent"
+                    android:gravity="center"
+                    android:shadowColor="#000000"
+                    android:shadowDx="3"
+                    android:shadowDy="-3"
+                    android:shadowRadius="1.5"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/black_font"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
 
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
@@ -597,23 +722,53 @@
             android:paddingTop="@dimen/activity_horizontal_margin"
             tools:context="org.ema.lolcompanion.TimerActivity">
 
-            <com.makeramen.roundedimageview.RoundedImageView
-                android:id="@+id/b31"
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                xmlns:custom="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/b31c"
                 android:layout_width="@dimen/timers_summoner_ulti_size"
                 android:layout_height="@dimen/timers_summoner_ulti_size"
+                android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_gravity="center_vertical"
-                android:clickable="true"
-                android:onClick="showCooldownReducers"
-                android:src="@drawable/test_round"
-                app:riv_border_color="@color/champions_frame_gold"
-                app:riv_border_width="2dip"
-                app:riv_corner_radius="0dip"
-                app:riv_mutate_background="true"
-                app:riv_oval="false"
-                app:riv_tile_mode="clamp" />
+                android:layout_marginEnd="@dimen/timers_summoner_ulti_margin"
+                android:layout_marginRight="@dimen/timers_summoner_ulti_margin"
+                >
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/b31"
+                    android:layout_width="@dimen/timers_summoner_ulti_size"
+                    android:layout_height="@dimen/timers_summoner_ulti_size"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    android:onClick="showCooldownReducers"
+                    android:src="@drawable/test_round"
+                    app:riv_border_color="@color/champions_frame_gold"
+                    app:riv_border_width="2dip"
+                    app:riv_corner_radius="0dip"
+                    app:riv_mutate_background="true"
+                    app:riv_oval="false"
+                    app:riv_tile_mode="clamp" />
+
+                <TextView
+                    android:id="@+id/b31t"
+                    android:layout_width="@dimen/timers_summoner_lvl_size"
+                    android:layout_height="@dimen/timers_summoner_lvl_size"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@color/bg_white_transparent"
+                    android:gravity="center"
+                    android:shadowColor="#000000"
+                    android:shadowDx="3"
+                    android:shadowDy="-3"
+                    android:shadowRadius="1.5"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/black_font"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
 
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
@@ -783,23 +938,53 @@
             android:paddingTop="@dimen/activity_horizontal_margin"
             tools:context="org.ema.lolcompanion.TimerActivity">
 
-            <com.makeramen.roundedimageview.RoundedImageView
-                android:id="@+id/b41"
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                xmlns:custom="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/b41c"
                 android:layout_width="@dimen/timers_summoner_ulti_size"
                 android:layout_height="@dimen/timers_summoner_ulti_size"
+                android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_gravity="center_vertical"
-                android:clickable="true"
-                android:onClick="showCooldownReducers"
-                android:src="@drawable/test_round"
-                app:riv_border_color="@color/champions_frame_gold"
-                app:riv_border_width="2dip"
-                app:riv_corner_radius="0dip"
-                app:riv_mutate_background="true"
-                app:riv_oval="false"
-                app:riv_tile_mode="clamp" />
+                android:layout_marginEnd="@dimen/timers_summoner_ulti_margin"
+                android:layout_marginRight="@dimen/timers_summoner_ulti_margin"
+                >
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/b41"
+                    android:layout_width="@dimen/timers_summoner_ulti_size"
+                    android:layout_height="@dimen/timers_summoner_ulti_size"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    android:onClick="showCooldownReducers"
+                    android:src="@drawable/test_round"
+                    app:riv_border_color="@color/champions_frame_gold"
+                    app:riv_border_width="2dip"
+                    app:riv_corner_radius="0dip"
+                    app:riv_mutate_background="true"
+                    app:riv_oval="false"
+                    app:riv_tile_mode="clamp" />
+
+                <TextView
+                    android:id="@+id/b41t"
+                    android:layout_width="@dimen/timers_summoner_lvl_size"
+                    android:layout_height="@dimen/timers_summoner_lvl_size"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@color/bg_white_transparent"
+                    android:gravity="center"
+                    android:shadowColor="#000000"
+                    android:shadowDx="3"
+                    android:shadowDy="-3"
+                    android:shadowRadius="1.5"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/black_font"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
 
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
@@ -969,12 +1154,23 @@
             android:paddingTop="@dimen/activity_horizontal_margin"
             tools:context="org.ema.lolcompanion.TimerActivity">
 
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            xmlns:custom="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/b51c"
+            android:layout_width="@dimen/timers_summoner_ulti_size"
+            android:layout_height="@dimen/timers_summoner_ulti_size"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="@dimen/timers_summoner_ulti_margin"
+            android:layout_marginRight="@dimen/timers_summoner_ulti_margin"
+            >
+
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/b51"
                 android:layout_width="@dimen/timers_summoner_ulti_size"
                 android:layout_height="@dimen/timers_summoner_ulti_size"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
                 android:clickable="true"
@@ -986,6 +1182,25 @@
                 app:riv_mutate_background="true"
                 app:riv_oval="false"
                 app:riv_tile_mode="clamp" />
+
+            <TextView
+                android:id="@+id/b51t"
+                android:layout_width="@dimen/timers_summoner_lvl_size"
+                android:layout_height="@dimen/timers_summoner_lvl_size"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:background="@color/bg_white_transparent"
+                android:gravity="center"
+                android:shadowColor="#000000"
+                android:shadowDx="3"
+                android:shadowDy="-3"
+                android:shadowRadius="1.5"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/black_font"
+                android:visibility="gone" />
+
+        </RelativeLayout>
 
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"

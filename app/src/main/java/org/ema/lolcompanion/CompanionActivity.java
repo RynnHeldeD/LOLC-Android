@@ -189,7 +189,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                     champLvl = 6;
                 }
                 timerFragment.timerUltiLvlMap.put("b12", champLvl);
-                WsEventHandling.sendUltiLevel("b12", champLvl);
+                WsEventHandling.sendUltiLevel("b11", champLvl);
                 champTxt.setText(String.valueOf(champLvl));
                 break;
             case R.id.b21:
@@ -199,7 +199,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                     champLvl = 6;
                 }
                 timerFragment.timerUltiLvlMap.put("b22", champLvl);
-                WsEventHandling.sendUltiLevel("b22", champLvl);
+                WsEventHandling.sendUltiLevel("b21", champLvl);
                 champTxt.setText(String.valueOf(champLvl));
                 break;
             case R.id.b31:
@@ -209,7 +209,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                     champLvl = 6;
                 }
                 timerFragment.timerUltiLvlMap.put("b32", champLvl);
-                WsEventHandling.sendUltiLevel("b32", champLvl);
+                WsEventHandling.sendUltiLevel("b31", champLvl);
                 champTxt.setText(String.valueOf(champLvl));
                 break;
             case R.id.b41:
@@ -219,7 +219,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                     champLvl = 6;
                 }
                 timerFragment.timerUltiLvlMap.put("b42", champLvl);
-                WsEventHandling.sendUltiLevel("b42", champLvl);
+                WsEventHandling.sendUltiLevel("b41", champLvl);
                 champTxt.setText(String.valueOf(champLvl));
                 break;
             case R.id.b51:
@@ -229,7 +229,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                     champLvl = 6;
                 }
                 timerFragment.timerUltiLvlMap.put("b52", champLvl);
-                WsEventHandling.sendUltiLevel("b52", champLvl);
+                WsEventHandling.sendUltiLevel("b51", champLvl);
                 champTxt.setText(String.valueOf(champLvl));
                 break;
         }
@@ -247,7 +247,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                     champCDR = 0;
                 }
                 timerFragment.timerCdrMap.put("b12", champCDR);
-                WsEventHandling.sendCdr("b12", champCDR);
+                WsEventHandling.sendCdr("b10", champCDR);
                 champTxt.setText(String.valueOf(champCDR) + "%");
                 break;
             case R.id.b20:
@@ -257,7 +257,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                     champCDR = 0;
                 }
                 timerFragment.timerCdrMap.put("b22", champCDR);
-                WsEventHandling.sendCdr("b22", champCDR);
+                WsEventHandling.sendCdr("b20", champCDR);
                 champTxt.setText(String.valueOf(champCDR) +"%");
                 break;
             case R.id.b30:
@@ -267,7 +267,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                     champCDR = 0;
                 }
                 timerFragment.timerCdrMap.put("b32", champCDR);
-                WsEventHandling.sendCdr("b32", champCDR);
+                WsEventHandling.sendCdr("b30", champCDR);
                 champTxt.setText(String.valueOf(champCDR)+"%");
                 break;
             case R.id.b40:
@@ -277,7 +277,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                     champCDR = 0;
                 }
                 timerFragment.timerCdrMap.put("b42", champCDR);
-                WsEventHandling.sendCdr("b42", champCDR);
+                WsEventHandling.sendCdr("b40", champCDR);
                 champTxt.setText(String.valueOf(champCDR)+"%");
                 break;
             case R.id.b50:
@@ -287,7 +287,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                     champCDR = 0;
                 }
                 timerFragment.timerCdrMap.put("b52", champCDR);
-                WsEventHandling.sendCdr("b52", champCDR);
+                WsEventHandling.sendCdr("b50", champCDR);
                 champTxt.setText(String.valueOf(champCDR)+"%");
                 break;
         }

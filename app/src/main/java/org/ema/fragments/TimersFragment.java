@@ -482,6 +482,11 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         return (TimerButton) getActivity().findViewById(getResources().getIdentifier(buttonID, "id", getActivity().getPackageName()));
     }
 
+    //Return a TextView from the button ID
+    public TextView getTextViewFromIdString(String textViewID) {
+        return (TextView) getActivity().findViewById(getResources().getIdentifier(textViewID, "id", getActivity().getPackageName()));
+    }
+
     //Called from the WsEventHandling to activate a timer
     public void activateTimer(final String buttonID, final long timerDelay) {
         this.getActivity().runOnUiThread(new Runnable() {
@@ -585,12 +590,33 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
     //Called from the WsEventHandling to set the new cdr to a champion
     public void setCdr(String buttonId, Integer cdr) {
         timerCdrMap.put(buttonId, cdr);
+
+        final String cdrString =  cdr.toString() + "%";
+        final String buttonIdFinal = buttonId;
+
+        this.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                //We add "t" because the % of the button is named bxxt
+                TextView tbtn = getTextViewFromIdString(buttonIdFinal + "t");
+                tbtn.setText(cdrString);
+            }});
+
     }
 
     //Called from the WsEventHandling to set the new ultimate level to a champion
     public void setUltimateLevel(String buttonId, Integer ultiLvl) {
         timerUltiLvlMap.put(buttonId, ultiLvl);
         updateCooldownWithNewUltimateLevel(buttonId, ultiLvl);
+
+        final String niveauString =  ultiLvl.toString();
+        final String buttonIdFinal = buttonId;
+
+        this.getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                //We add "t" because the % of the button is named bxxt
+                TextView tbtn = getTextViewFromIdString(buttonIdFinal + "t");
+                tbtn.setText(niveauString);
+            }});
     }
 
     //When a ultimate level is update, we need to update the timerMap who contain the cooldown for all timers

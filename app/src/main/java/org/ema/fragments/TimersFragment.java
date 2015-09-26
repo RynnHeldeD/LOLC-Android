@@ -76,6 +76,11 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         TextView timers = (TextView) rootView.findViewById(R.id.timers);
         timers.setTypeface(font);
 
+        //we hide nashor and drake because of Riot update (nashor / drake timers are now available on game)
+        //we keep the code here, in order to enable them again if Riot changes its mind.
+        rootView.findViewById(R.id.b01c).setVisibility(View.INVISIBLE);
+        rootView.findViewById(R.id.b02c).setVisibility(View.INVISIBLE);
+
         TimersFragment.settingsManager = new SettingsManager();
         PreferenceManager.getDefaultSharedPreferences(this.getActivity().getApplicationContext());
 

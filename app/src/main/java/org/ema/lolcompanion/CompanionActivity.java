@@ -290,6 +290,10 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
 
     //Go to AdvancedStat Activity
     public void showAdvancedStatistics(View v) {
+        /*
+            SEE FILE : SummonerListFragment.java on line 160 - 170
+            Listener of the view is changed if not enought statistics
+        */
         switch (mPager.getCurrentItem()) {
             case 0:
                 ennemiesFragment.showAdvancedStatistics(v, true);

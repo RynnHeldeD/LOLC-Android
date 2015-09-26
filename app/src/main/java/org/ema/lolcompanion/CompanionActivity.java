@@ -28,7 +28,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -41,6 +40,7 @@ import org.ema.dialogs.SecureDialogFragment;
 import org.ema.fragments.AlliesFragment;
 import org.ema.fragments.EnnemiesFragment;
 import org.ema.fragments.TimersFragment;
+import org.ema.utils.LogUtils;
 import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
 
@@ -144,7 +144,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
 
                 public void run() {
                     if (this.tbtn.isTriggered()) {
-                        Log.v("DAO", this.buttonID + " simple click postponed");
+                        LogUtils.LOGV("DAO", this.buttonID + " simple click postponed");
                         timerFragment.simpleClickTimer(buttonID, 0, false, false);
                         this.tbtn.setTriggered(false);
                     }
@@ -364,7 +364,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
                try{
                    CompanionActivity.instance.cleanChannelSummary();
                } catch (Exception e){
-                   Log.v("Websocket", "Erreur dans handleDisconnection au moment du CleanChannel:" + e.getMessage());
+                   LogUtils.LOGV("Websocket", "Erreur dans handleDisconnection au moment du CleanChannel:" + e.getMessage());
                }
 
                //On dis au websocket que maintenant ça ne sert plus a rien d'afficher des messages d'erreur car l'utilisteur sais qu'il est déconnecté

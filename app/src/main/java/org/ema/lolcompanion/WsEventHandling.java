@@ -19,11 +19,11 @@
 package org.ema.lolcompanion;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import org.ema.model.business.Summoner;
 import org.ema.utils.GameTimestamp;
 import org.ema.utils.GlobalDataManager;
+import org.ema.utils.LogUtils;
 import org.ema.utils.WebSocket;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +40,7 @@ public class WsEventHandling {
     public static String waitingReconnexionMessage = "";
 
     public static void handlingMessage(String message) {
-        Log.v("Websocket:", "message from websocket: " + message);
+        LogUtils.LOGV("Websocket:", "message from websocket: " + message);
 
         try{
 
@@ -52,7 +52,7 @@ public class WsEventHandling {
             } else {
 
                 String action = obj.getString("action");
-                Log.v("Websocket","Action requise: " +  action);
+                LogUtils.LOGV("Websocket", "Action requise: " + action);
 
                 switch (action){
                     case "timer":
@@ -84,7 +84,7 @@ public class WsEventHandling {
                         try {
                             updateTimers(obj.getJSONArray("timers"),obj.getJSONArray("cdr"),obj.getJSONArray("ultiLevel"),obj.getString("timestamp"));
                         } catch (JSONException e){
-                            Log.v("Websocket","Erreur parsage:" + e.getMessage());
+                            LogUtils.LOGV("Websocket", "Erreur parsage:" + e.getMessage());
                         }
                         break;
                     case "sharedCooldown":
@@ -101,7 +101,7 @@ public class WsEventHandling {
                 }
             }
         } catch (JSONException e) {
-            Log.v("Websocket","Error during message parsing: " +e.getMessage());
+            LogUtils.LOGV("Websocket", "Error during message parsing: " + e.getMessage());
         }
     }
 
@@ -175,17 +175,17 @@ public class WsEventHandling {
                     tstmp = new Timestamp(formatUTC.parse(formatUTC.format(new Date())).getTime());
                 } catch (ParseException e) {
                     tstmp = new Timestamp(new Date().getTime());
-                    Log.v("Websocket", "Impossible de parser la current date");
+                    LogUtils.LOGV("Websocket", "Impossible de parser la current date");
                 }
 
                 Timestamp currentTimestamp = Timestamp.valueOf(activationTimestamp);
 
                 try {
-                    Log.v("Websocket", "CurrentTimeStamp get time :" + currentTimestamp.getTime());
+                    LogUtils.LOGV("Websocket", "CurrentTimeStamp get time :" + currentTimestamp.getTime());
                     final long delayOfTransfert = tstmp.getTime() - currentTimestamp.getTime();
                     CompanionActivity.instance.restartTimer(buttonIdGrid, delayOfTransfert, true);
                 } catch (Exception e) {
-                    Log.v("Websocket", "Erreur lors du calcul du delay of transfert");
+                    LogUtils.LOGV("Websocket", "Erreur lors du calcul du delay of transfert");
                 }
             }
         }
@@ -234,14 +234,14 @@ public class WsEventHandling {
                         for(Summoner s : summonersList) {
                             //On passe dans la boucle si ce n'est pas le joueur courant et que c'est un allié
                             if (!s.getName().equals(user.getName()) && s.getTeamId() ==  user.getTeamId() && s.getChampion().getIconName().equals(iconeSummonerName)) {
-                                Log.v("Websocket", "On ajoute l'icone du joueur:" + s.getName());
+                                LogUtils.LOGV("Websocket", "On ajoute l'icone du joueur:" + s.getName());
                                 final Bitmap summonerIconName = s.getChampion().getIcon();
                                  CompanionActivity.instance.appendPlayerIconToChannelSummary(summonerIconName);
                             }
                         }
                     }
                 } catch (JSONException e) {
-                    Log.v("Websocket","Error during message parsing in updateChannelPlayers: " +e.getMessage());
+                    LogUtils.LOGV("Websocket", "Error during message parsing in updateChannelPlayers: " + e.getMessage());
                 }
             }
         });
@@ -266,9 +266,9 @@ public class WsEventHandling {
                         String oldTimeStamp = obj.getString("timestampDeclenchement");
                          messageAfterReconnexionModified = waitingReconnexionMessage.replace(oldTimeStamp,Long.toString(GameTimestamp.getServerTimestamp()));
                     } catch (JSONException e) {
-                        Log.v("Websocket","Erreur : parse : " + e.getMessage());
+                        LogUtils.LOGV("Websocket", "Erreur : parse : " + e.getMessage());
                     } catch (Exception ex){
-                        Log.v("Websocket","Erreur :" + ex.getMessage());
+                        LogUtils.LOGV("Websocket", "Erreur :" + ex.getMessage());
                     }
                 }
                 //si il n'y a pas eu de bug, on envoi la string modifiée, sinon on ne fait rien pour ne pas envoyer de fausses infos
@@ -354,7 +354,7 @@ public class WsEventHandling {
             }
 
         } catch (JSONException e){
-            Log.v("Websocket","Erreur lors de la reception des timers partagés");
+            LogUtils.LOGV("Websocket", "Erreur lors de la reception des timers partagés");
         }
 
     }
@@ -369,9 +369,9 @@ public class WsEventHandling {
 
     public static void getErrorFromJson(JSONObject obj) {
         try {
-            Log.v("Websocket","Error : server return error during action -" + obj.getString("action") + "- message : " + obj.getString("message"));
+            LogUtils.LOGV("Websocket", "Error : server return error during action -" + obj.getString("action") + "- message : " + obj.getString("message"));
         } catch (JSONException e) {
-            Log.v("Websocket:","Error : During message parsing error message: " +e.getMessage());
+            LogUtils.LOGV("Websocket:", "Error : During message parsing error message: " + e.getMessage());
         }
     }
 

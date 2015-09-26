@@ -43,6 +43,7 @@ import org.ema.lolcompanion.WsEventHandling;
 import org.ema.model.business.Summoner;
 import org.ema.utils.GameTimestamp;
 import org.ema.utils.GlobalDataManager;
+import org.ema.utils.LogUtils;
 import org.ema.utils.SettingsManager;
 import org.ema.utils.Timer;
 import org.ema.utils.TimerButton;
@@ -181,7 +182,7 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
 
     //This functions adds dynamically a player icon in the channel summary so user can know who is connected
     public void appendPlayerIconToChannelSummary(Bitmap playerIcon) {
-        Log.v("Websocket", "On passe dans la fonction AppendPlayer");
+        LogUtils.LOGV("Websocket", "On passe dans la fonction AppendPlayer");
         LinearLayout channelSummary = (LinearLayout) getActivity().findViewById(R.id.channel_summary);
         RoundedImageView riv = new RoundedImageView(getActivity());
         riv.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -390,7 +391,7 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
                         Double timerDelayWithCdr = timerMap.get(buttonID) * 1000 - (timerMap.get(buttonID) * 1000) * cdr;
                         timerDelayToUse = Math.round(timerDelayWithCdr);
 
-                        Log.v("Websocket","Cdr:" + Double.toString(cdr) + ".TimerSpell:" + Double.toString(timerMap.get(buttonID)));
+                        LogUtils.LOGV("Websocket", "Cdr:" + Double.toString(cdr) + ".TimerSpell:" + Double.toString(timerMap.get(buttonID)));
                     } catch (Exception e) {
                         timerDelayToUse = timerMap.get(buttonID) * 1000 - delayOfTransfert;
                     }
@@ -655,7 +656,7 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         float cooldownRatioByLevel = (float) 1 - (float) ((float) ((float) 1 - (new Float(summonersList.get(summonerIndex).getCooldownPerLevelAndCalculCooldowns()))) * (float) ultiLevel);
         float cdSummonerSpell = summonersList.get(summonerIndex).getChampion().getSpell().getCooldown()[indexCooldown] * cooldownRatioByLevel;
 
-        Log.v("Websocket", "Update champ " + summonerIndex + " to level " + ultiLevel + " so index cooldown " + indexCooldown);
+        LogUtils.LOGV("Websocket", "Update champ " + summonerIndex + " to level " + ultiLevel + " so index cooldown " + indexCooldown);
 
         timerMap.put(buttonId, (long) cdSummonerSpell);
     }

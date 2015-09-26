@@ -19,7 +19,6 @@
 package org.ema.model.DAO;
 import android.os.AsyncTask;
 import android.os.SystemClock;
-import android.util.Log;
 
 import org.ema.model.business.Champion;
 import org.ema.model.business.LaneProbability;
@@ -31,6 +30,7 @@ import org.ema.model.business.Statistic;
 import org.ema.model.business.Summoner;
 import org.ema.model.business.Item;
 import org.ema.utils.Constant;
+import org.ema.utils.LogUtils;
 import org.ema.utils.SortChampionsArrayList;
 import org.ema.utils.SortIntegerTabArrayList;
 import org.ema.utils.SortSummonerByTeamAndPerf;
@@ -340,7 +340,7 @@ public class CurrentGameDAO {
 
         } catch (Exception e) {
             e.printStackTrace();
-            Log.v("Erreur stats", e.getMessage());
+            LogUtils.LOGV("Erreur stats", e.getMessage());
         }
     }
 
@@ -447,7 +447,7 @@ public class CurrentGameDAO {
             user.getChampion().getStatistic().setCreepChartInfo(creepChartInfo);
     } catch (Exception e) {
             e.printStackTrace();
-            Log.v("Erreur creep", e.getMessage());
+            LogUtils.LOGV("Erreur creep", e.getMessage());
         }
     }
 
@@ -568,10 +568,10 @@ public class CurrentGameDAO {
                 }
             }
 
-            /*Log.v("TOTO","Team = " + summoner.getTeamId());
+            /*LogUtils.LOGV("TOTO","Team = " + summoner.getTeamId());
 
             for (int i = 0; i < nbGamesWithUser.length; i++) {
-                Log.v("PREMADES", nbGamesWithUser[i][0] + " " + nbGamesWithUser[i][1]);
+                LogUtils.LOGV("PREMADES", nbGamesWithUser[i][0] + " " + nbGamesWithUser[i][1]);
             }*/
 
             int limit;
@@ -606,7 +606,7 @@ public class CurrentGameDAO {
                 if(nbGamesWithUser[i][1] >= limit) {
                     for(Summoner premadeCurrent : summoners) {
                         if(premadeCurrent.getId() == nbGamesWithUser[i][0]) {
-                            Log.v("PREMADES",summoner.getName() + " and " + premadeCurrent.getName() + " are premade");
+                            LogUtils.LOGV("PREMADES", summoner.getName() + " and " + premadeCurrent.getName() + " are premade");
 
                             if(premadeCurrent.getPremade() != 0 && summoner.getPremade() != 0) {
                                 //1 and 2 are friends, need merge
@@ -636,7 +636,7 @@ public class CurrentGameDAO {
                 }
             }
             summoner.getDataProcessed().setPremades(true);
-            //Log.v("TOTO", "Limit = " + String.valueOf(limit));
+            //LogUtils.LOGV("TOTO", "Limit = " + String.valueOf(limit));
         } catch (Exception e) {
             summoner.getDataProcessed().setPremades(true);
             e.printStackTrace();
@@ -664,7 +664,7 @@ public class CurrentGameDAO {
             return build;
         }catch (Exception e) {
             e.printStackTrace();
-            Log.v("Erreur creep", e.getMessage());
+            LogUtils.LOGV("Erreur creep", e.getMessage());
             return null;
         }
     }
@@ -776,12 +776,12 @@ public class CurrentGameDAO {
             summoner.getChampion().getStatistic().setDamageTakenPercentage(meanPercentageDamageTakenByUser);
         } catch(Exception e){
             e.printStackTrace();
-            Log.v("Erreur creep", e.getMessage());
+            LogUtils.LOGV("Erreur creep", e.getMessage());
         }
     }
 
     public static void getSummonerFavoriteBuild(Summoner summoner, JSONArray matchHistory) {
-        Log.v("DAO", "Favorite build");
+        LogUtils.LOGV("DAO", "Favorite build");
         ArrayList<int[]> itemHistoy = new ArrayList<>();
         int[] matchItemHistory = new int[6];
         int numberOfItemToAnalyze = 5;
@@ -832,7 +832,7 @@ public class CurrentGameDAO {
                                 }
                             }
                             if (!found) {
-                                //Log.v("DAO", "Item into, user : " + user.getName());
+                                //LogUtils.LOGV("DAO", "Item into, user : " + user.getName());
                                 int itemID = matchItemHistory[j];
                                 if (itemID != 0) {
                                     if(!jsonGlobalItems.isNull(String.valueOf(itemID)))
@@ -865,7 +865,7 @@ public class CurrentGameDAO {
         summoner.getChampion().setBuild(Build);
         } catch (Exception e){
             e.printStackTrace();
-            //Log.v("Erreur creep", e.getMessage());
+            //LogUtils.LOGV("Erreur creep", e.getMessage());
         }
     }
 
@@ -884,7 +884,7 @@ public class CurrentGameDAO {
             return jsonMatches;
         } catch (Exception e) {
             e.printStackTrace();
-            Log.v("Erreur creep", e.getMessage());
+            LogUtils.LOGV("Erreur creep", e.getMessage());
             return null;
         }
     }
@@ -907,7 +907,7 @@ public class CurrentGameDAO {
             }
         } catch(Exception e){
             e.printStackTrace();
-            Log.v("Erreur lanes", e.getMessage());
+            LogUtils.LOGV("Erreur lanes", e.getMessage());
         }
     }
 

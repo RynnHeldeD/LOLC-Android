@@ -6,7 +6,6 @@ import org.ema.model.business.Summoner;
 import org.ema.model.business.SummonerSorted;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Created by romain on 03/06/2015.

@@ -1,10 +1,6 @@
 package org.ema.utils;
 
-import android.util.Log;
 
-import org.ema.model.business.Summoner;
-
-import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class Constant {

@@ -1,19 +1,19 @@
-/* Copyright © 2015
+/* Copyright ï¿½ 2015
  * GHARBI Eddy
  * PARRENO Michel
  * VELTRI Constantin
  * NGUYEN Remy
  * GALLI Romain
  *
- * Cette œuvre est protégée par le droit d’auteur et strictement réservée à l’usage privé du
- * client. Toute reproduction ou diffusion au profit de tiers, à titre
- * gratuit ou onéreux, de
- * tout ou partie de cette œuvre est strictement interdite et constitue une contrefaçon prévue
- * par les articles L 335-2 et suivants du Code de la propriété
+ * Cette ï¿½uvre est protï¿½gï¿½e par le droit dï¿½auteur et strictement rï¿½servï¿½e ï¿½ lï¿½usage privï¿½ du
+ * client. Toute reproduction ou diffusion au profit de tiers, ï¿½ titre
+ * gratuit ou onï¿½reux, de
+ * tout ou partie de cette ï¿½uvre est strictement interdite et constitue une contrefaï¿½on prï¿½vue
+ * par les articles L 335-2 et suivants du Code de la propriï¿½tï¿½
  * intellectuelle. Les ayants-droits se
- * réservent le droit de poursuivre toute atteinte à leurs droits de
- * propriété intellectuelle devant les
- * juridictions civiles ou pénales.
+ * rï¿½servent le droit de poursuivre toute atteinte ï¿½ leurs droits de
+ * propriï¿½tï¿½ intellectuelle devant les
+ * juridictions civiles ou pï¿½nales.
  */
 
 package org.ema.lolcompanion;
@@ -22,42 +22,29 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import android.util.Log;
 import android.widget.Toast;
 
 import org.ema.model.DAO.CurrentGameDAO;
 import org.ema.model.DAO.SummonerDAO;
 import org.ema.model.business.Summoner;
-import org.ema.utils.Constant;
-import org.ema.utils.Region;
+import org.ema.utils.LogUtils;
 import org.ema.utils.GlobalDataManager;
 import org.ema.utils.Utils;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
 
 public class PendingRoomActivity extends Activity {
 
@@ -138,17 +125,17 @@ public class PendingRoomActivity extends Activity {
                 while (true) {
                     if (!shouldContinue) {
                         try {
-                            Log.v("DAO", "Waiting");
+                            LogUtils.LOGV("DAO", "Waiting");
                             synchronized (signal) {
                                 signal.wait();
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Log.v("Erreur stats", e.getMessage());
+                            LogUtils.LOGV("Erreur stats", e.getMessage());
                         }
                     } else {
                         //Waiting 10 seconds before make a new request to the server
-                        Log.v("DAO", "Loading data");
+                        LogUtils.LOGV("DAO", "Loading data");
                         Message msg = handler.obtainMessage();
 
                         if (!loadData()) {
@@ -156,7 +143,7 @@ public class PendingRoomActivity extends Activity {
                         }
                     }
                 }
-                //Log.v("DAO", "On a recupere les , on affiche la vue timer");
+                //LogUtils.LOGV("DAO", "On a recupere les , on affiche la vue timer");
                 //launchTimerActivity();
             }
         });
@@ -165,13 +152,13 @@ public class PendingRoomActivity extends Activity {
     }
 
     public void stopThread() {
-        Log.v("DAO", "Stopping thread");
+        LogUtils.LOGV("DAO", "Stopping thread");
         shouldContinue = false;
         //synchronized(signal){ signal.notify();}
     }
 
     public void resumeThread() {
-        Log.v("DAO", "Resuming thread");
+        LogUtils.LOGV("DAO", "Resuming thread");
         shouldContinue = true;
         synchronized (signal) {
             signal.notify();
@@ -186,7 +173,7 @@ public class PendingRoomActivity extends Activity {
         //Launch thread if the user login is good
         if (user != null) {
             GlobalDataManager.add("user", user);
-            Log.v("DAO", user.toString());
+            LogUtils.LOGV("DAO", user.toString());
             resumeThread();
             if (waitingThread.getState() == Thread.State.NEW) {
                 waitingThread.start();
@@ -216,7 +203,7 @@ public class PendingRoomActivity extends Activity {
         // 60 tours de boucle x 10000( 10 secondes) = 600 000 milliseconde;
         // 600 000 / 60 000 (1 minute)=  10min
         if (count > (getResources().getInteger(R.integer.pending_room_countdown_seconds) / 10)) {
-            //Log.v("Error", "Interrupted");
+            //LogUtils.LOGV("Error", "Interrupted");
             stopThread();
             launchMainActivity();
             count = 0; //count begins at -1 to make the good number of loops (10 loops so count from 0 to 10)
@@ -227,7 +214,7 @@ public class PendingRoomActivity extends Activity {
         Message msgInGame = handler.obtainMessage();
         msgInGame.arg1 = 2;
         handler.sendMessage(msgInGame);
-        //Log.v("DAO", "Is in game: " + isInGame);
+        //LogUtils.LOGV("DAO", "Is in game: " + isInGame);
 
         if (isInGame) {
 
@@ -239,13 +226,13 @@ public class PendingRoomActivity extends Activity {
 
             summonersList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
             if (summonersList != null) {
-                //Log.v("DAO", "SummonerList: " + summonersList.toString());
+                //LogUtils.LOGV("DAO", "SummonerList: " + summonersList.toString());
                 while (!this.areAllImagesLoaded(summonersList)) {
                     SystemClock.sleep(500);
                 }
                 launchTimerActivity();
             } else {
-                //Log.v("DAO", "FATAL : summonersList is NULL. Summoner :" + summonerNameFromPreviousView);
+                //LogUtils.LOGV("DAO", "FATAL : summonersList is NULL. Summoner :" + summonerNameFromPreviousView);
                 shouldContinue = false;
                 launchMainActivity();
             }
@@ -254,7 +241,7 @@ public class PendingRoomActivity extends Activity {
             isAllowedToBack = true;
             return true;
         } else {
-            //Log.v("Error", "User not in game");
+            //LogUtils.LOGV("Error", "User not in game");
             shouldContinue = true;
         }
         return false;
@@ -285,7 +272,7 @@ public class PendingRoomActivity extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (isAllowedToBack) {
-            //Log.v("Back", "Going back");
+            //LogUtils.LOGV("Back", "Going back");
             if (keyCode == KeyEvent.KEYCODE_BACK) {
                 shouldContinue = false;
                 launchMainActivity();

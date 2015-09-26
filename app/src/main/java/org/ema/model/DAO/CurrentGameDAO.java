@@ -391,11 +391,21 @@ public class CurrentGameDAO {
         int numberOfValueZeroToTen, numberOfValueTenToTwenty, numberOfValueTwentyToThirsty, numberOfValueThirtyToEnd;
         numberOfValueZeroToTen = numberOfValueTenToTwenty = numberOfValueTwentyToThirsty = numberOfValueThirtyToEnd = 0;
         JSONArray jsonParticipants = null;
+        long idGame = 0;
+
+
 
         try {
             for (int i = 0; i < matchHistory.length(); i++) {
-                if (!matchHistory.getJSONObject(i).isNull("participants")) {
-                    jsonParticipants = matchHistory.getJSONObject(i).getJSONArray("participants");
+
+                idGame = matchHistory.getJSONObject(i).getLong("matchId");
+                String jsonResult = Utils.getDocument(Constant.API_MATCHS + String.valueOf(idGame));
+                JSONObject gameDetails = new JSONObject(jsonResult);
+
+                //teamID = gameDetails.getJSONArray("participants").getJSONObject(0).getInt("teamId");
+
+                if (!gameDetails.isNull("participants")) {
+                    jsonParticipants = gameDetails.getJSONArray("participants");
                     if (!jsonParticipants.getJSONObject(0).isNull("timeline")) {
                         if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").isNull("creepsPerMinDeltas")) {
                             if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("zeroToTen")) {
@@ -743,22 +753,28 @@ public class CurrentGameDAO {
                     numberOfGames++;
                     JSONObject test = jsonMatches.getJSONObject(i);
                     idGame = jsonMatches.getJSONObject(i).getLong("matchId");
-                    teamID = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getInt("teamId");
-                    toalDamageDealtByUserInCurrentGame = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getJSONObject("stats").getInt("totalDamageDealtToChampions");
-                    totalDamageTakenByUserInCurrentGame = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getJSONObject("stats").getInt("totalDamageTaken");
                     String jsonResult = Utils.getDocument(Constant.API_MATCHS + String.valueOf(idGame));
-                    if (jsonResult != null) {
+                    if(jsonResult != null)
+                    {
                         JSONObject gameDetails = new JSONObject(jsonResult);
-                        for (int j = 0; j < gameDetails.getJSONArray("participants").length(); j++) {
-                            if (gameDetails.getJSONArray("participants").getJSONObject(j).getInt("teamId") == teamID) {
-                                totalDamageDealtByUserTeamInCurrentGame += gameDetails.getJSONArray("participants").getJSONObject(j).getJSONObject("stats").getInt("totalDamageDealtToChampions");
-                                totalDamageTakenByUserTeamInCurrentGame += gameDetails.getJSONArray("participants").getJSONObject(j).getJSONObject("stats").getInt("totalDamageTaken");
+
+                        teamID = gameDetails.getJSONArray("participants").getJSONObject(0).getInt("teamId");
+                        toalDamageDealtByUserInCurrentGame = gameDetails.getJSONArray("participants").getJSONObject(0).getJSONObject("stats").getInt("totalDamageDealtToChampions");
+                        totalDamageTakenByUserInCurrentGame = gameDetails.getJSONArray("participants").getJSONObject(0).getJSONObject("stats").getInt("totalDamageTaken");
+
+                        if (jsonResult != null) {
+                            //JSONObject gameDetails = new JSONObject(jsonResult);
+                            for (int j = 0; j < gameDetails.getJSONArray("participants").length(); j++) {
+                                if (gameDetails.getJSONArray("participants").getJSONObject(j).getInt("teamId") == teamID) {
+                                    totalDamageDealtByUserTeamInCurrentGame += gameDetails.getJSONArray("participants").getJSONObject(j).getJSONObject("stats").getInt("totalDamageDealtToChampions");
+                                    totalDamageTakenByUserTeamInCurrentGame += gameDetails.getJSONArray("participants").getJSONObject(j).getJSONObject("stats").getInt("totalDamageTaken");
+                                }
                             }
+                            meanPercentageDamageDealtByUser += (float) toalDamageDealtByUserInCurrentGame / (float) totalDamageDealtByUserTeamInCurrentGame;
+                            meanPercentageDamageTakenByUser += (float) totalDamageTakenByUserInCurrentGame / (float) totalDamageTakenByUserTeamInCurrentGame;
+                            totalDamageDealtByUserTeamInCurrentGame = 0;
+                            totalDamageTakenByUserTeamInCurrentGame = 0;
                         }
-                        meanPercentageDamageDealtByUser += (float) toalDamageDealtByUserInCurrentGame / (float) totalDamageDealtByUserTeamInCurrentGame;
-                        meanPercentageDamageTakenByUser += (float) totalDamageTakenByUserInCurrentGame / (float) totalDamageTakenByUserTeamInCurrentGame;
-                        totalDamageDealtByUserTeamInCurrentGame = 0;
-                        totalDamageTakenByUserTeamInCurrentGame = 0;
                     }
                 }
             }
@@ -781,6 +797,7 @@ public class CurrentGameDAO {
     }
 
     public static void getSummonerFavoriteBuild(Summoner summoner, JSONArray matchHistory) {
+        long idGame = 0;
         Log.v("DAO", "Favorite build");
         ArrayList<int[]> itemHistoy = new ArrayList<>();
         int[] matchItemHistory = new int[6];
@@ -797,8 +814,12 @@ public class CurrentGameDAO {
             jsonGlobalItems = jsonGlobalItems.getJSONObject("data");
 
             for (int i = 0; i < matchHistory.length(); i++) {
-                if (!matchHistory.getJSONObject(i).isNull("participants") && matchHistory.getJSONObject(i).getString("season").equals("SEASON2015")) {
-                    jsonParticipants = matchHistory.getJSONObject(i).getJSONArray("participants");
+                idGame = matchHistory.getJSONObject(i).getLong("matchId");
+                String jsonResult = Utils.getDocument(Constant.API_MATCHS + String.valueOf(idGame));
+                JSONObject gameDetails = new JSONObject(jsonResult);
+
+                if (!gameDetails.isNull("participants") && gameDetails.getString("season").equals("SEASON2015")) {
+                    jsonParticipants = gameDetails.getJSONArray("participants");
                     matchItemHistory = getUserBuild(jsonParticipants, numberOfItemToAnalyze);
                     if (i == 0) {
                         for (int j = 0; j < numberOfItemToAnalyze; j++) {
@@ -871,8 +892,13 @@ public class CurrentGameDAO {
 
     public static JSONArray getMatchHistory(Summoner summoner, int numberOfGamesAnalyzed){
         JSONObject jsonResult;
+        String debugRequest = Constant.API_MATCH_LIST_URI +
+                summoner.getId() +
+                "?championIds=" +
+                summoner.getChampion().getId() +
+                "&rankedQueus=RANKED_SOLO_5x5&beginIndex=" + 0 + "&endIndex=" + numberOfGamesAnalyzed;
         try {
-            jsonResult = new JSONObject(Utils.getDocument(Constant.API_MATCH_HISTORY_URI +
+            jsonResult = new JSONObject(Utils.getDocument(Constant.API_MATCH_LIST_URI +
                     summoner.getId() +
                     "?championIds=" +
                     summoner.getChampion().getId() +
@@ -890,20 +916,29 @@ public class CurrentGameDAO {
     }
 
     private static void getLanesProbabilities(Summoner user, JSONArray matchHistory) {
+        long idGame = 0;
         try {
             for (int i = 0; i < matchHistory.length(); i++) {
-                LaneProbability laneProbability = new LaneProbability();
 
-                JSONObject jsonMatch = (JSONObject)matchHistory.get(i);
-                jsonMatch = (JSONObject)(((JSONArray)jsonMatch.get("participants")).get(0));
+                idGame = matchHistory.getJSONObject(i).getLong("matchId");
+                String jsonResult = Utils.getDocument(Constant.API_MATCHS + String.valueOf(idGame));
+                if(jsonResult != null)
+                {
+                    JSONObject gameDetails = new JSONObject(jsonResult);
 
-                laneProbability.setSpellId1(jsonMatch.getInt("spell1Id"));
-                laneProbability.setSpellId2(jsonMatch.getInt("spell2Id"));
-                jsonMatch = (JSONObject)jsonMatch.get("timeline");
-                laneProbability.setLane(jsonMatch.getString("lane"));
-                laneProbability.setRole(jsonMatch.getString("role"));
+                    LaneProbability laneProbability = new LaneProbability();
 
-                user.getChampion().addLaneProbability(laneProbability);
+                    JSONObject jsonMatch = (JSONObject)matchHistory.get(i);
+                    jsonMatch = (JSONObject)((gameDetails.getJSONArray("participants")).get(0));
+
+                    laneProbability.setSpellId1(jsonMatch.getInt("spell1Id"));
+                    laneProbability.setSpellId2(jsonMatch.getInt("spell2Id"));
+                    jsonMatch = (JSONObject)jsonMatch.get("timeline");
+                    laneProbability.setLane(jsonMatch.getString("lane"));
+                    laneProbability.setRole(jsonMatch.getString("role"));
+
+                    user.getChampion().addLaneProbability(laneProbability);
+                }
             }
         } catch(Exception e){
             e.printStackTrace();

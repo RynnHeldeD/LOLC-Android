@@ -85,6 +85,9 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         TimersFragment.settingsManager = new SettingsManager();
         PreferenceManager.getDefaultSharedPreferences(this.getActivity().getApplicationContext());
 
+        //adding a default passphrase
+        TimersFragment.settingsManager.set(this.getActivity(), "passphrase", "myteam");
+
         //Connect the websocket and send the picked champion to the server
         WebSocket.connectWebSocket();
 

@@ -26,6 +26,8 @@
     android:background="@drawable/gold_border_background"
     android:orientation="horizontal"
     android:id="@+id/s1Container"
+    android:clickable="true"
+    android:onClick="showAdvancedStatistics"
     tools:context="org.ema.lolcompanion.CompanionActivity">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

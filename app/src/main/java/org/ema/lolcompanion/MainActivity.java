@@ -119,7 +119,7 @@ public class MainActivity extends Activity {
         View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
         TextView text = (TextView) layout.findViewById(R.id.text);
 
-		if((System.currentTimeMillis() / 1000) > 1444867200){
+		if((System.currentTimeMillis() / 1000) > 1448834400){ //fin de la béta le 09/11 à 23h
 			text.setText(getResources().getString(R.string.beta_test_version_end));
             Toast toast = new Toast(getApplicationContext());
             toast.setGravity(Gravity.BOTTOM, 0, 40);

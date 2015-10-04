@@ -61,6 +61,7 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
 
     public static Integer numberOfPlayersPerTeam;
     public static Integer numberOfTimers;
+    ArrayList<Summoner> ennemyTeamSummonerList;
 
 
     @Override
@@ -85,7 +86,9 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         PreferenceManager.getDefaultSharedPreferences(this.getActivity().getApplicationContext());
 
         //adding a default passphrase
-        TimersFragment.settingsManager.set(this.getActivity(), "passphrase", "myteam");
+        if(settingsManager.get(this.getActivity(),"passphrase").equals("")){
+            settingsManager.set(this.getActivity(), "passphrase", "myteam");
+        }
 
         //Connect the websocket and send the picked champion to the server
         WebSocket.connectWebSocket();
@@ -125,15 +128,15 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
 
         //Filtering to get the list of the opponent team of the player
         // Recuperation et tri des summoners de l'equipe du joueur
-        ArrayList<Summoner> teamSummonersList = new ArrayList<Summoner>();
+        ennemyTeamSummonerList = new ArrayList<Summoner>();
         for (Summoner s : summonersList) {
             if (s.getTeamId() != user.getTeamId()) {
-                teamSummonersList.add(s);
+                ennemyTeamSummonerList.add(s);
             }
         }
 
         //Used to initialize the good number of timers on the timer page
-        numberOfPlayersPerTeam = teamSummonersList.size();
+        numberOfPlayersPerTeam = ennemyTeamSummonerList.size();
 
         //Set the cooldown to 0 and the ultimate level to 6 for all champ in the two hashmap
         InitializeTimerCdrMapAndTimerUltiLvlMap();
@@ -149,13 +152,13 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         }
 
         // Bitmap loading
-        this.setTimerButtonsImage(teamSummonersList);
+        this.setTimerButtonsImage(ennemyTeamSummonerList);
 
         //ACHTUNG !!! Du bist eine grosse Wurst.
         //For the moment, if the number of the player is different of 10 we don't loading timers because the DAO is not ready
         if (summonersList.size() == 10) {
             //Creation of the hashmap where the index of the timer (ex: b12) and the cooldown are listed. (Ex : b12:23sec, b13:45sec...)
-            this.buildTimerTable(teamSummonersList);
+            this.buildTimerTable(ennemyTeamSummonerList);
         }
 
         LogUtils.LOGV("DEBUGT","/************ FIN DU ONSTART TIMER FRAGMENT **********************/");
@@ -633,8 +636,6 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
 
     //When a ultimate level is update, we need to update the timerMap who contain the cooldown for all timers
     public void updateCooldownWithNewUltimateLevel(String buttonId, Integer ultiLevel) {
-        // Summoner user = (Summoner) GlobalDataManager.get("user");
-        ArrayList<Summoner> summonersList = (ArrayList<Summoner>) GlobalDataManager.get("summonersList");
 
         //Parsing button name to get the summoner index. We retrench 1 because the index start at 0 whereas buttons start at 1
         int summonerIndex = Integer.parseInt(buttonId.substring(1, 2)) - 1;
@@ -659,12 +660,13 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         }
 
         //get the cooldown from the DAO
-        float cooldownRatioByLevel = (float) 1 - (float) ((float) ((float) 1 - (new Float(summonersList.get(summonerIndex).getCooldownPerLevelAndCalculCooldowns()))) * (float) ultiLevel);
-        float cdSummonerSpell = summonersList.get(summonerIndex).getChampion().getSpell().getCooldown()[indexCooldown] * cooldownRatioByLevel;
+        float cooldownRatioByLevel = (float) 1 - (float) ((float) ((float) 1 - (new Float(ennemyTeamSummonerList.get(summonerIndex).getCooldownPerLevelAndCalculCooldowns()))) * (float) ultiLevel);
+        float cdSummonerSpell = ennemyTeamSummonerList.get(summonerIndex).getChampion().getSpell().getCooldown()[indexCooldown] * cooldownRatioByLevel;
+        String champName = ennemyTeamSummonerList.get(summonerIndex).getChampion().getName();
 
         LogUtils.LOGV("Websocket", "Update champ " + summonerIndex + " to level " + ultiLevel + " so index cooldown " + indexCooldown);
 
-        LogUtils.LOGV("DEBUGT", "Update champ " + summonerIndex + " cooldown. BEFORE:" + timerMap.get(buttonId).toString() + ".AFTER:" + cdSummonerSpell + "with cooldown ration bby level at " + cooldownRatioByLevel);
+        LogUtils.LOGV("DEBUGT", "Update champ " + summonerIndex + " named "+ champName +" with index cooldown of " + indexCooldown +". BEFORE:" + timerMap.get(buttonId).toString() + ".AFTER:" + cdSummonerSpell + "with cooldown ration bby level at " + cooldownRatioByLevel);
 
         timerMap.put(buttonId, (long) cdSummonerSpell);
     }

@@ -24,7 +24,7 @@ import android.util.Log;
  * Created by Parreno on 26/09/2015.
  */
 public class LogUtils {
-    static final boolean LOG = true;
+    static final boolean LOG = false;
     public static void LOGD(final String tag, String message) {
         if (LOG) {
             Log.d(tag, message);

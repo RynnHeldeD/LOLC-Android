@@ -8,7 +8,7 @@ android {
         applicationId "org.ema.lolcompanion"
         minSdkVersion 13
         targetSdkVersion 21
-        versionCode 2
+        versionCode 3
         versionName "0.1"
     }
     buildTypes {

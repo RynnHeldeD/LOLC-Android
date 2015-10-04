@@ -59,17 +59,37 @@ public class WsEventHandling {
                         activateTimer(obj.getString("idSortGrille"), obj.getLong("timestampDeclenchement"));
                         break;
                     case "playerList":
+                        LogUtils.LOGV("DEBUGT","/************ AVANT FONCTION PLAYERLIST **********************/");
+                        CompanionActivity.instance.logTimerMap();
+
                         startGameTimestamp(obj.getLong("timestamp"));
                         updateChannelPlayersThread(obj.getJSONArray("allies"));
+
+                        LogUtils.LOGV("DEBUGT","/************ APRES FONCTION PLAYERLIST **********************/");
+                        CompanionActivity.instance.logTimerMap();
                         break;
                     case "playerList_toNewAllies":
+
+                        LogUtils.LOGV("DEBUGT","/************ AVANT FONCTION PLAYERLISTTONEWALLIES **********************/");
+                        CompanionActivity.instance.logTimerMap();
+
                         updateChannelPlayersThread(obj.getJSONArray("allies"));
                         if(obj.has("share")){
                             shareTimers();
                         }
+
+                        LogUtils.LOGV("DEBUGT","/************ APRSE FONCTION PLAYERLISTTONEWALLIES **********************/");
+                        CompanionActivity.instance.logTimerMap();
                         break;
                     case "playerList_toOldAllies":
+
+                        LogUtils.LOGV("DEBUGT","/************ AVANT FONCTION PLAYERLISTTOOLDALLIES **********************/");
+                        CompanionActivity.instance.logTimerMap();
+
                         updateChannelPlayersThread(obj.getJSONArray("allies"));
+
+                        LogUtils.LOGV("DEBUGT","/************ APRES FONCTION PLAYERLISTTOLDWALLIES **********************/");
+                        CompanionActivity.instance.logTimerMap();
                         break;
                     case "timerDelay":
                         delayTimer(obj.getString("idSortGrille"));
@@ -81,11 +101,15 @@ public class WsEventHandling {
                         doStopTimer(obj.getString("idSortGrille"));
                         break;
                     case "sharedTimers":
+                        LogUtils.LOGV("DEBUGT","/************ AVANT FONCTION SHAREDTIMERS **********************/");
+                        CompanionActivity.instance.logTimerMap();
                         try {
                             updateTimers(obj.getJSONArray("timers"),obj.getJSONArray("cdr"),obj.getJSONArray("ultiLevel"),obj.getString("timestamp"));
                         } catch (JSONException e){
                             LogUtils.LOGV("Websocket", "Erreur parsage:" + e.getMessage());
                         }
+                        LogUtils.LOGV("DEBUGT","/************ APRES FONCTION SHAREDTIMERS **********************/");
+                        CompanionActivity.instance.logTimerMap();
                         break;
                     case "sharedCooldown":
                         setCdr(obj.getString("champUlti"), obj.getInt("cdr"));
@@ -326,13 +350,7 @@ public class WsEventHandling {
 
     public static void updateTimers(JSONArray timerTable,JSONArray cdrTable,JSONArray ultiLevelTable,String timestampEnvoi){
 
-        LogUtils.LOGV("DEBUGT","/************ DEBUT FONCTION UPDATETIMER **********************/");
-        CompanionActivity.instance.logTimerMap();
-
         CompanionActivity.instance.cancelAllTimers();
-
-        LogUtils.LOGV("DEBUGT","/************ DEBUT FONCTION UPDATETIMER APRES CANCEL TIMER**********************/");
-        CompanionActivity.instance.logTimerMap();
 
         long delayOfTransfert = GameTimestamp.transfertDelay(Long.parseLong(timestampEnvoi));
         try {
@@ -345,8 +363,6 @@ public class WsEventHandling {
                 }
             }
 
-            LogUtils.LOGV("DEBUGT","/************ FONCTION UPDATETIMER APRES UPDATING TIMER **********************/");
-            CompanionActivity.instance.logTimerMap();
 
             //Update timer cdr hashmap
             for(int i = 0; i < cdrTable.length();i++){
@@ -354,8 +370,6 @@ public class WsEventHandling {
                 CompanionActivity.instance.timerCdrMap.put(buttonAndCdr.getString(0),Integer.parseInt(buttonAndCdr.getString(1)));
             }
 
-            LogUtils.LOGV("DEBUGT","/************  FONCTION UPDATETIMER AVANT UPDAPTE TIMER ULTI LEVEL **********************/");
-            CompanionActivity.instance.logTimerMap();
 
             //Update timer ulti Level hashmap
             for(int i = 0; i < ultiLevelTable.length();i++){
@@ -370,8 +384,6 @@ public class WsEventHandling {
             LogUtils.LOGV("Websocket", "Erreur lors de la reception des timers partagés");
         }
 
-        LogUtils.LOGV("DEBUGT","/************ APRES RECEPTION SHARE TIMER **********************/");
-        CompanionActivity.instance.logTimerMap();
 
     }
 

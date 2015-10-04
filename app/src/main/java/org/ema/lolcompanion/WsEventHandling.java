@@ -326,13 +326,8 @@ public class WsEventHandling {
     }
 
     public static void updateTimers(JSONArray timerTable,JSONArray cdrTable,JSONArray ultiLevelTable,String timestampEnvoi){
-        LogUtils.LOGV("DEBUGT","/************ AVANT CANCEL ALL TIMERS **********************/");
-        CompanionActivity.instance.logTimerMap();
 
         CompanionActivity.instance.cancelAllTimers();
-
-        LogUtils.LOGV("DEBUGT","/************ APRES CANCEL ALL TIMERS **********************/");
-        CompanionActivity.instance.logTimerMap();
 
         long delayOfTransfert = GameTimestamp.transfertDelay(Long.parseLong(timestampEnvoi));
         try {
@@ -344,9 +339,6 @@ public class WsEventHandling {
                     CompanionActivity.instance.activateTimer(buttonAndCooldown.getString(0),cooldown);
                 }
             }
-            LogUtils.LOGV("DEBUGT","/************ APRES UPDATING TIMERS **********************/");
-            CompanionActivity.instance.logTimerMap();
-
 
             //Update timer cdr hashmap
             for(int i = 0; i < cdrTable.length();i++){
@@ -354,15 +346,16 @@ public class WsEventHandling {
                 CompanionActivity.instance.timerCdrMap.put(buttonAndCdr.getString(0),Integer.parseInt(buttonAndCdr.getString(1)));
             }
 
-            LogUtils.LOGV("DEBUGT","/************ APRES UPDATING CDR MAP **********************/");
-            CompanionActivity.instance.logTimerMap();
-
             //Update timer ulti Level hashmap
             for(int i = 0; i < ultiLevelTable.length();i++){
                 JSONArray buttonAndUltiLevel = (JSONArray) ultiLevelTable.get(i);
                 //Update in hashmap of ulti level (used to get and set the dialog
                 CompanionActivity.instance.timerUltiLvlMap.put(buttonAndUltiLevel.getString(0),Integer.parseInt(buttonAndUltiLevel.getString(1)));
                 //Update the hashmap of cooldown (used when a timer is activated)
+
+                LogUtils.LOGV("DEBUGT","/************ AVANT UPDATE COOLDOWN WITH NEW ULTI **********************/");
+                CompanionActivity.instance.logTimerMap();
+
                 CompanionActivity.instance.updateCooldownWithNewUltimateLevel(buttonAndUltiLevel.getString(0),Integer.parseInt(buttonAndUltiLevel.getString(1)));
             }
 
@@ -370,8 +363,6 @@ public class WsEventHandling {
             LogUtils.LOGV("Websocket", "Erreur lors de la reception des timers partagés");
         }
 
-        LogUtils.LOGV("DEBUGT","/************ APRES UPDATE TIMER ULTI LEVEL **********************/");
-        CompanionActivity.instance.logTimerMap();
 
     }
 

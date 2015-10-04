@@ -664,6 +664,8 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
 
         LogUtils.LOGV("Websocket", "Update champ " + summonerIndex + " to level " + ultiLevel + " so index cooldown " + indexCooldown);
 
+        LogUtils.LOGV("DEBUGT", "Update champ " + summonerIndex + " cooldown. BEFORE:" + timerMap.get(buttonId).toString() + ".AFTER:" + cdSummonerSpell + "with cooldown ration bby level at " + cooldownRatioByLevel);
+
         timerMap.put(buttonId, (long) cdSummonerSpell);
     }
 

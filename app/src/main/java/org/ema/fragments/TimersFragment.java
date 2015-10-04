@@ -158,7 +158,7 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             this.buildTimerTable(teamSummonersList);
         }
 
-        logTimerMap();
+
     }
 
     public void InitializeTimerCdrMapAndTimerUltiLvlMap() {

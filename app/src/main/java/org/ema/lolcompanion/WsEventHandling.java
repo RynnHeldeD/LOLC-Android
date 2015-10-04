@@ -325,7 +325,14 @@ public class WsEventHandling {
     }
 
     public static void updateTimers(JSONArray timerTable,JSONArray cdrTable,JSONArray ultiLevelTable,String timestampEnvoi){
+
+        LogUtils.LOGV("DEBUGT","/************ DEBUT FONCTION UPDATETIMER **********************/");
+        CompanionActivity.instance.logTimerMap();
+
         CompanionActivity.instance.cancelAllTimers();
+
+        LogUtils.LOGV("DEBUGT","/************ DEBUT FONCTION UPDATETIMER APRES CANCEL TIMER**********************/");
+        CompanionActivity.instance.logTimerMap();
 
         long delayOfTransfert = GameTimestamp.transfertDelay(Long.parseLong(timestampEnvoi));
         try {
@@ -338,11 +345,17 @@ public class WsEventHandling {
                 }
             }
 
+            LogUtils.LOGV("DEBUGT","/************ FONCTION UPDATETIMER APRES UPDATING TIMER **********************/");
+            CompanionActivity.instance.logTimerMap();
+
             //Update timer cdr hashmap
             for(int i = 0; i < cdrTable.length();i++){
                 JSONArray buttonAndCdr = (JSONArray) cdrTable.get(i);
                 CompanionActivity.instance.timerCdrMap.put(buttonAndCdr.getString(0),Integer.parseInt(buttonAndCdr.getString(1)));
             }
+
+            LogUtils.LOGV("DEBUGT","/************  FONCTION UPDATETIMER AVANT UPDAPTE TIMER ULTI LEVEL **********************/");
+            CompanionActivity.instance.logTimerMap();
 
             //Update timer ulti Level hashmap
             for(int i = 0; i < ultiLevelTable.length();i++){

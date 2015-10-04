@@ -357,6 +357,9 @@ public class WsEventHandling {
             LogUtils.LOGV("Websocket", "Erreur lors de la reception des timers partagés");
         }
 
+        LogUtils.LOGV("DEBUGT","/************ APRES RECEPTION SHARE TIMER **********************/");
+        CompanionActivity.instance.logTimerMap();
+
     }
 
     public  static void setCdr(String buttonId, Integer cooldown){

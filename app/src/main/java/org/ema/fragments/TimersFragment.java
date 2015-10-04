@@ -26,7 +26,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -158,6 +157,8 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             //Creation of the hashmap where the index of the timer (ex: b12) and the cooldown are listed. (Ex : b12:23sec, b13:45sec...)
             this.buildTimerTable(teamSummonersList);
         }
+
+        logTimerMap();
     }
 
     public void InitializeTimerCdrMapAndTimerUltiLvlMap() {
@@ -722,5 +723,31 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
 
         //add the line to the rootview
         containerView.addView(rootview);
+    }
+
+    public void logTimerMap(){
+
+        LogUtils.LOGV("DEBUGT","LOG TIMER MAP");
+        for (String champ: timerMap.keySet()){
+            String key =champ.toString();
+            String value = timerMap.get(champ).toString();
+            if(key.endsWith("2")){
+                LogUtils.LOGV("DEBUGT",key + ":" + value);
+            }
+        }
+
+        LogUtils.LOGV("DEBUGT","LOG TIMER MAP CDR");
+        for (String champ: timerCdrMap.keySet()){
+            String key =champ.toString();
+            String value = timerCdrMap.get(champ).toString();
+            LogUtils.LOGV("DEBUGT",key + ":" + value);
+        }
+
+        LogUtils.LOGV("DEBUGT","LOG ULTI LVL MAP");
+        for (String champ: timerUltiLvlMap.keySet()){
+            String key =champ.toString();
+            String value = timerUltiLvlMap.get(champ).toString();
+            LogUtils.LOGV("DEBUGT",key + ":" + value);
+        }
     }
 }

@@ -516,6 +516,10 @@ public class AdvancedStatsActivity extends FragmentActivity implements OnChartVa
             lp.setText(summoner.getLeague().getDivision().toUpperCase() + " " + String.valueOf(summoner.getLeague().getLeaguePoints()) + " LP");
         }
 
+        LinearLayout clickableLayout = (LinearLayout) rootview.findViewById(R.id.s1Container);
+        clickableLayout.setId(idForLine);
+        clickableLayout.setClickable(false);
+        clickableLayout.setOnClickListener(null);
         //add the line to the rootview as the FIRST child
         containerView.addView(rootview, 0);
     }

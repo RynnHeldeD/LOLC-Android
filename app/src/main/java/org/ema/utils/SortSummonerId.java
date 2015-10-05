@@ -1,6 +1,5 @@
 package org.ema.utils;
 
-import org.ema.model.business.Champion;
 import org.ema.model.business.Summoner;
 
 import java.util.Comparator;

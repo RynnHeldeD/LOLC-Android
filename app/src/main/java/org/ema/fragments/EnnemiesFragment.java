@@ -1,53 +1,35 @@
-/* Copyright © 2015
+/* Copyright ï¿½ 2015
  * GHARBI Eddy
  * PARRENO Michel
  * VELTRI Constantin
  * NGUYEN Remy
  * GALLI Romain
  *
- * Cette œuvre est protégée par le droit d’auteur et strictement réservée à l’usage privé du
- * client. Toute reproduction ou diffusion au profit de tiers, à titre
- * gratuit ou onéreux, de
- * tout ou partie de cette œuvre est strictement interdite et constitue une contrefaçon prévue
- * par les articles L 335-2 et suivants du Code de la propriété
+ * Cette ï¿½uvre est protï¿½gï¿½e par le droit dï¿½auteur et strictement rï¿½servï¿½e ï¿½ lï¿½usage privï¿½ du
+ * client. Toute reproduction ou diffusion au profit de tiers, ï¿½ titre
+ * gratuit ou onï¿½reux, de
+ * tout ou partie de cette ï¿½uvre est strictement interdite et constitue une contrefaï¿½on prï¿½vue
+ * par les articles L 335-2 et suivants du Code de la propriï¿½tï¿½
  * intellectuelle. Les ayants-droits se
- * réservent le droit de poursuivre toute atteinte à leurs droits de
- * propriété intellectuelle devant les
- * juridictions civiles ou pénales.
+ * rï¿½servent le droit de poursuivre toute atteinte ï¿½ leurs droits de
+ * propriï¿½tï¿½ intellectuelle devant les
+ * juridictions civiles ou pï¿½nales.
  */
 
 package org.ema.fragments;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.ema.dialogs.ChampionTipDialogFragment;
-import org.ema.dialogs.LolCompanionProgressDialog;
-import org.ema.lolcompanion.AdvancedStatsActivity;
-import org.ema.lolcompanion.MainActivity;
 import org.ema.lolcompanion.R;
-import org.ema.model.DAO.CurrentGameDAO;
 import org.ema.model.business.Summoner;
 import org.ema.utils.GlobalDataManager;
-import org.ema.utils.VerticalProgressBar;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class EnnemiesFragment extends SummonersListFragment {

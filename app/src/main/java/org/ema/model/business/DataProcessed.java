@@ -26,7 +26,24 @@ public class DataProcessed {
     private boolean premades = false;
     private boolean damages = false;
     private boolean detailedStats = false;
+    private boolean runes = false;
+    private boolean masteries = false;
 
+    public boolean isRunes() {
+        return runes;
+    }
+
+    public void setRunes(boolean runes) {
+        this.runes = runes;
+    }
+
+    public boolean isMasteries() {
+        return masteries;
+    }
+
+    public void setMasteries(boolean masteries) {
+        this.masteries = masteries;
+    }
 
     public boolean isStats() {
         return stats;

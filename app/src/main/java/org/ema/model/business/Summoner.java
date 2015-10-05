@@ -1,27 +1,27 @@
-/* Copyright © 2015
+/* Copyright ï¿½ 2015
  * GHARBI Eddy
  * PARRENO Michel
  * VELTRI Constantin
  * NGUYEN Remy
  * GALLI Romain
  *
- * Cette œuvre est protégée par le droit d’auteur et strictement réservée à l’usage privé du
- * client. Toute reproduction ou diffusion au profit de tiers, à titre
- * gratuit ou onéreux, de
- * tout ou partie de cette œuvre est strictement interdite et constitue une contrefaçon prévue
- * par les articles L 335-2 et suivants du Code de la propriété
+ * Cette ï¿½uvre est protï¿½gï¿½e par le droit dï¿½auteur et strictement rï¿½servï¿½e ï¿½ lï¿½usage privï¿½ du
+ * client. Toute reproduction ou diffusion au profit de tiers, ï¿½ titre
+ * gratuit ou onï¿½reux, de
+ * tout ou partie de cette ï¿½uvre est strictement interdite et constitue une contrefaï¿½on prï¿½vue
+ * par les articles L 335-2 et suivants du Code de la propriï¿½tï¿½
  * intellectuelle. Les ayants-droits se
- * réservent le droit de poursuivre toute atteinte à leurs droits de
- * propriété intellectuelle devant les
- * juridictions civiles ou pénales.
+ * rï¿½servent le droit de poursuivre toute atteinte ï¿½ leurs droits de
+ * propriï¿½tï¿½ intellectuelle devant les
+ * juridictions civiles ou pï¿½nales.
  */
 
 package org.ema.model.business;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
-
+import org.ema.utils.LogUtils;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -43,6 +43,25 @@ public class Summoner implements Parcelable {
     //size between 1 and 3
     private Champion[] mostChampionsPlayed;
     private DataProcessed dataProcessed = new DataProcessed();
+    private ArrayList<Mastery> masteries = new ArrayList<>();
+    private ArrayList<Rune> runes = new ArrayList<>();
+    private double cooldownsRatioPerLevel = -1;
+
+    public ArrayList<Mastery> getMasteries() {
+        return masteries;
+    }
+
+    public void setMasteries(ArrayList<Mastery> masteries) {
+        this.masteries = masteries;
+    }
+
+    public ArrayList<Rune> getRunes() {
+        return runes;
+    }
+
+    public void setRunes(ArrayList<Rune> runes) {
+        this.runes = runes;
+    }
 
     public DataProcessed getDataProcessed() {
         return dataProcessed;
@@ -267,11 +286,65 @@ public class Summoner implements Parcelable {
 
         for(Champion champion : this.getMostChampionsPlayed()) {
             if(champion.getIcon() == null) {
-                Log.v("IMAGES_MOST", champion.getIconName() + " not loaded");
+                LogUtils.LOGV("IMAGES_MOST", champion.getIconName() + " not loaded");
                 return false;
             }
         }
-        Log.v("IMAGES_MOST", "loaded");
+        LogUtils.LOGV("IMAGES_MOST", "loaded");
         return true;
+    }
+
+    public Double getCooldownPerLevelAndCalculCooldowns() {
+        if(cooldownsRatioPerLevel == -1) {
+            double cooldownRatio = 1;
+            double cooldownRatioPerLevel = 1;
+            double cooldownSummunerSpells = 1;
+
+            for(int i = 0; i < this.getRunes().size(); i++) {
+                Rune rune = this.getRunes().get(i);
+
+                if(rune.getStats().get("rPercentCooldownMod") != null) {
+                    cooldownRatio += Double.parseDouble(rune.getStats().get("rPercentCooldownMod"));
+                }
+                else if(rune.getStats().get("rPercentCooldownModPerLevel") != null) {
+                    cooldownRatioPerLevel += Double.parseDouble(rune.getStats().get("rPercentCooldownModPerLevel"));
+                }
+            }
+
+            for(int i = 0; i < this.getMasteries().size(); i++) {
+                Mastery mastery = this.getMasteries().get(i);
+
+                //Cooldown of champion spells
+                if(mastery.getDescription().contains("Cooldown Reduction")){
+                    String stat = mastery.getDescription().replaceAll("\\+","").split("\\%")[0];
+                    cooldownRatio -= (Double.parseDouble(stat) / 100);
+                }
+                //Cooldowns of summuner spells
+                else if(mastery.getDescription().contains("cooldown")) {
+                    String stats[] = mastery.getDescription().replaceAll("\\%","").split(" ");
+                    String stat = stats[stats.length-1];
+                    cooldownSummunerSpells -= (Double.parseDouble(stat) / 100);
+                }
+            }
+
+            //Update summoner spells
+            for(Spell spell : this.getSpells()) {
+                float cooldowns[] = spell.getCooldown();
+                for(int x = 0; x < cooldowns.length; x++) {
+                        cooldowns[x] = Math.round(cooldowns[x] * cooldownSummunerSpells);
+                }
+            }
+
+            //Update ultimate spell
+            Spell spell = this.getChampion().getSpell();
+            float cooldowns[] = spell.getCooldown();
+            for(int x = 0; x < cooldowns.length; x++) {
+                cooldowns[x] = Math.round(cooldowns[x] * cooldownRatio);
+            }
+
+            cooldownsRatioPerLevel = cooldownRatioPerLevel;
+        }
+
+        return cooldownsRatioPerLevel;
     }
 }

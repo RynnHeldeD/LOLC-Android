@@ -16,33 +16,36 @@ import java.util.ArrayList;
 public class WebSocket {
 
     public static WebSocketClient mWebSocketClient;
+    //used to don't display "Disconnected from server" each time the user press a timer if he is disconnected
     public static Boolean alreadyDisconnected = false;
+    public static Boolean onCompanionActivity = true;
 
 
 
     public static void connectWebSocket() {
         URI uri;
         try {
-            uri = new URI("ws://5.135.153.45:8080/");
+            uri = new URI("ws://5.135.153.45:8081/");
 
         } catch (URISyntaxException e) {
             e.printStackTrace();
-            Log.v("Websocket", "Fail to connect to websocket");
+            LogUtils.LOGV("Websocket", "Fail to connect to websocket");
             return;
         }
     try {
         mWebSocketClient = new WebSocketClient(uri) {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
-                Log.v("Websocket", "Opened");
+                LogUtils.LOGV("Websocket", "Opened");
 
-                if (alreadyDisconnected) {
+                if (alreadyDisconnected && onCompanionActivity) {
                     try{
                         CompanionActivity.instanceCompanion.reconnectionNotification();
                     } catch (Exception e){
-                        Log.v("Websocket","Erreur on Websocket open :" + e.getMessage());
+                        LogUtils.LOGV("Websocket", "Erreur on Websocket open :" + e.getMessage());
                     }
                 }
+                WebSocket.onCompanionActivity = true;
 
                 String userNickname = ((Summoner) GlobalDataManager.get("user")).getName();
                 ArrayList<Summoner> summonersList = (ArrayList<Summoner>) GlobalDataManager.get("summonersList");
@@ -62,7 +65,7 @@ public class WebSocket {
                 //mWebSocketClient.send("{\"action\":\"pickedChampion\",\"gameId\":\"0\",\"teamId\":\"0\",\"championIconId\":\"0\",\"passphrase\":\""+ passphrase +"\"}");
 
                 mWebSocketClient.send("{\"action\":\"pickedChampion\",\"gameId\":\"" + user.getGameId() + "\",\"teamId\":\"" + user.getTeamId() + "\",\"championIconId\":\"" + user.getChampion().getIconName() + "\",\"passphrase\":\"" + passphrase + "\"}");
-                Log.v("Websocket", "{\"action\":\"pickedChampion\",\"gameId\":\"" + user.getGameId() + "\",\"teamId\":\"" + user.getTeamId() + "\",\"championIconId\":\"" + user.getChampion().getIconName() + "\",\"passphrase\":\"" + passphrase + "\"}");
+                LogUtils.LOGV("Websocket", "{\"action\":\"pickedChampion\",\"gameId\":\"" + user.getGameId() + "\",\"teamId\":\"" + user.getTeamId() + "\",\"championIconId\":\"" + user.getChampion().getIconName() + "\",\"passphrase\":\"" + passphrase + "\"}");
 
             }
 
@@ -73,28 +76,28 @@ public class WebSocket {
 
             @Override
             public void onClose(int i, String s, boolean b) {
-                Log.v("Websocket", "Closed :" + s);
+                LogUtils.LOGV("Websocket", "Closed :" + s);
                 try{
                     CompanionActivity.instanceCompanion.handleDisconnection();
                 } catch (NullPointerException ex){
-                    Log.v("Websocket","Erreur dans le try catch du websocketOnError" + ex.getMessage());
+                    LogUtils.LOGV("Websocket", "Erreur dans le try catch du websocketOnError" + ex.getMessage());
                 }
 
             }
 
             @Override
             public void onError(Exception e) {
-                Log.v("Websocket", "Error :" + e.getMessage());
+                LogUtils.LOGV("Websocket", "Error :" + e.getMessage());
               /*  try{
-                    CompanionActivity.instanceCompanion.handleDisconnection();
-                } catch (NullPointerException ex){
-                    Log.v("Websocket","Erreur dans le try catch du websocketOnError " + ex.getMessage());
-                }*/
-            }
+                    Companion            Activity.instanceCompanion.handleDisconnection();
+        } catch (NullPointerException ex){
+            LogUtils.LOGV("Websocket","Erreur dans le try catch du websocketOnError " + ex.getMessage());
+        }*/
+    }
 
         };
     } catch (Exception ex){
-        Log.v("Websocket","Timeout ? :" + ex.getMessage());
+        LogUtils.LOGV("Websocket", "Timeout ? :" + ex.getMessage());
     }
         mWebSocketClient.connect();
     }
@@ -102,14 +105,14 @@ public class WebSocket {
     public static void send(String s) {
         try{
             mWebSocketClient.send(s);
-            Log.v("Websocket","Message send to websocket: " + s);
+            LogUtils.LOGV("Websocket", "Message send to websocket: " + s);
         } catch (WebsocketNotConnectedException e){
             try {
                 connectWebSocket();
                 WsEventHandling.waitingReconnexionMessage = s;
             }catch (WebsocketNotConnectedException er){
-                Log.v("Websocket","Erreur lors de l'envoi du message: " + e.getMessage());
-                Log.v("Websocket","La tentative de reconnexion au serveur WS a echoué");
+                LogUtils.LOGV("Websocket", "Erreur lors de l'envoi du message: " + e.getMessage());
+                LogUtils.LOGV("Websocket", "La tentative de reconnexion au serveur WS a echoué");
             }
         }
     }

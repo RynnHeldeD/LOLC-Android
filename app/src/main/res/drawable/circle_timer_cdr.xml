@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Used for the timers of drake and nashor -->
+<!-- Used for the timers champ CDR -->
 <shape
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
 
     <solid
-        android:color="@color/bg_white_transparent"/>
+        android:color="@color/bg_blue_transparent"/>
 
     <size
         android:width="120dp"

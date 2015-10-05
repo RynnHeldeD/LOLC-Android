@@ -3,7 +3,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceActivity;
-import android.test.ActivityTestCase;
 
 public class SettingsManager extends PreferenceActivity {
     public static final String PREFERENCES_FILE_NAME = "preferences";

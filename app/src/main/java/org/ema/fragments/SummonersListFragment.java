@@ -1,19 +1,19 @@
-/* Copyright © 2015
+/* Copyright ï¿½ 2015
  * GHARBI Eddy
  * PARRENO Michel
  * VELTRI Constantin
  * NGUYEN Remy
  * GALLI Romain
  *
- * Cette œuvre est protégée par le droit d’auteur et strictement réservée à l’usage privé du
- * client. Toute reproduction ou diffusion au profit de tiers, à titre
- * gratuit ou onéreux, de
- * tout ou partie de cette œuvre est strictement interdite et constitue une contrefaçon prévue
- * par les articles L 335-2 et suivants du Code de la propriété
+ * Cette ï¿½uvre est protï¿½gï¿½e par le droit dï¿½auteur et strictement rï¿½servï¿½e ï¿½ lï¿½usage privï¿½ du
+ * client. Toute reproduction ou diffusion au profit de tiers, ï¿½ titre
+ * gratuit ou onï¿½reux, de
+ * tout ou partie de cette ï¿½uvre est strictement interdite et constitue une contrefaï¿½on prï¿½vue
+ * par les articles L 335-2 et suivants du Code de la propriï¿½tï¿½
  * intellectuelle. Les ayants-droits se
- * réservent le droit de poursuivre toute atteinte à leurs droits de
- * propriété intellectuelle devant les
- * juridictions civiles ou pénales.
+ * rï¿½servent le droit de poursuivre toute atteinte ï¿½ leurs droits de
+ * propriï¿½tï¿½ intellectuelle devant les
+ * juridictions civiles ou pï¿½nales.
  */
 
 package org.ema.fragments;
@@ -27,6 +27,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -148,12 +149,37 @@ public class SummonersListFragment extends Fragment implements ChampionTipDialog
         summonerPerf.setId(idForLine + 100);
 
         //######################### Image of the champ
+        /*
+            If there is not enought statistics, we change
+            the listener of the layout to print "not enought statics"
+            and don't load the advstats view
+
+            Update 26/09/2015 - as we use the entire rectangle, we don't need img anymore, so i commented it below (line 168)
+         */
+        LinearLayout clickableLayout = (LinearLayout) rootview.findViewById(R.id.s1Container);
+        clickableLayout.setId(idForLine);
+
         ImageView img = (ImageView) rootview.findViewById(R.id.s1Img);
         Bitmap bitmap = summoner.getChampion().getIcon();
         img.setImageBitmap(bitmap);
         img.setId(idForLine);
         if (summoner.getChampion().getStatistic() == null || (summoner.getChampion().getStatistic().getDamageDealtPercentage() == 0 && summoner.getChampion().getStatistic().getDamageTakenPercentage() == 0)) {
-            img.setOnClickListener(new View.OnClickListener() {
+            /*img.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    LayoutInflater inflater = getActivity().getLayoutInflater();
+                    View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) getActivity().findViewById(R.id.toast_layout_root));
+                    TextView text = (TextView) layout.findViewById(R.id.text);
+                    Toast toast = new Toast(getActivity());
+                    toast.setGravity(Gravity.BOTTOM, 0, 40);
+                    toast.setDuration(Toast.LENGTH_SHORT);
+                    toast.setView(layout);
+                    text.setText(getResources().getString(R.string.ranked_statistics_restriction_click_advanced_stats));
+                    toast.show();
+                }
+            });*/
+
+            clickableLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -297,6 +323,7 @@ public class SummonersListFragment extends Fragment implements ChampionTipDialog
 
     //This function handle the advanced statistic goto
     public void showAdvancedStatistics(View v, Boolean isEnnemy) {
+        Log.v("MIC", "View ID : " + v.getId());
         summonerToShow = summonersList.get(v.getId());
         new loadAdvStatsBackgroundTask(this.getActivity()).execute();
     }

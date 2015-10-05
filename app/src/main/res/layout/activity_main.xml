@@ -65,11 +65,11 @@
             android:layout_below="@+id/login"
             android:layout_toEndOf="@+id/login"
             android:layout_toRightOf="@+id/login"
-            android:paddingRight="55dip"
+            android:gravity="end"
             android:orientation="horizontal"
             android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:gravity="end">
+            android:paddingRight="55dip"
+            android:paddingTop="@dimen/activity_vertical_margin">
 
             <ImageView
                 android:id="@+id/s1tips"
@@ -108,188 +108,198 @@
 
     </LinearLayout>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_high_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_high_margin"
-        android:layout_marginTop="10dp"
-        android:background="@color/bg_black_transparent"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/activity_vertical_margin"
-        android:paddingRight="@dimen/activity_vertical_margin"
-        tools:context=".MainActivity">
+        android:layout_height="fill_parent">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             tools:context=".MainActivity">
 
-            <ImageView
-                android:id="@+id/timer"
-                android:layout_width="60dp"
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/activity_vertical_low_margin"
+                android:layout_marginLeft="@dimen/activity_horizontal_high_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_high_margin"
+                android:layout_marginTop="10dp"
+                android:background="@color/bg_black_transparent"
+                android:orientation="vertical"
                 android:paddingLeft="@dimen/activity_vertical_margin"
                 android:paddingRight="@dimen/activity_vertical_margin"
-                android:paddingTop="@dimen/activity_vertical_low_margin"
-                android:src="@drawable/login_timer" />
+                tools:context=".MainActivity">
 
-            <TextView
-                android:id="@+id/cooldown_tip"
-                android:layout_width="wrap_content"
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:context=".MainActivity">
+
+                    <ImageView
+                        android:id="@+id/timer"
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="@dimen/activity_vertical_low_margin"
+                        android:paddingLeft="@dimen/activity_vertical_margin"
+                        android:paddingRight="@dimen/activity_vertical_margin"
+                        android:paddingTop="@dimen/activity_vertical_low_margin"
+                        android:src="@drawable/login_timer" />
+
+                    <TextView
+                        android:id="@+id/cooldown_tip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/cooldown_tip"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/light_font" />
+
+                </LinearLayout>
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:context=".MainActivity">
+
+                    <ImageView
+                        android:id="@+id/magnifier"
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="@dimen/activity_vertical_low_margin"
+                        android:paddingLeft="@dimen/activity_vertical_margin"
+                        android:paddingRight="@dimen/activity_vertical_margin"
+                        android:paddingTop="@dimen/activity_vertical_low_margin"
+                        android:src="@drawable/login_magnifier" />
+
+                    <TextView
+                        android:id="@+id/analysis_tip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/analysis_tip"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/light_font" />
+                </LinearLayout>
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:context=".MainActivity">
+
+                    <ImageView
+                        android:id="@+id/synchro"
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="@dimen/activity_vertical_low_margin"
+                        android:paddingLeft="@dimen/activity_vertical_margin"
+                        android:paddingRight="@dimen/activity_vertical_margin"
+                        android:paddingTop="@dimen/activity_vertical_low_margin"
+                        android:src="@drawable/login_synchro" />
+
+                    <TextView
+                        android:id="@+id/synchro_tip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/synchro_tip"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/light_font" />
+
+                </LinearLayout>
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    tools:context=".MainActivity">
+
+                    <ImageView
+                        android:id="@+id/security"
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="@dimen/activity_vertical_low_margin"
+                        android:paddingLeft="@dimen/activity_vertical_margin"
+                        android:paddingRight="@dimen/activity_vertical_margin"
+                        android:paddingTop="@dimen/activity_vertical_low_margin"
+                        android:src="@drawable/login_security" />
+
+                    <TextView
+                        android:id="@+id/security_tip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/security_tip"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/light_font" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/cooldown_tip"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/light_font" />
+                android:layout_marginLeft="@dimen/activity_horizontal_high_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_high_margin"
+                android:layout_marginTop="10dp"
+                android:background="@color/bg_black_transparent"
+                android:orientation="vertical"
+                tools:context=".MainActivity">
 
+                <Spinner
+                    android:id="@+id/region_spinner"
+                    style="@android:style/Widget.Holo.Light.Spinner"
+                    android:layout_width="fill_parent"
+                    android:layout_height="60dp"
+                    android:paddingLeft="@dimen/activity_vertical_margin"
+                    android:paddingRight="@dimen/activity_vertical_margin" />
+            </LinearLayout>
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_high_margin"
+                android:layout_marginLeft="@dimen/activity_horizontal_high_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_high_margin"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                tools:context=".MainActivity">
+
+
+                <EditText
+                    android:id="@+id/summoner_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/bg_white_transparent"
+                    android:ems="10"
+                    android:hint="@string/summoner_name"
+                    android:inputType="textPersonName"
+                    android:paddingLeft="@dimen/activity_vertical_margin"
+                    android:paddingRight="@dimen/activity_vertical_margin" />
+
+                <Button
+                    android:id="@+id/login_submit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/bg_black_transparent"
+                    android:minWidth="120dp"
+                    android:onClick="lauchSummonerSearch"
+                    android:text="@string/login_submit"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/light_font" />
+            </LinearLayout>
         </LinearLayout>
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            tools:context=".MainActivity">
-
-            <ImageView
-                android:id="@+id/magnifier"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/activity_vertical_low_margin"
-                android:paddingLeft="@dimen/activity_vertical_margin"
-                android:paddingRight="@dimen/activity_vertical_margin"
-                android:paddingTop="@dimen/activity_vertical_low_margin"
-                android:src="@drawable/login_magnifier" />
-
-            <TextView
-                android:id="@+id/analysis_tip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/analysis_tip"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/light_font" />
-        </LinearLayout>
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            tools:context=".MainActivity">
-
-            <ImageView
-                android:id="@+id/synchro"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/activity_vertical_low_margin"
-                android:paddingLeft="@dimen/activity_vertical_margin"
-                android:paddingRight="@dimen/activity_vertical_margin"
-                android:paddingTop="@dimen/activity_vertical_low_margin"
-                android:src="@drawable/login_synchro" />
-
-            <TextView
-                android:id="@+id/synchro_tip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/synchro_tip"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/light_font" />
-
-        </LinearLayout>
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            tools:context=".MainActivity">
-
-            <ImageView
-                android:id="@+id/security"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/activity_vertical_low_margin"
-                android:paddingLeft="@dimen/activity_vertical_margin"
-                android:paddingRight="@dimen/activity_vertical_margin"
-                android:paddingTop="@dimen/activity_vertical_low_margin"
-                android:src="@drawable/login_security" />
-
-            <TextView
-                android:id="@+id/security_tip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/security_tip"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/light_font" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_high_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_high_margin"
-        android:layout_marginTop="10dp"
-        android:orientation="vertical"
-        android:background="@color/bg_black_transparent"
-        tools:context=".MainActivity">
-
-        <Spinner
-            android:id="@+id/region_spinner"
-            android:layout_width="fill_parent"
-            android:layout_height="60dp"
-            android:paddingLeft="@dimen/activity_vertical_margin"
-            android:paddingRight="@dimen/activity_vertical_margin"
-            style="@android:style/Widget.Holo.Light.Spinner"/>
-    </LinearLayout>
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_high_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_high_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_high_margin"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal"
-        tools:context=".MainActivity">
-
-
-        <EditText
-            android:id="@+id/summoner_name"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:background="@color/bg_white_transparent"
-            android:ems="10"
-            android:layout_gravity="center_vertical"
-            android:hint="@string/summoner_name"
-            android:inputType="textPersonName"
-            android:paddingLeft="@dimen/activity_vertical_margin"
-            android:paddingRight="@dimen/activity_vertical_margin" />
-
-        <Button
-            android:id="@+id/login_submit"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:background="@color/bg_black_transparent"
-            android:textColor="@color/light_font"
-            android:layout_gravity="center_vertical"
-            android:minWidth="120dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:onClick="lauchSummonerSearch"
-            android:text="@string/login_submit" />
-    </LinearLayout>
-
-
-
+    </ScrollView>
 </LinearLayout>

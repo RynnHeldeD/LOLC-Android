@@ -1,40 +1,43 @@
-/* Copyright © 2015
+/* Copyright ï¿½ 2015
  * GHARBI Eddy
  * PARRENO Michel
  * VELTRI Constantin
  * NGUYEN Remy
  * GALLI Romain
  *
- * Cette œuvre est protégée par le droit d’auteur et strictement réservée à l’usage privé du
- * client. Toute reproduction ou diffusion au profit de tiers, à titre
- * gratuit ou onéreux, de
- * tout ou partie de cette œuvre est strictement interdite et constitue une contrefaçon prévue
- * par les articles L 335-2 et suivants du Code de la propriété
+ * Cette ï¿½uvre est protï¿½gï¿½e par le droit dï¿½auteur et strictement rï¿½servï¿½e ï¿½ lï¿½usage privï¿½ du
+ * client. Toute reproduction ou diffusion au profit de tiers, ï¿½ titre
+ * gratuit ou onï¿½reux, de
+ * tout ou partie de cette ï¿½uvre est strictement interdite et constitue une contrefaï¿½on prï¿½vue
+ * par les articles L 335-2 et suivants du Code de la propriï¿½tï¿½
  * intellectuelle. Les ayants-droits se
- * réservent le droit de poursuivre toute atteinte à leurs droits de
- * propriété intellectuelle devant les
- * juridictions civiles ou pénales.
+ * rï¿½servent le droit de poursuivre toute atteinte ï¿½ leurs droits de
+ * propriï¿½tï¿½ intellectuelle devant les
+ * juridictions civiles ou pï¿½nales.
  */
 
 package org.ema.model.DAO;
 import android.os.AsyncTask;
 import android.os.SystemClock;
-import android.util.Log;
 
 import org.ema.model.business.Champion;
 import org.ema.model.business.LaneProbability;
 import org.ema.model.business.League;
+import org.ema.model.business.Mastery;
+import org.ema.model.business.Rune;
 import org.ema.model.business.Spell;
 import org.ema.model.business.Statistic;
 import org.ema.model.business.Summoner;
 import org.ema.model.business.Item;
 import org.ema.utils.Constant;
+import org.ema.utils.LogUtils;
 import org.ema.utils.SortChampionsArrayList;
 import org.ema.utils.SortIntegerTabArrayList;
 import org.ema.utils.SortSummonerByTeamAndPerf;
 import org.ema.utils.SummonerList;
 import org.ema.utils.Utils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -62,6 +65,51 @@ public class CurrentGameDAO {
 
             summoner.getDataProcessed().setDetailedStats(true);
         }
+    }
+
+    public static ArrayList<Mastery> getSummunerMasteries(Summoner summuner, JSONArray jsonMasteries) {
+        ArrayList<Mastery> masteries = new ArrayList<>();
+
+        for(int i = 0; i < jsonMasteries.length(); i++) {
+            try {
+                JSONObject jsonMastery = jsonMasteries.getJSONObject(i);
+
+                Mastery mastery = new Mastery();
+                mastery.setId(jsonMastery.getInt("masteryId"));
+                mastery.setRank(jsonMastery.getInt("rank"));
+                mastery.setIconUrl(mastery.getId() + ".png");
+
+                masteries.add(mastery);
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+            return masteries;
+    }
+
+    public static ArrayList<Rune> getSummunerRunes(Summoner summuner, JSONArray jsonRunes) {
+        ArrayList<Rune> runes = new ArrayList<>();
+
+        for(int i = 0; i < jsonRunes.length(); i++) {
+            try {
+                JSONObject jsonRune = jsonRunes.getJSONObject(i);
+
+                Rune rune = new Rune();
+                rune.setId(jsonRune.getInt("runeId"));
+                rune.setCount(jsonRune.getInt("count"));
+                rune.setIconUrl(rune.getId() + ".png");
+                runes.add(rune);
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+        return runes;
     }
 
     public static ArrayList<Summoner> getSummunerListInGameFromCurrentUser(Summoner user) {
@@ -117,8 +165,18 @@ public class CurrentGameDAO {
                     user.setChampion(summoner.getChampion());
                 }
 
+                //get runes
+                summoner.setRunes(getSummunerRunes(summoner, jsonParticipant.getJSONArray("runes")));
+
+                //get masteries
+                summoner.setMasteries(getSummunerMasteries(summoner, jsonParticipant.getJSONArray("masteries")));
+
                 summonersList.add(summoner);
             }
+
+            //Async thread to get detailles runes and masteries (images, descriptions, effects)
+            new Utils.getRunesDetailled().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, summonersList);
+            new Utils.getMasteriesDetailled().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, summonersList);
 
             getLevels(summonersList);
 
@@ -171,11 +229,15 @@ public class CurrentGameDAO {
                 new Utils.getStats().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current);
             }
 
-            while(!SummonerList.areSummenersPremadesLoaded(summonersList) || !SummonerList.areSummenersStatsLoaded(summonersList)){
+            while(!SummonerList.areSummenersPremadesLoaded(summonersList) ||
+                  !SummonerList.areSummenersStatsLoaded(summonersList) ||
+                  !SummonerList.areSummenersRunesLoaded(summonersList) ||
+                  !SummonerList.areSummenersMasteriesLoaded(summonersList)) {
                 SystemClock.sleep(500);
             }
 
             for(Summoner current : summonersList) {
+                current.getCooldownPerLevelAndCalculCooldowns();
                 calculUserPerformance(current);
             }
 
@@ -278,7 +340,7 @@ public class CurrentGameDAO {
 
         } catch (Exception e) {
             e.printStackTrace();
-            Log.v("Erreur stats", e.getMessage());
+            LogUtils.LOGV("Erreur stats", e.getMessage());
         }
     }
 
@@ -329,28 +391,48 @@ public class CurrentGameDAO {
         int numberOfValueZeroToTen, numberOfValueTenToTwenty, numberOfValueTwentyToThirsty, numberOfValueThirtyToEnd;
         numberOfValueZeroToTen = numberOfValueTenToTwenty = numberOfValueTwentyToThirsty = numberOfValueThirtyToEnd = 0;
         JSONArray jsonParticipants = null;
+        long idGame = 0;
+
+
 
         try {
             for (int i = 0; i < matchHistory.length(); i++) {
-                if (!matchHistory.getJSONObject(i).isNull("participants")) {
-                    jsonParticipants = matchHistory.getJSONObject(i).getJSONArray("participants");
-                    if (!jsonParticipants.getJSONObject(0).isNull("timeline")) {
-                        if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").isNull("creepsPerMinDeltas")) {
-                            if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("zeroToTen")) {
-                                zeroToTen += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("zeroToTen");
+
+                idGame = matchHistory.getJSONObject(i).getLong("matchId");
+                String jsonResult = Utils.getDocument(Constant.API_MATCHS + String.valueOf(idGame));
+                JSONObject gameDetails = new JSONObject(jsonResult);
+
+                boolean idChampionFound = false;
+                int indexParticipants = 0;
+                while(!idChampionFound)
+                {
+                    if(gameDetails.getJSONArray("participants").getJSONObject(indexParticipants).getInt("championId") == user.getChampion().getId())
+                    {
+                        idChampionFound = true;
+                    }
+                    else{
+                        indexParticipants ++;
+                    }
+                }
+                if (!gameDetails.isNull("participants")) {
+                    jsonParticipants = gameDetails.getJSONArray("participants");
+                    if (!jsonParticipants.getJSONObject(indexParticipants).isNull("timeline")) {
+                        if (!jsonParticipants.getJSONObject(indexParticipants).getJSONObject("timeline").isNull("creepsPerMinDeltas")) {
+                            if (!jsonParticipants.getJSONObject(indexParticipants).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("zeroToTen")) {
+                                zeroToTen += jsonParticipants.getJSONObject(indexParticipants).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("zeroToTen");
                                 numberOfValueZeroToTen++;
                             }
-                            if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("tenToTwenty")) {
-                                tenToTwenty += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("tenToTwenty");
+                            if (!jsonParticipants.getJSONObject(indexParticipants).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("tenToTwenty")) {
+                                tenToTwenty += jsonParticipants.getJSONObject(indexParticipants).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("tenToTwenty");
                                 numberOfValueTenToTwenty++;
                             }
-                            if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("twentyToThirty")) {
-                                twentyToThirty += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("twentyToThirty");
+                            if (!jsonParticipants.getJSONObject(indexParticipants).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("twentyToThirty")) {
+                                twentyToThirty += jsonParticipants.getJSONObject(indexParticipants).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("twentyToThirty");
                                 numberOfValueTwentyToThirsty++;
 
                             }
-                            if (!jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("thirtyToEnd")) {
-                                thirtyToEnd += jsonParticipants.getJSONObject(0).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("thirtyToEnd");
+                            if (!jsonParticipants.getJSONObject(indexParticipants).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").isNull("thirtyToEnd")) {
+                                thirtyToEnd += jsonParticipants.getJSONObject(indexParticipants).getJSONObject("timeline").getJSONObject("creepsPerMinDeltas").getDouble("thirtyToEnd");
                                 numberOfValueThirtyToEnd++;
                             }
                         }
@@ -385,7 +467,7 @@ public class CurrentGameDAO {
             user.getChampion().getStatistic().setCreepChartInfo(creepChartInfo);
     } catch (Exception e) {
             e.printStackTrace();
-            Log.v("Erreur creep", e.getMessage());
+            LogUtils.LOGV("Erreur creep", e.getMessage());
         }
     }
 
@@ -506,10 +588,10 @@ public class CurrentGameDAO {
                 }
             }
 
-            /*Log.v("TOTO","Team = " + summoner.getTeamId());
+            /*LogUtils.LOGV("TOTO","Team = " + summoner.getTeamId());
 
             for (int i = 0; i < nbGamesWithUser.length; i++) {
-                Log.v("PREMADES", nbGamesWithUser[i][0] + " " + nbGamesWithUser[i][1]);
+                LogUtils.LOGV("PREMADES", nbGamesWithUser[i][0] + " " + nbGamesWithUser[i][1]);
             }*/
 
             int limit;
@@ -544,7 +626,7 @@ public class CurrentGameDAO {
                 if(nbGamesWithUser[i][1] >= limit) {
                     for(Summoner premadeCurrent : summoners) {
                         if(premadeCurrent.getId() == nbGamesWithUser[i][0]) {
-                            Log.v("PREMADES",summoner.getName() + " and " + premadeCurrent.getName() + " are premade");
+                            LogUtils.LOGV("PREMADES", summoner.getName() + " and " + premadeCurrent.getName() + " are premade");
 
                             if(premadeCurrent.getPremade() != 0 && summoner.getPremade() != 0) {
                                 //1 and 2 are friends, need merge
@@ -574,24 +656,36 @@ public class CurrentGameDAO {
                 }
             }
             summoner.getDataProcessed().setPremades(true);
-            //Log.v("TOTO", "Limit = " + String.valueOf(limit));
+            //LogUtils.LOGV("TOTO", "Limit = " + String.valueOf(limit));
         } catch (Exception e) {
             summoner.getDataProcessed().setPremades(true);
             e.printStackTrace();
         }
     }
 
-    public static int[] getUserBuild(JSONArray jsonParticipants, int numberOfItemToAnalyze)
+    public static int[] getUserBuild(JSONArray jsonParticipants, int numberOfItemToAnalyze, int summonerIdChampion)
     {
         JSONArray json = jsonParticipants;
 
         int[] build = new int[numberOfItemToAnalyze];
         try{
+            boolean idChampionFound = false;
+            int indexParticipants = 0;
+            while(!idChampionFound)
+            {
+                if(jsonParticipants.getJSONObject(indexParticipants).getInt("championId") == summonerIdChampion)
+                {
+                    idChampionFound = true;
+                }
+                else{
+                    indexParticipants ++;
+                }
+            }
             for(int i=0;i<numberOfItemToAnalyze;i++)
             {
-                if(!jsonParticipants.getJSONObject(0).isNull("stats")) {
-                    if(!jsonParticipants.getJSONObject(0).getJSONObject("stats").isNull("item" + i)){
-                        int itemID = jsonParticipants.getJSONObject(0).getJSONObject("stats").getInt("item" + i);
+                if(!jsonParticipants.getJSONObject(indexParticipants).isNull("stats")) {
+                    if(!jsonParticipants.getJSONObject(indexParticipants).getJSONObject("stats").isNull("item" + i)){
+                        int itemID = jsonParticipants.getJSONObject(indexParticipants).getJSONObject("stats").getInt("item" + i);
                         build[i] = itemID;
                     }
                     else{
@@ -599,10 +693,17 @@ public class CurrentGameDAO {
                     }
                 }
             }
+            //DEBUG EDDY
+            /*for(int i=0;i<numberOfItemToAnalyze;i++)
+            {
+                Log.v("Debug favorite build ", "item + " + build[i]);
+            }
+            Log.v("Debug favorite build ", "------------------");*/
+            //DEBUG EDDY
             return build;
         }catch (Exception e) {
             e.printStackTrace();
-            Log.v("Erreur creep", e.getMessage());
+            LogUtils.LOGV("Erreur creep", e.getMessage());
             return null;
         }
     }
@@ -676,27 +777,46 @@ public class CurrentGameDAO {
         int numberOfGames = 0;
         try {
             for (int i = jsonMatches.length()-1; i > Math.max(jsonMatches.length() - 3, jsonMatches.length() - 2) ; i--) {
-                //if (!jsonMatches.getJSONObject(i).isNull("season") && (jsonMatches.getJSONObject(i).getString("season").equals("SEASON2015") || (jsonMatches.getJSONObject(i).getString("season").equals("PRESEASON2015")))) {
                 if (!jsonMatches.getJSONObject(i).isNull("season") && (jsonMatches.getJSONObject(i).getString("season").equals("SEASON2015") )) {
+
                     numberOfGames++;
-                    JSONObject test = jsonMatches.getJSONObject(i);
                     idGame = jsonMatches.getJSONObject(i).getLong("matchId");
-                    teamID = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getInt("teamId");
-                    toalDamageDealtByUserInCurrentGame = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getJSONObject("stats").getInt("totalDamageDealtToChampions");
-                    totalDamageTakenByUserInCurrentGame = jsonMatches.getJSONObject(i).getJSONArray("participants").getJSONObject(0).getJSONObject("stats").getInt("totalDamageTaken");
                     String jsonResult = Utils.getDocument(Constant.API_MATCHS + String.valueOf(idGame));
-                    if (jsonResult != null) {
+
+                    if(jsonResult != null)
+                    {
                         JSONObject gameDetails = new JSONObject(jsonResult);
-                        for (int j = 0; j < gameDetails.getJSONArray("participants").length(); j++) {
-                            if (gameDetails.getJSONArray("participants").getJSONObject(j).getInt("teamId") == teamID) {
-                                totalDamageDealtByUserTeamInCurrentGame += gameDetails.getJSONArray("participants").getJSONObject(j).getJSONObject("stats").getInt("totalDamageDealtToChampions");
-                                totalDamageTakenByUserTeamInCurrentGame += gameDetails.getJSONArray("participants").getJSONObject(j).getJSONObject("stats").getInt("totalDamageTaken");
+
+                        boolean idChampionFound = false;
+                        int indexParticipants = 0;
+                        while(!idChampionFound)
+                        {
+                            if(gameDetails.getJSONArray("participants").getJSONObject(indexParticipants).getInt("championId") == summoner.getChampion().getId())
+                            {
+                                idChampionFound = true;
+                            }
+                            else{
+                                indexParticipants ++;
                             }
                         }
-                        meanPercentageDamageDealtByUser += (float) toalDamageDealtByUserInCurrentGame / (float) totalDamageDealtByUserTeamInCurrentGame;
-                        meanPercentageDamageTakenByUser += (float) totalDamageTakenByUserInCurrentGame / (float) totalDamageTakenByUserTeamInCurrentGame;
-                        totalDamageDealtByUserTeamInCurrentGame = 0;
-                        totalDamageTakenByUserTeamInCurrentGame = 0;
+
+                        teamID = gameDetails.getJSONArray("participants").getJSONObject(indexParticipants).getInt("teamId");
+                        toalDamageDealtByUserInCurrentGame = gameDetails.getJSONArray("participants").getJSONObject(indexParticipants).getJSONObject("stats").getInt("totalDamageDealtToChampions");
+                        totalDamageTakenByUserInCurrentGame = gameDetails.getJSONArray("participants").getJSONObject(indexParticipants).getJSONObject("stats").getInt("totalDamageTaken");
+
+                        if (jsonResult != null) {
+                            //JSONObject gameDetails = new JSONObject(jsonResult);
+                            for (int j = 0; j < gameDetails.getJSONArray("participants").length(); j++) {
+                                if (gameDetails.getJSONArray("participants").getJSONObject(j).getInt("teamId") == teamID) {
+                                    totalDamageDealtByUserTeamInCurrentGame += gameDetails.getJSONArray("participants").getJSONObject(j).getJSONObject("stats").getInt("totalDamageDealtToChampions");
+                                    totalDamageTakenByUserTeamInCurrentGame += gameDetails.getJSONArray("participants").getJSONObject(j).getJSONObject("stats").getInt("totalDamageTaken");
+                                }
+                            }
+                            meanPercentageDamageDealtByUser += (float) toalDamageDealtByUserInCurrentGame / (float) totalDamageDealtByUserTeamInCurrentGame;
+                            meanPercentageDamageTakenByUser += (float) totalDamageTakenByUserInCurrentGame / (float) totalDamageTakenByUserTeamInCurrentGame;
+                            totalDamageDealtByUserTeamInCurrentGame = 0;
+                            totalDamageTakenByUserTeamInCurrentGame = 0;
+                        }
                     }
                 }
             }
@@ -714,12 +834,12 @@ public class CurrentGameDAO {
             summoner.getChampion().getStatistic().setDamageTakenPercentage(meanPercentageDamageTakenByUser);
         } catch(Exception e){
             e.printStackTrace();
-            Log.v("Erreur creep", e.getMessage());
+            LogUtils.LOGV("Erreur creep", e.getMessage());
         }
     }
 
     public static void getSummonerFavoriteBuild(Summoner summoner, JSONArray matchHistory) {
-        Log.v("DAO", "Favorite build");
+        long idGame = 0;
         ArrayList<int[]> itemHistoy = new ArrayList<>();
         int[] matchItemHistory = new int[6];
         int numberOfItemToAnalyze = 5;
@@ -735,9 +855,13 @@ public class CurrentGameDAO {
             jsonGlobalItems = jsonGlobalItems.getJSONObject("data");
 
             for (int i = 0; i < matchHistory.length(); i++) {
-                if (!matchHistory.getJSONObject(i).isNull("participants") && matchHistory.getJSONObject(i).getString("season").equals("SEASON2015")) {
-                    jsonParticipants = matchHistory.getJSONObject(i).getJSONArray("participants");
-                    matchItemHistory = getUserBuild(jsonParticipants, numberOfItemToAnalyze);
+                idGame = matchHistory.getJSONObject(i).getLong("matchId");
+                String jsonResult = Utils.getDocument(Constant.API_MATCHS + String.valueOf(idGame));
+                JSONObject gameDetails = new JSONObject(jsonResult);
+
+                if (!gameDetails.isNull("participants") && gameDetails.getString("season").equals("SEASON2015")) {
+                    jsonParticipants = gameDetails.getJSONArray("participants");
+                    matchItemHistory = getUserBuild(jsonParticipants, numberOfItemToAnalyze, summoner.getChampion().getId());
                     if (i == 0) {
                         for (int j = 0; j < numberOfItemToAnalyze; j++) {
                             int itemID = matchItemHistory[j];
@@ -770,7 +894,7 @@ public class CurrentGameDAO {
                                 }
                             }
                             if (!found) {
-                                //Log.v("DAO", "Item into, user : " + user.getName());
+                                //LogUtils.LOGV("DAO", "Item into, user : " + user.getName());
                                 int itemID = matchItemHistory[j];
                                 if (itemID != 0) {
                                     if(!jsonGlobalItems.isNull(String.valueOf(itemID)))
@@ -803,14 +927,19 @@ public class CurrentGameDAO {
         summoner.getChampion().setBuild(Build);
         } catch (Exception e){
             e.printStackTrace();
-            //Log.v("Erreur creep", e.getMessage());
+            //LogUtils.LOGV("Erreur creep", e.getMessage());
         }
     }
 
     public static JSONArray getMatchHistory(Summoner summoner, int numberOfGamesAnalyzed){
         JSONObject jsonResult;
+        String debugRequest = Constant.API_MATCH_LIST_URI +
+                summoner.getId() +
+                "?championIds=" +
+                summoner.getChampion().getId() +
+                "&rankedQueus=RANKED_SOLO_5x5&beginIndex=" + 0 + "&endIndex=" + numberOfGamesAnalyzed;
         try {
-            jsonResult = new JSONObject(Utils.getDocument(Constant.API_MATCH_HISTORY_URI +
+            jsonResult = new JSONObject(Utils.getDocument(Constant.API_MATCH_LIST_URI +
                     summoner.getId() +
                     "?championIds=" +
                     summoner.getChampion().getId() +
@@ -822,30 +951,53 @@ public class CurrentGameDAO {
             return jsonMatches;
         } catch (Exception e) {
             e.printStackTrace();
-            Log.v("Erreur creep", e.getMessage());
+            LogUtils.LOGV("Erreur creep", e.getMessage());
             return null;
         }
     }
 
     private static void getLanesProbabilities(Summoner user, JSONArray matchHistory) {
+        long idGame = 0;
         try {
             for (int i = 0; i < matchHistory.length(); i++) {
-                LaneProbability laneProbability = new LaneProbability();
 
-                JSONObject jsonMatch = (JSONObject)matchHistory.get(i);
-                jsonMatch = (JSONObject)(((JSONArray)jsonMatch.get("participants")).get(0));
+                idGame = matchHistory.getJSONObject(i).getLong("matchId");
+                String jsonResult = Utils.getDocument(Constant.API_MATCHS + String.valueOf(idGame));
+                if(jsonResult != null)
+                {
+                    JSONObject gameDetails = new JSONObject(jsonResult);
 
-                laneProbability.setSpellId1(jsonMatch.getInt("spell1Id"));
-                laneProbability.setSpellId2(jsonMatch.getInt("spell2Id"));
-                jsonMatch = (JSONObject)jsonMatch.get("timeline");
-                laneProbability.setLane(jsonMatch.getString("lane"));
-                laneProbability.setRole(jsonMatch.getString("role"));
+                    LaneProbability laneProbability = new LaneProbability();
 
-                user.getChampion().addLaneProbability(laneProbability);
+                    JSONObject jsonMatch = (JSONObject)matchHistory.get(i);
+
+                    boolean idChampionFound = false;
+                    int indexParticipants = 0;
+                    while(!idChampionFound)
+                    {
+                        if(gameDetails.getJSONArray("participants").getJSONObject(indexParticipants).getInt("championId") == user.getChampion().getId())
+                        {
+                            idChampionFound = true;
+                        }
+                        else{
+                            indexParticipants ++;
+                        }
+                    }
+
+                    jsonMatch = (JSONObject)((gameDetails.getJSONArray("participants")).get(indexParticipants));
+
+                    laneProbability.setSpellId1(jsonMatch.getInt("spell1Id"));
+                    laneProbability.setSpellId2(jsonMatch.getInt("spell2Id"));
+                    jsonMatch = (JSONObject)jsonMatch.get("timeline");
+                    laneProbability.setLane(jsonMatch.getString("lane"));
+                    laneProbability.setRole(jsonMatch.getString("role"));
+
+                    user.getChampion().addLaneProbability(laneProbability);
+                }
             }
         } catch(Exception e){
             e.printStackTrace();
-            Log.v("Erreur lanes", e.getMessage());
+            LogUtils.LOGV("Erreur lanes", e.getMessage());
         }
     }
 
@@ -933,6 +1085,69 @@ public class CurrentGameDAO {
 
             if(user2 != null && user2.getChampion().getSummary()[i].getProba() != new Float(0)) {
                 user2.getChampion().setLane(user.getChampion().getSummary()[i].getLane());
+            }
+        }
+    }
+
+    public static void getRunesDetailled(ArrayList<Summoner> summoners) {
+        try {
+            JSONObject jsonRunes = (new JSONObject(Utils.getDocumentAndCheck(Constant.API_RUNES,4))).getJSONObject("data");
+
+            for(Summoner summoner : summoners) {
+                for(int i = 0; i < summoner.getRunes().size(); i++) {
+                    Rune rune = summoner.getRunes().get(i);
+                    JSONObject jsonRune = jsonRunes.getJSONObject(String.valueOf(rune.getId()));
+                    rune.setName(jsonRune.getString("name"));
+                    rune.setDescription(jsonRune.getString("description"));
+
+                    String stats = jsonRune.getString("stats");
+
+                    //replace '{' and '}'
+                    stats = stats.substring(1,stats.length()-1);
+
+                    stats = stats.replaceAll("\"","").replace(" ","");
+                    String statsSplitter[] = stats.split(",");
+
+                    for(int j = 0; j < statsSplitter.length; j++) {
+                        String stat[] = statsSplitter[j].split(":");
+
+                        rune.getStats().put(stat[0],stat[1]);
+                    }
+                }
+
+                summoner.getDataProcessed().setRunes(true);
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+
+            for(Summoner summoner : summoners) {
+                summoner.getDataProcessed().setRunes(true);
+            }
+        }
+    }
+
+    public static void getMasteriesDetailled(ArrayList<Summoner> summoners) {
+        try {
+            JSONObject jsonMasteries = (new JSONObject(Utils.getDocumentAndCheck(Constant.API_MASTERIES,4))).getJSONObject("data");
+
+            for(Summoner summoner : summoners) {
+                for(int i = 0; i < summoner.getMasteries().size(); i++) {
+                    Mastery mastery = summoner.getMasteries().get(i);
+
+                    JSONObject jsonMastery = jsonMasteries.getJSONObject(String.valueOf(mastery.getId()));
+                    mastery.setName(jsonMastery.getString("name"));
+                    mastery.setDescription(jsonMastery.getJSONArray("description").getString(mastery.getRank()-1));
+                }
+
+                summoner.getDataProcessed().setMasteries(true);
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+
+            for(Summoner summoner : summoners) {
+                summoner.getDataProcessed().setMasteries(true);
             }
         }
     }

@@ -1,47 +1,36 @@
-/* Copyright © 2015
+/* Copyright ï¿½ 2015
  * GHARBI Eddy
  * PARRENO Michel
  * VELTRI Constantin
  * NGUYEN Remy
  * GALLI Romain
  *
- * Cette œuvre est protégée par le droit d’auteur et strictement réservée à l’usage privé du
- * client. Toute reproduction ou diffusion au profit de tiers, à titre
- * gratuit ou onéreux, de
- * tout ou partie de cette œuvre est strictement interdite et constitue une contrefaçon prévue
- * par les articles L 335-2 et suivants du Code de la propriété
+ * Cette ï¿½uvre est protï¿½gï¿½e par le droit dï¿½auteur et strictement rï¿½servï¿½e ï¿½ lï¿½usage privï¿½ du
+ * client. Toute reproduction ou diffusion au profit de tiers, ï¿½ titre
+ * gratuit ou onï¿½reux, de
+ * tout ou partie de cette ï¿½uvre est strictement interdite et constitue une contrefaï¿½on prï¿½vue
+ * par les articles L 335-2 et suivants du Code de la propriï¿½tï¿½
  * intellectuelle. Les ayants-droits se
- * réservent le droit de poursuivre toute atteinte à leurs droits de
- * propriété intellectuelle devant les
- * juridictions civiles ou pénales.
+ * rï¿½servent le droit de poursuivre toute atteinte ï¿½ leurs droits de
+ * propriï¿½tï¿½ intellectuelle devant les
+ * juridictions civiles ou pï¿½nales.
  */
 
 package org.ema.lolcompanion;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Legend;
@@ -55,15 +44,11 @@ import com.github.mikephil.charting.utils.Highlight;
 import com.github.mikephil.charting.utils.ValueFormatter;
 
 import org.ema.dialogs.ChampionTipAdvStatsDialogFragment;
-import org.ema.dialogs.ChampionTipDialogFragment;
-import org.ema.dialogs.LolCompanionProgressDialog;
-import org.ema.model.DAO.CurrentGameDAO;
-import org.ema.model.DAO.SummonerDAO;
 import org.ema.model.business.Champion;
 import org.ema.model.business.Item;
 import org.ema.model.business.Summoner;
-import org.ema.utils.Constant;
 import org.ema.utils.GlobalDataManager;
+import org.ema.utils.LogUtils;
 import org.ema.utils.VerticalProgressBar;
 
 import java.math.RoundingMode;
@@ -152,11 +137,11 @@ public class AdvancedStatsActivity extends FragmentActivity implements OnChartVa
         //AVG WINRATE GLOBAL
         TextView advWinRateGlobal = (TextView) findViewById(R.id.advstats_winrate_global_value);
         float winRate = 0;
-        //Log.v("MIC", "summoner wins : " + summonerToShow.getWins() + " summoner looses : " + summonerToShow.getLooses());
+        //LogUtils.LOGV("MIC", "summoner wins : " + summonerToShow.getWins() + " summoner looses : " + summonerToShow.getLooses());
         if ((float) summonerToShow.getWins() + (float) summonerToShow.getLooses() != 0) {
             winRate = (float) (summonerToShow.getWins() / ((float) summonerToShow.getWins() + (float) (float) summonerToShow.getLooses())) * 100;
         }
-        //Log.v("MIC", "summoner Winrate : " + winRate);
+        //LogUtils.LOGV("MIC", "summoner Winrate : " + winRate);
         String winRateFormatted = String.valueOf( winRate > 0 && winRate < 10 ? dfsmall.format(winRate) : df.format(winRate));
         advWinRateGlobal.setText(winRateFormatted + getResources().getString(R.string.purcent));
 
@@ -238,8 +223,8 @@ public class AdvancedStatsActivity extends FragmentActivity implements OnChartVa
 
         for(int i = 0; i < champions.length; i++) {
             xChampions.add(champions[i].getName());
-            Log.v("MIC", champions[i].toString());
-            Log.v("MIC", String.valueOf(champions[i].getStatistic().getWin() + champions[i].getStatistic().getLoose()));
+            LogUtils.LOGV("MIC", champions[i].toString());
+            LogUtils.LOGV("MIC", String.valueOf(champions[i].getStatistic().getWin() + champions[i].getStatistic().getLoose()));
             yPlayedGames.add(new BarEntry((champions[i].getStatistic().getWin() + champions[i].getStatistic().getLoose()), i));
             yWinGames.add(new BarEntry(champions[i].getStatistic().getWin(), i));
             yLoseGames.add(new BarEntry(champions[i].getStatistic().getLoose(), i));

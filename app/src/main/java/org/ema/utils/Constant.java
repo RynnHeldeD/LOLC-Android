@@ -1,10 +1,6 @@
 package org.ema.utils;
 
-import android.util.Log;
 
-import org.ema.model.business.Summoner;
-
-import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class Constant {
@@ -18,7 +14,7 @@ public class Constant {
     public static String DDRAGON_ITEMS_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/item/";
     public static String DDRAGON_SCOREBOARD_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/ui/";
 
-    private static String CACHE_SERVER_URI = "http://devtoolbox.fr/?url=";
+    private static String CACHE_SERVER_URI = "http://devtoolbox.fr:1337/?url=";
     private static String API_DNS = "https://euw.api.pvp.net/";
     private static String API_STATIC_DNS = "https://global.api.pvp.net/";
     //Default EUW
@@ -27,12 +23,14 @@ public class Constant {
     //Default EUW (for all)
     public static String API_CHAMPION_URI = CACHE_SERVER_URI + API_STATIC_DNS + "api/lol/static-data/euw/v1.2/champion?dataById=true&champData=allytips,enemytips,altimages,image,spells";
     public static String API_LEAGUE_URI = CACHE_SERVER_URI + API_DNS + "api/lol/euw/v2.5/league/by-summoner/";
-    public static String API_MATCH_HISTORY_URI = CACHE_SERVER_URI + API_DNS + "api/lol/euw/v2.2/matchhistory/";
+    public static String API_MATCH_LIST_URI = CACHE_SERVER_URI + API_DNS + "api/lol/euw/v2.2/matchlist/by-summoner/";
     public static String API_STATS_URI = CACHE_SERVER_URI + API_DNS + "api/lol/euw/v1.3/stats/by-summoner/";
     public static String API_SUMMONER_INFO_URI = CACHE_SERVER_URI + API_DNS + "api/lol/euw/v1.4/summoner/by-name/";
     public static String API_SUMMONER_SPELLS = CACHE_SERVER_URI + API_STATIC_DNS + "api/lol/static-data/euw/v1.2/summoner-spell?dataById=true&spellData=cooldown,image";
     public static String API_ITEMS = CACHE_SERVER_URI + API_STATIC_DNS + "api/lol/static-data/euw/v1.2/item";
     public static String API_MATCHS = CACHE_SERVER_URI + API_DNS + "api/lol/euw/v2.2/match/";
+    public static String API_RUNES = CACHE_SERVER_URI + API_STATIC_DNS + "api/lol/static-data/euw/v1.2/rune?runeListData=stats";
+    public static String API_MASTERIES = CACHE_SERVER_URI + API_STATIC_DNS + "api/lol/static-data/euw/v1.2/mastery?masteryListData=masteryTree,ranks";
 
     //Need to add "/recent" after the summoner id
     public static String API_SUMMONER_GAMES = CACHE_SERVER_URI + API_DNS + "api/lol/euw/v1.3/game/by-summoner/";
@@ -100,13 +98,15 @@ public class Constant {
         API_CURRENT_GAME_URI = setRequestRegion(API_CURRENT_GAME_URI,region);
         API_CHAMPION_URI = setRequestRegion(API_CHAMPION_URI,region);
         API_LEAGUE_URI = setRequestRegion(API_LEAGUE_URI,region);
-        API_MATCH_HISTORY_URI = setRequestRegion(API_MATCH_HISTORY_URI,region);
+        API_MATCH_LIST_URI = setRequestRegion(API_MATCH_LIST_URI,region);
         API_STATS_URI = setRequestRegion(API_STATS_URI,region);
         API_SUMMONER_INFO_URI = setRequestRegion(API_SUMMONER_INFO_URI,region);
         API_SUMMONER_SPELLS = setRequestRegion(API_SUMMONER_SPELLS,region);
         API_SUMMONER_GAMES = setRequestRegion(API_SUMMONER_GAMES,region);
         API_ITEMS = setRequestRegion(API_ITEMS,region);
         API_MATCHS = setRequestRegion(API_MATCHS,region);
+        API_RUNES = setRequestRegion(API_RUNES,region);
+        API_MASTERIES = setRequestRegion(API_MASTERIES,region);
 
         localRegion = region;
     }

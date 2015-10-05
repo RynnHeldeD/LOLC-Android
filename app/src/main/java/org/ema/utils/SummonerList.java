@@ -6,7 +6,6 @@ import org.ema.model.business.Summoner;
 import org.ema.model.business.SummonerSorted;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Created by romain on 03/06/2015.
@@ -36,6 +35,26 @@ public class SummonerList {
     public static boolean areSummenersStatsLoaded(ArrayList<Summoner> summoners) {
         for(Summoner current : summoners) {
             if(!current.getDataProcessed().isStats()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean areSummenersRunesLoaded(ArrayList<Summoner> summoners) {
+        for(Summoner current : summoners) {
+            if(!current.getDataProcessed().isRunes()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean areSummenersMasteriesLoaded(ArrayList<Summoner> summoners) {
+        for(Summoner current : summoners) {
+            if(!current.getDataProcessed().isMasteries()) {
                 return false;
             }
         }

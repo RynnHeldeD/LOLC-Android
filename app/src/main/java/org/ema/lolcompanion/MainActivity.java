@@ -1,19 +1,19 @@
-/* Copyright © 2015
+/* Copyright ÔøΩ 2015
  * GHARBI Eddy
  * PARRENO Michel
  * VELTRI Constantin
  * NGUYEN Remy
  * GALLI Romain
  *
- * Cette úuvre est protÈgÈe par le droit díauteur et strictement rÈservÈe ‡ líusage privÈ du
- * client. Toute reproduction ou diffusion au profit de tiers, ‡ titre
- * gratuit ou onÈreux, de
- * tout ou partie de cette úuvre est strictement interdite et constitue une contrefaÁon prÈvue
- * par les articles L 335-2 et suivants du Code de la propriÈtÈ
+ * Cette ÔøΩuvre est protÔøΩgÔøΩe par le droit dÔøΩauteur et strictement rÔøΩservÔøΩe ÔøΩ lÔøΩusage privÔøΩ du
+ * client. Toute reproduction ou diffusion au profit de tiers, ÔøΩ titre
+ * gratuit ou onÔøΩreux, de
+ * tout ou partie de cette ÔøΩuvre est strictement interdite et constitue une contrefaÔøΩon prÔøΩvue
+ * par les articles L 335-2 et suivants du Code de la propriÔøΩtÔøΩ
  * intellectuelle. Les ayants-droits se
- * rÈservent le droit de poursuivre toute atteinte ‡ leurs droits de
- * propriÈtÈ intellectuelle devant les
- * juridictions civiles ou pÈnales.
+ * rÔøΩservent le droit de poursuivre toute atteinte ÔøΩ leurs droits de
+ * propriÔøΩtÔøΩ intellectuelle devant les
+ * juridictions civiles ou pÔøΩnales.
  */
 
 package org.ema.lolcompanion;
@@ -115,12 +115,19 @@ public class MainActivity extends Activity {
         NetworkInfo mMobile = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
         //setting the toast
-        LayoutInflater inflater = getLayoutInflater();
+		LayoutInflater inflater = getLayoutInflater();
         View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
         TextView text = (TextView) layout.findViewById(R.id.text);
 
-        if (mWifi.isConnected() == false && mMobile.isConnected() == false) {
-
+		if((System.currentTimeMillis() / 1000) > 1448834400){ //fin de la b√©ta le 09/11 √† 23h
+			text.setText(getResources().getString(R.string.beta_test_version_end));
+            Toast toast = new Toast(getApplicationContext());
+            toast.setGravity(Gravity.BOTTOM, 0, 40);
+            toast.setDuration(Toast.LENGTH_SHORT);
+            toast.setView(layout);
+            toast.show();
+		}
+        else if (mWifi.isConnected() == false && mMobile.isConnected() == false) {
             text.setText(getResources().getString(R.string.pending_network_error));
             Toast toast = new Toast(getApplicationContext());
             toast.setGravity(Gravity.BOTTOM, 0, 40);
@@ -138,7 +145,6 @@ public class MainActivity extends Activity {
             toast.show();
             new CheckUserBackgroundTask(this).execute();
         }
-
     }
 
     class CheckUserBackgroundTask extends AsyncTask<Void, Void, Boolean> {

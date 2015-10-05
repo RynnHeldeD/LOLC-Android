@@ -56,9 +56,7 @@
                 android:layout_width="@dimen/stats_summoner_size"
                 android:layout_height="@dimen/stats_summoner_size"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/test_round"
-                android:clickable="true"
-                android:onClick="showAdvancedStatistics" />
+                android:src="@drawable/test_round" />
 
             <ImageView
                 android:id="@+id/s1Main"

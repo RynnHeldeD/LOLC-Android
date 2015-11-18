@@ -45,6 +45,7 @@ import org.ema.lolcompanion.R;
 import org.ema.model.DAO.CurrentGameDAO;
 import org.ema.model.business.Summoner;
 import org.ema.utils.GlobalDataManager;
+import org.ema.utils.LogUtils;
 import org.ema.utils.VerticalProgressBar;
 
 import java.math.RoundingMode;
@@ -323,7 +324,7 @@ public class SummonersListFragment extends Fragment implements ChampionTipDialog
 
     //This function handle the advanced statistic goto
     public void showAdvancedStatistics(View v, Boolean isEnnemy) {
-        Log.v("MIC", "View ID : " + v.getId());
+        LogUtils.LOGV("MIC", "View ID : " + v.getId());
         summonerToShow = summonersList.get(v.getId());
         new loadAdvStatsBackgroundTask(this.getActivity()).execute();
     }

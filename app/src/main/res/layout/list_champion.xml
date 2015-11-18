@@ -81,6 +81,15 @@
             android:textColor="@color/light_font"
             android:textSize="20dp" />
 
+        <ImageView
+            android:id="@+id/show_tutorial_button"
+            android:layout_width="@dimen/stats_tutorial_size"
+            android:layout_height="@dimen/stats_tutorial_size"
+            android:layout_alignEnd="@+id/imageView"
+            android:layout_alignRight="@+id/imageView"
+            android:clickable="true"
+            android:onClick="showTutorial"
+            android:src="@drawable/open_tutorial" />
 
     </RelativeLayout>
 
@@ -104,4 +113,12 @@
 
         </LinearLayout>
     </ScrollView>
+    <ImageView
+        android:id="@+id/tutorial_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/tutorial_stats_allies_t"
+        android:visibility="visible" />
 </LinearLayout>

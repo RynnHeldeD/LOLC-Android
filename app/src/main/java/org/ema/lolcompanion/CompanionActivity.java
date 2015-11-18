@@ -75,6 +75,7 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
         instance = timerFragment;
         instanceCompanion = this;
 
+
     }
 
     //Permet de Switcher entre les fragments
@@ -164,6 +165,21 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
     // DIALOG HANDLERS FOR ALL FRAGMENTS
     public void secureAppSharing(View v) {
         timerFragment.secureAppSharing(v);
+    }
+
+    //show the android tutorial of the application on Views
+    public void showTutorial(View v){
+        switch (mPager.getCurrentItem()) {
+            case 0:
+                ennemiesFragment.showTutorial();
+                break;
+            case 1:
+                timerFragment.showTutorial();
+                break;
+            case 2:
+                alliesFragment.showTutorial();
+                break;
+        }
     }
 
     public void showChampionTips(View v) {

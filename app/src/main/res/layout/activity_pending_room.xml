@@ -95,13 +95,27 @@
         android:layout_marginLeft="@dimen/activity_horizontal_high_margin"
         android:layout_marginRight="@dimen/activity_horizontal_high_margin"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         tools:context=".PendingRoomActivity">
 
         <TextView
             android:id="@+id/pending_summoner_name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:shadowColor="#000000"
+            android:shadowDx="3"
+            android:shadowDy="-3"
+            android:shadowRadius="1.5"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/light_font" />
+
+        <TextView
+            android:id="@+id/pending_status"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:gravity="center"
             android:shadowColor="#000000"

@@ -101,12 +101,13 @@
     <string name="advstats_chart_cpm_missed_creeps">Missed Creeps</string>
 
     <!-- TOASTS -->
-    <string name="pending_logging">logging&#8230;</string>
+    <string name="pending_logging">Logging&#8230;</string>
+    <string name="pending_port_unreachable">Servers unreachable, check your connection firewall and open ports&#8230;</string>
     <string name="beta_test_version_end">This beta version is no longer available</string>
     <string name="pending_network_error">Please connect to WiFi or Mobile Network</string>
-    <string name="pending_waiting_signal">waiting for game signal&#8230;</string>
-    <string name="pending_loading_game">loading game data&#8230;</string>
-    <string name="disconnected_from_ws">disconnected from server</string>
+    <string name="pending_waiting_signal">Waiting for game signal&#8230;</string>
+    <string name="pending_loading_game">Loading game data&#8230;</string>
+    <string name="disconnected_from_ws">Disconnected from server</string>
     <string name="title_activity_advanced_stats">AdvancedStatsActivity</string>
     <string name="ranked_statistics_restriction_click_advanced_stats">Not enough statistics</string>
 

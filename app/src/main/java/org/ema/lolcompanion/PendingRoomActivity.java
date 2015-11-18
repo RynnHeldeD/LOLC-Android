@@ -60,28 +60,6 @@ public class PendingRoomActivity extends Activity {
     public final Object signal = new Object();
     public int websocketSleepTime = 0;
 
-    private final Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            LayoutInflater inflater = getLayoutInflater();
-            View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
-            TextView text = (TextView) layout.findViewById(R.id.text);
-            Toast toast = new Toast(getApplicationContext());
-            toast.setDuration(Toast.LENGTH_SHORT);
-            switch (msg.arg1) {
-                case 2:
-                    text.setText(getResources().getString(R.string.pending_waiting_signal));
-                    break;
-                case 3:
-                    toast.setDuration(Toast.LENGTH_LONG);
-                    text.setText(getResources().getString(R.string.pending_loading_game));
-                    break;
-            }
-            toast.setGravity(Gravity.BOTTOM, 0, 40);
-            toast.setView(layout);
-            toast.show();
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,15 +114,12 @@ public class PendingRoomActivity extends Activity {
                     } else {
                         //Waiting 10 seconds before make a new request to the server
                         LogUtils.LOGV("DAO", "Loading data");
-                        Message msg = handler.obtainMessage();
 
                         if (!loadData()) {
                             SystemClock.sleep(websocketSleepTime * 1000); //sleep and wait for game detection
                         }
                     }
                 }
-                //LogUtils.LOGV("DAO", "On a recupere les , on affiche la vue timer");
-                //launchTimerActivity();
             }
         });
 
@@ -154,7 +129,6 @@ public class PendingRoomActivity extends Activity {
     public void stopThread() {
         LogUtils.LOGV("DAO", "Stopping thread");
         shouldContinue = false;
-        //synchronized(signal){ signal.notify();}
     }
 
     public void resumeThread() {
@@ -183,11 +157,7 @@ public class PendingRoomActivity extends Activity {
 
     public void launchTimerActivity() {
         Intent intent = new Intent(this, CompanionActivity.class);
-
         GlobalDataManager.add("summonersList", summonersList);
-
-        //TODO : mettre le channel enregistre dans la case channel
-        // MainActivity.settingsManager.set(this, "summonerName", message);
         startActivity(intent);
     }
 
@@ -211,18 +181,32 @@ public class PendingRoomActivity extends Activity {
         }
         int id = user.getId();
         boolean isInGame = SummonerDAO.isInGame(id);
-        Message msgInGame = handler.obtainMessage();
-        msgInGame.arg1 = 2;
-        handler.sendMessage(msgInGame);
+
+        //affichage du statut
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                TextView pending_status = (TextView) findViewById(R.id.pending_status);
+                pending_status.setText(R.string.pending_waiting_signal);
+            }
+        });
+
+
         //LogUtils.LOGV("DAO", "Is in game: " + isInGame);
 
         if (isInGame) {
 
             resumeThread();
             isAllowedToBack = false;
-            Message msgLoadData = handler.obtainMessage();
-            msgLoadData.arg1 = 3;
-            handler.sendMessage(msgLoadData);
+            //affichage du statut
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    TextView pending_status = (TextView) findViewById(R.id.pending_status);
+                    pending_status.setText(R.string.pending_loading_game);
+                }
+            });
+
 
             summonersList = CurrentGameDAO.getSummunerListInGameFromCurrentUser(user);
             if (summonersList != null) {

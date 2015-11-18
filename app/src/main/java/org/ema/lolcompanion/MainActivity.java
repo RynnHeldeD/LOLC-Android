@@ -32,6 +32,7 @@ import android.os.*;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,10 +46,15 @@ import android.widget.Toast;
 import org.ema.dialogs.AboutDialogFragment;
 import org.ema.dialogs.LolCompanionProgressDialog;
 import org.ema.model.business.Summoner;
+import org.ema.utils.LogUtils;
 import org.ema.utils.SettingsManager;
 import org.ema.utils.Utils;
 import org.ema.utils.Constant;
 import org.ema.model.DAO.*;
+
+import java.net.ConnectException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 
 
 public class MainActivity extends Activity {
@@ -135,8 +141,15 @@ public class MainActivity extends Activity {
             toast.setView(layout);
             toast.show();
         }
+        else if (!isPortOpen("37.187.97.102", 1337, 3000) || !isPortOpen("5.135.153.45", 8081, 3000)) {
+            text.setText(getResources().getString(R.string.pending_port_unreachable));
+            Toast toast = new Toast(getApplicationContext());
+            toast.setGravity(Gravity.BOTTOM, 0, 40);
+            toast.setDuration(Toast.LENGTH_SHORT);
+            toast.setView(layout);
+            toast.show();
+        }
         else {
-
             text.setText(getResources().getString(R.string.pending_logging));
             Toast toast = new Toast(getApplicationContext());
             toast.setGravity(Gravity.BOTTOM, 0, 40);
@@ -144,6 +157,29 @@ public class MainActivity extends Activity {
             toast.setView(layout);
             toast.show();
             new CheckUserBackgroundTask(this).execute();
+        }
+    }
+
+    public static boolean isPortOpen(final String ip, final int port, final int timeout) {
+
+        try {
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress(ip, port), timeout);
+            socket.close();
+            LogUtils.LOGV("MIC", "Port open OK");
+            return true;
+        }
+
+        catch(ConnectException ce){
+            LogUtils.LOGV("MIC", "Port open NONOK");
+            ce.printStackTrace();
+            return false;
+        }
+
+        catch (Exception ex) {
+            Log.v("MIC", "Port open NONOK");
+            ex.printStackTrace();
+            return false;
         }
     }
 

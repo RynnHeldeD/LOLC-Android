@@ -102,6 +102,7 @@
 
     <!-- TOASTS -->
     <string name="pending_logging">Logging&#8230;</string>
+    <string name="pending_port_testing">Trying to connect to LolCompanion servers&#8230;</string>
     <string name="pending_port_unreachable">Servers unreachable, check your connection firewall and open ports&#8230;</string>
     <string name="beta_test_version_end">This beta version is no longer available</string>
     <string name="pending_network_error">Please connect to WiFi or Mobile Network</string>
@@ -110,5 +111,12 @@
     <string name="disconnected_from_ws">Disconnected from server</string>
     <string name="title_activity_advanced_stats">AdvancedStatsActivity</string>
     <string name="ranked_statistics_restriction_click_advanced_stats">Not enough statistics</string>
+
+    <!-- CACHE AND WEBSOCKETS SETTINGS -->
+    <string name="cache_ip">37.187.97.102</string>
+    <string name="cache_port">1337</string>
+    <string name="websocket_ip">5.135.153.45</string>
+    <string name="websocket_port">8081</string>
+    <string name="timeout_millisecond">3000</string>
 
 </resources>

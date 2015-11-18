@@ -160,7 +160,8 @@ public class MainActivity extends Activity {
         }
     }
 
-    public static boolean isPortOpen(final String ip, final int port, final int timeout) {
+    //TO-DO : replace this with a single function using params in strings.xml
+    public boolean isPortOpen(final String ip, final int port, final int timeout) {
 
         try {
             Socket socket = new Socket();

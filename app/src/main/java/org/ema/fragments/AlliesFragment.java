@@ -75,7 +75,7 @@ public class AlliesFragment extends SummonersListFragment {
     }
 
     //show the android tutorial of the application on the Timer View
-    public void showTutorial(View view){
+    public void showTutorial(){
         ScrollView root_scroll_allies = (ScrollView) getView().findViewById(R.id.root_scroll_allies);
         ImageView tutorial_view = (ImageView) getView().findViewById(R.id.tutorial_view);
         ImageView show_tutorial_button = (ImageView) getView().findViewById(R.id.show_tutorial_button);

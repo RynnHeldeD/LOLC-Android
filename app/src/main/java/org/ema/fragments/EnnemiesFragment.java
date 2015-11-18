@@ -31,6 +31,7 @@ import android.widget.TextView;
 import org.ema.lolcompanion.R;
 import org.ema.model.business.Summoner;
 import org.ema.utils.GlobalDataManager;
+import org.ema.utils.SettingsManager;
 
 import java.util.ArrayList;
 
@@ -69,15 +70,27 @@ public class EnnemiesFragment extends SummonersListFragment {
             fillSummonerInformations(ennemies_container,  idForLine, summonersList.get(idForLine), 0, 100);
         }
 
+        SettingsManager settingsManager = new SettingsManager();
+        ScrollView root_scroll_allies = (ScrollView) rootView.findViewById(R.id.root_scroll_allies);
+        ImageView show_tutorial_button = (ImageView) rootView.findViewById(R.id.show_tutorial_button);
+
+        //Display the tuto if it's the first use of the app
+        if(settingsManager.get(this.getActivity(),"firstDisplayEnemmiesView").equals("")) {
+            root_scroll_allies.setVisibility(View.GONE);
+            tutorial_view.setVisibility(View.VISIBLE);
+            show_tutorial_button.setImageDrawable(getResources().getDrawable(R.drawable.close_tutorial));
+            //We set the "firstDisplayEnemmiesView" value to not show the tuto next time
+            settingsManager.set(this.getActivity(), "firstDisplayEnemmiesView", "no");
+        }
+
         return rootView;
     }
-
     public void showChampionTips(View v) {
         super.showChampionTips(v, true);
     }
 
     //show the android tutorial of the application on the Timer View
-    public void showTutorial(View view){
+    public void showTutorial(){
         ScrollView root_scroll_allies = (ScrollView) getView().findViewById(R.id.root_scroll_allies);
         ImageView tutorial_view = (ImageView) getView().findViewById(R.id.tutorial_view);
         ImageView show_tutorial_button = (ImageView) getView().findViewById(R.id.show_tutorial_button);

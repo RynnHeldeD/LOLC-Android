@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -113,7 +114,17 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
             fillTimersInformations(ennemies_container, idForLine+1, teamSummonersList.get(idForLine));
         }
 
+        LinearLayout root_list_timers = (LinearLayout) rootView.findViewById(R.id.root_list_timers);
+        ImageView tutorial_view = (ImageView) rootView.findViewById(R.id.tutorial_view);
+        ImageView show_tutorial_button = (ImageView) rootView.findViewById(R.id.show_tutorial_button);
 
+        if(settingsManager.get(this.getActivity(),"firstDisplayTimerView").equals("")) {
+            root_list_timers.setVisibility(View.GONE);
+            tutorial_view.setVisibility(View.VISIBLE);
+            show_tutorial_button.setImageDrawable(getResources().getDrawable(R.drawable.close_tutorial));
+            //We set the "firstDisplayTimerView" value to not show the tuto next time
+            settingsManager.set(this.getActivity(), "firstDisplayTimerView", "no");
+        }
         return rootView;
     }
 
@@ -190,7 +201,7 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
     }
 
     //show the android tutorial of the application on the Timer View
-    public void showTutorial(View view){
+    public void showTutorial(){
         LinearLayout root_list_timers = (LinearLayout) getView().findViewById(R.id.root_list_timers);
         ImageView tutorial_view = (ImageView) getView().findViewById(R.id.tutorial_view);
         ImageView show_tutorial_button = (ImageView) getView().findViewById(R.id.show_tutorial_button);

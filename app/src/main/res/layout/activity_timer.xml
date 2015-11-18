@@ -37,8 +37,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingLeft="@dimen/activity_horizontal_vhigh_margin"
-        android:paddingRight="@dimen/activity_horizontal_vhigh_margin"
         tools:context="org.ema.lolcompanion.TimerActivity">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -154,6 +152,17 @@
                 android:src="@drawable/login_security" />
 
         </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/show_tutorial_button"
+            android:layout_width="@dimen/stats_tutorial_size"
+            android:layout_height="@dimen/stats_tutorial_size"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:clickable="true"
+            android:onClick="showTutorial"
+            android:src="@drawable/open_tutorial" />
     </RelativeLayout>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -184,29 +193,6 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/light_font"
             android:textSize="20dp" />
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/tutorial_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="false"
-            android:layout_below="@+id/timers"
-            android:layout_toEndOf="@+id/timers"
-            android:layout_toRightOf="@+id/timers"
-            android:gravity="end"
-            android:orientation="horizontal"
-            android:paddingLeft="55dip"
-            android:paddingTop="@dimen/activity_vertical_margin">
-
-            <ImageView
-                android:id="@+id/show_tutorial_button"
-                android:layout_width="@dimen/stats_tips_size"
-                android:layout_height="@dimen/stats_tips_size"
-                android:clickable="true"
-                android:onClick="showTutorial"
-                android:src="@drawable/open_tutorial" />
-        </LinearLayout>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"

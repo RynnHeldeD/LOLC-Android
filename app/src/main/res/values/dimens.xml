@@ -54,6 +54,7 @@
     <dimen name="stats_summoner_size">78dp</dimen>
     <dimen name="stats_ismain_size">22dp</dimen>
     <dimen name="stats_tips_size">26dp</dimen>
+    <dimen name="stats_tutorial_size">32dp</dimen>
     <dimen name="stats_rank_icon_size">20dp</dimen>
     <dimen name="stats_teamicon_size">26dp</dimen>
     <dimen name="stats_icon_damage_size">18dp</dimen>

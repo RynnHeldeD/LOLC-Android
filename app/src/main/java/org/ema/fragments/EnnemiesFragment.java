@@ -23,7 +23,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.ema.lolcompanion.R;
@@ -40,6 +42,8 @@ public class EnnemiesFragment extends SummonersListFragment {
         View rootView = inflater.inflate(R.layout.list_champion, null, false);
         //We get the container where we are going to add all the champion lines
         LinearLayout ennemiesBackground = (LinearLayout) rootView.findViewById(R.id.root_activity_list_champion);
+        ImageView tutorial_view = (ImageView) rootView.findViewById(R.id.tutorial_view);
+        tutorial_view.setImageDrawable(getResources().getDrawable(R.drawable.tutorial_stats_ennemies_t));
         ennemiesBackground.setBackgroundDrawable(getResources().getDrawable(R.drawable.background_red));
         //setting the font for title
         Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/lol.ttf");
@@ -70,5 +74,22 @@ public class EnnemiesFragment extends SummonersListFragment {
 
     public void showChampionTips(View v) {
         super.showChampionTips(v, true);
+    }
+
+    //show the android tutorial of the application on the Timer View
+    public void showTutorial(View view){
+        ScrollView root_scroll_allies = (ScrollView) getView().findViewById(R.id.root_scroll_allies);
+        ImageView tutorial_view = (ImageView) getView().findViewById(R.id.tutorial_view);
+        ImageView show_tutorial_button = (ImageView) getView().findViewById(R.id.show_tutorial_button);
+        if(root_scroll_allies.getVisibility() == View.GONE){
+            root_scroll_allies.setVisibility(View.VISIBLE);
+            tutorial_view.setVisibility(View.GONE);
+            show_tutorial_button.setImageDrawable(getResources().getDrawable(R.drawable.open_tutorial));
+        }
+        else{
+            root_scroll_allies.setVisibility(View.GONE);
+            tutorial_view.setVisibility(View.VISIBLE);
+            show_tutorial_button.setImageDrawable(getResources().getDrawable(R.drawable.close_tutorial));
+        }
     }
 }

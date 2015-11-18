@@ -77,7 +77,7 @@
                 android:layout_height="@dimen/stats_tips_size"
                 android:clickable="true"
                 android:onClick="showAbout"
-                android:src="@drawable/tip" />
+                android:src="@drawable/open_tutorial" />
 
         </LinearLayout>
 

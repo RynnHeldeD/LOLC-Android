@@ -189,6 +189,24 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         channelSummary.refreshDrawableState();
     }
 
+    //show the android tutorial of the application on the Timer View
+    public void showTutorial(View view){
+        LinearLayout root_list_timers = (LinearLayout) getView().findViewById(R.id.root_list_timers);
+        ImageView tutorial_view = (ImageView) getView().findViewById(R.id.tutorial_view);
+        ImageView show_tutorial_button = (ImageView) getView().findViewById(R.id.show_tutorial_button);
+
+        if(root_list_timers.getVisibility() == View.GONE){
+            root_list_timers.setVisibility(View.VISIBLE);
+            tutorial_view.setVisibility(View.GONE);
+            show_tutorial_button.setImageDrawable(getResources().getDrawable(R.drawable.open_tutorial));
+        }
+        else{
+            root_list_timers.setVisibility(View.GONE);
+            tutorial_view.setVisibility(View.VISIBLE);
+            show_tutorial_button.setImageDrawable(getResources().getDrawable(R.drawable.close_tutorial));
+        }
+    }
+
     //This functions adds dynamically a player icon in the channel summary so user can know who is connected
     public void appendPlayerIconToChannelSummary(Bitmap playerIcon) {
         LogUtils.LOGV("Websocket", "On passe dans la fonction AppendPlayer");

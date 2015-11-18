@@ -1,19 +1,19 @@
-/* Copyright © 2015
+/* Copyright ï¿½ 2015
  * GHARBI Eddy
  * PARRENO Michel
  * VELTRI Constantin
  * NGUYEN Remy
  * GALLI Romain
  *
- * Cette œuvre est protégée par le droit d’auteur et strictement réservée à l’usage privé du
- * client. Toute reproduction ou diffusion au profit de tiers, à titre
- * gratuit ou onéreux, de
- * tout ou partie de cette œuvre est strictement interdite et constitue une contrefaçon prévue
- * par les articles L 335-2 et suivants du Code de la propriété
+ * Cette ï¿½uvre est protï¿½gï¿½e par le droit dï¿½auteur et strictement rï¿½servï¿½e ï¿½ lï¿½usage privï¿½ du
+ * client. Toute reproduction ou diffusion au profit de tiers, ï¿½ titre
+ * gratuit ou onï¿½reux, de
+ * tout ou partie de cette ï¿½uvre est strictement interdite et constitue une contrefaï¿½on prï¿½vue
+ * par les articles L 335-2 et suivants du Code de la propriï¿½tï¿½
  * intellectuelle. Les ayants-droits se
- * réservent le droit de poursuivre toute atteinte à leurs droits de
- * propriété intellectuelle devant les
- * juridictions civiles ou pénales.
+ * rï¿½servent le droit de poursuivre toute atteinte ï¿½ leurs droits de
+ * propriï¿½tï¿½ intellectuelle devant les
+ * juridictions civiles ou pï¿½nales.
  */
 
 package org.ema.fragments;
@@ -23,7 +23,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.ema.lolcompanion.R;
@@ -72,4 +74,20 @@ public class AlliesFragment extends SummonersListFragment {
         super.showChampionTips(v, false);
     }
 
+    //show the android tutorial of the application on the Timer View
+    public void showTutorial(View view){
+        ScrollView root_scroll_allies = (ScrollView) getView().findViewById(R.id.root_scroll_allies);
+        ImageView tutorial_view = (ImageView) getView().findViewById(R.id.tutorial_view);
+        ImageView show_tutorial_button = (ImageView) getView().findViewById(R.id.show_tutorial_button);
+        if(root_scroll_allies.getVisibility() == View.GONE){
+            root_scroll_allies.setVisibility(View.VISIBLE);
+            tutorial_view.setVisibility(View.GONE);
+            show_tutorial_button.setImageDrawable(getResources().getDrawable(R.drawable.open_tutorial));
+        }
+        else{
+            root_scroll_allies.setVisibility(View.GONE);
+            tutorial_view.setVisibility(View.VISIBLE);
+            show_tutorial_button.setImageDrawable(getResources().getDrawable(R.drawable.close_tutorial));
+        }
+    }
 }

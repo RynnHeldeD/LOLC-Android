@@ -32,6 +32,9 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -164,6 +167,21 @@ public class CompanionActivity extends FragmentActivity implements ChampionTipDi
     // DIALOG HANDLERS FOR ALL FRAGMENTS
     public void secureAppSharing(View v) {
         timerFragment.secureAppSharing(v);
+    }
+
+    //show the android tutorial of the application on the Timer View
+    public void showTutorial(View v){
+        switch (mPager.getCurrentItem()) {
+            case 0:
+                ennemiesFragment.showTutorial(v);
+                break;
+            case 1:
+                timerFragment.showTutorial(v);
+                break;
+            case 2:
+                alliesFragment.showTutorial(v);
+                break;
+        }
     }
 
     public void showChampionTips(View v) {

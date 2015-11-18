@@ -314,11 +314,15 @@ public class Summoner implements Parcelable {
             for(int i = 0; i < this.getMasteries().size(); i++) {
                 Mastery mastery = this.getMasteries().get(i);
 
+                //Cooldown of summoners spell
+                //if(mastery.getDescription().contains("reduced cooldown")){
+
                 //Cooldown of champion spells
                 if(mastery.getDescription().contains("Cooldown Reduction")){
                     try
                     {
-                        String stat = mastery.getDescription().replaceAll("\\+","").split("\\%")[0];
+                        String stats[] = mastery.getDescription().replaceAll("\\%","").split(" ");
+                        String stat = stats[4];
                         cooldownRatio -= (Double.parseDouble(stat) / 100);
                     }
                     catch(Exception e)
@@ -327,11 +331,11 @@ public class Summoner implements Parcelable {
                     }
                 }
                 //Cooldowns of summuner spells
-                else if(mastery.getDescription().contains("cooldown")) {
+                else if(mastery.getDescription().contains("reduced cooldown")) {
                     try
                     {
                         String stats[] = mastery.getDescription().replaceAll("\\%","").split(" ");
-                        String stat = stats[stats.length-1];
+                        String stat = stats[4];
                         cooldownSummunerSpells -= (Double.parseDouble(stat) / 100);
                     }
                     catch(Exception e)

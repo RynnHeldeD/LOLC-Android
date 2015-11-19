@@ -103,12 +103,12 @@ public class MainActivity extends Activity {
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
 
-        if(MainActivity.settingsManager.get(this, "summonerRegion") != "" )
+        if (MainActivity.settingsManager.get(this, "summonerRegion") != "")
             spinner.setSelection(Integer.parseInt(MainActivity.settingsManager.get(this, "summonerRegion")));
 
     }
 
-    public void showAbout(View v){
+    public void showAbout(View v) {
         DialogFragment dialog = new AboutDialogFragment();
         dialog.show(getFragmentManager(), "about");
     }
@@ -121,63 +121,94 @@ public class MainActivity extends Activity {
         NetworkInfo mMobile = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
         //setting the toast
-		LayoutInflater inflater = getLayoutInflater();
+        LayoutInflater inflater = getLayoutInflater();
         View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
         TextView text = (TextView) layout.findViewById(R.id.text);
 
-		if((System.currentTimeMillis() / 1000) > 1448834400){ //fin de la béta le 09/11 à 23h
-			text.setText(getResources().getString(R.string.beta_test_version_end));
+        if ((System.currentTimeMillis() / 1000) > 1488834400) { //fin de la béta Mon, 06 Mar 2017 21:06:40 GMT
+            text.setText(getResources().getString(R.string.beta_test_version_end));
             Toast toast = new Toast(getApplicationContext());
             toast.setGravity(Gravity.BOTTOM, 0, 40);
             toast.setDuration(Toast.LENGTH_SHORT);
             toast.setView(layout);
             toast.show();
-		}
-        else if (mWifi.isConnected() == false && mMobile.isConnected() == false) {
+        } else if (mWifi.isConnected() == false && mMobile.isConnected() == false) {
             text.setText(getResources().getString(R.string.pending_network_error));
             Toast toast = new Toast(getApplicationContext());
             toast.setGravity(Gravity.BOTTOM, 0, 40);
             toast.setDuration(Toast.LENGTH_SHORT);
             toast.setView(layout);
             toast.show();
-        }
-        else if (!isPortOpen("37.187.97.102", 1337, 3000) || !isPortOpen("5.135.153.45", 8081, 3000)) {
-            text.setText(getResources().getString(R.string.pending_port_unreachable));
-            Toast toast = new Toast(getApplicationContext());
-            toast.setGravity(Gravity.BOTTOM, 0, 40);
-            toast.setDuration(Toast.LENGTH_SHORT);
-            toast.setView(layout);
-            toast.show();
-        }
-        else {
-            text.setText(getResources().getString(R.string.pending_logging));
-            Toast toast = new Toast(getApplicationContext());
-            toast.setGravity(Gravity.BOTTOM, 0, 40);
-            toast.setDuration(Toast.LENGTH_SHORT);
-            toast.setView(layout);
-            toast.show();
-            new CheckUserBackgroundTask(this).execute();
+        } else {
+            //show a toast to inform user.
+            text.setText(getResources().getString(R.string.pending_port_testing));
+            Toast toasty = new Toast(getApplicationContext());
+            toasty.setGravity(Gravity.BOTTOM, 0, 40);
+            toasty.setDuration(Toast.LENGTH_SHORT);
+            toasty.setView(layout);
+            toasty.show();
+
+            //hack android - we need to create a thread because UI is stopped by isLolCompanionServerReachable function
+            Thread thread = new Thread(){
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(1000); // As I am using LENGTH_LONG in Toast
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            public void run() {
+                                LayoutInflater inflater = getLayoutInflater();
+                                View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
+                                TextView text = (TextView) layout.findViewById(R.id.text);
+                                if (!isLolCompanionServerReachable()) {
+                                    text.setText(getResources().getString(R.string.pending_port_unreachable));
+                                    Toast toast = new Toast(getApplicationContext());
+                                    toast.setGravity(Gravity.BOTTOM, 0, 40);
+                                    toast.setDuration(Toast.LENGTH_SHORT);
+                                    toast.setView(layout);
+                                    toast.show();
+                                } else {
+                                    text.setText(getResources().getString(R.string.pending_logging));
+                                    Toast toast = new Toast(getApplicationContext());
+                                    toast.setGravity(Gravity.BOTTOM, 0, 40);
+                                    toast.setDuration(Toast.LENGTH_SHORT);
+                                    toast.setView(layout);
+                                    toast.show();
+                                    new CheckUserBackgroundTask(MainActivity.this).execute();
+                                }
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+
+            thread.start();
         }
     }
 
-    //TO-DO : replace this with a single function using params in strings.xml
-    public boolean isPortOpen(final String ip, final int port, final int timeout) {
+    //Check if lolcompanion cache and websocket servers are reachable before connecting.
+    public boolean isLolCompanionServerReachable() {
+        String cacheServer = getResources().getString(R.string.cache_ip);
+        int cachePort = Integer.parseInt(getResources().getString(R.string.cache_port));
+        String WSServer = getResources().getString(R.string.websocket_ip);
+        int WSPort = Integer.parseInt(getResources().getString(R.string.websocket_port));
+        int lolc_timeout = Integer.parseInt(getResources().getString(R.string.lolcompanion_server_timeout_millisecond));
 
         try {
-            Socket socket = new Socket();
-            socket.connect(new InetSocketAddress(ip, port), timeout);
-            socket.close();
+            Socket socketCache = new Socket();
+            Socket socketWS = new Socket();
+            socketCache.connect(new InetSocketAddress(cacheServer, cachePort), lolc_timeout);
+            socketWS.connect(new InetSocketAddress(WSServer, WSPort), lolc_timeout);
+            socketCache.close();
+            socketWS.close();
             LogUtils.LOGV("MIC", "Port open OK");
             return true;
-        }
-
-        catch(ConnectException ce){
+        } catch (ConnectException ce) {
             LogUtils.LOGV("MIC", "Port open NONOK");
             ce.printStackTrace();
             return false;
-        }
-
-        catch (Exception ex) {
+        } catch (Exception ex) {
             Log.v("MIC", "Port open NONOK");
             ex.printStackTrace();
             return false;
@@ -207,14 +238,13 @@ public class MainActivity extends Activity {
             //Init Pending Room
             Intent intent = new Intent(MainActivity.this, PendingRoomActivity.class);
 
-            if(result){
+            if (result) {
                 intent.putExtra(SUMMONER_NAME, user.getName());
-                intent.putExtra("USER",user);
+                intent.putExtra("USER", user);
                 MainActivity.settingsManager.set(MainActivity.this, "summonerName", user.getName());
                 MainActivity.settingsManager.set(MainActivity.this, "summonerRegion", String.valueOf(position));
                 startActivity(intent);
-            }
-            else {
+            } else {
                 //setting the toast
                 LayoutInflater inflater = getLayoutInflater();
                 View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.toast_layout_root));

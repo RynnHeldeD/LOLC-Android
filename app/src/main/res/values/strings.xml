@@ -117,6 +117,6 @@
     <string name="cache_port">1337</string>
     <string name="websocket_ip">5.135.153.45</string>
     <string name="websocket_port">8081</string>
-    <string name="timeout_millisecond">3000</string>
+    <string name="lolcompanion_server_timeout_millisecond">3000</string>
 
 </resources>

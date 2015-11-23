@@ -7,12 +7,12 @@ public class Constant {
     //Region
     private static Region localRegion = Region.EUW;
 
-    public static String DDRAGON_SUMMONER_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/profileicon/";
-    public static String DDRAGON_CHAMPION_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/champion/";
-    public static String DDRAGON_CHAMPION_SPELL_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/spell/";
-    public static String DDRAGON_SUMMONER_SPELL_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/spell/";
-    public static String DDRAGON_ITEMS_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/item/";
-    public static String DDRAGON_SCOREBOARD_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/ui/";
+    public static String DDRAGON_SUMMONER_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.22.3/img/profileicon/";
+    public static String DDRAGON_CHAMPION_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.22.3/img/champion/";
+    public static String DDRAGON_CHAMPION_SPELL_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.22.3/img/spell/";
+    public static String DDRAGON_SUMMONER_SPELL_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.22.3/img/spell/";
+    public static String DDRAGON_ITEMS_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.22.3/img/item/";
+    public static String DDRAGON_SCOREBOARD_ICON_URI = "http://ddragon.leagueoflegends.com/cdn/5.22.3/img/ui/";
 
     private static String CACHE_SERVER_URI = "http://devtoolbox.fr:1337/?url=";
     private static String API_DNS = "https://euw.api.pvp.net/";

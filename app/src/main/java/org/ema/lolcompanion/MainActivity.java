@@ -28,6 +28,7 @@ import android.graphics.Typeface;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.*;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
@@ -111,6 +112,19 @@ public class MainActivity extends Activity {
     public void showAbout(View v) {
         DialogFragment dialog = new AboutDialogFragment();
         dialog.show(getFragmentManager(), "about");
+    }
+
+    public void openFacebook(View v){
+        Intent facebookIntent;
+
+        try {
+            getApplicationContext().getPackageManager().getPackageInfo("com.facebook.katana", 0); //Checks if FB is even installed.
+            facebookIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/777956932303071")); //Trys to make intent with FB's URI
+        } catch (Exception e) {
+            facebookIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/LoLCompanionTeam/")); //catches and opens a url to the desired page
+        }
+
+        startActivity(facebookIntent);
     }
 
     //Lauch the summoner search in LOL API and check validity

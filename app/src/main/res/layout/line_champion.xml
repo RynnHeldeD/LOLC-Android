@@ -51,7 +51,7 @@
             android:layout_width="@dimen/stats_summoner_size"
             android:layout_height="@dimen/stats_summoner_size">
 
-            <ImageView
+            <org.ema.view.ImageViewCustom
                 android:id="@+id/s1Img"
                 android:layout_width="@dimen/stats_summoner_size"
                 android:layout_height="@dimen/stats_summoner_size"

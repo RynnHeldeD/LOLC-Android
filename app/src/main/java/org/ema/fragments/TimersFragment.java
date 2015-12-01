@@ -41,6 +41,7 @@ import org.ema.dialogs.SecureDialogFragment;
 import org.ema.lolcompanion.R;
 import org.ema.lolcompanion.WsEventHandling;
 import org.ema.model.business.Summoner;
+import org.ema.utils.Constant;
 import org.ema.utils.GameTimestamp;
 import org.ema.utils.GlobalDataManager;
 import org.ema.utils.LogUtils;
@@ -48,6 +49,7 @@ import org.ema.utils.SettingsManager;
 import org.ema.utils.Timer;
 import org.ema.utils.TimerButton;
 import org.ema.utils.WebSocket;
+import org.ema.view.ImageViewCustom;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -278,7 +280,7 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
     //Load the champions icons
     public void setChampionTimerButtonsImage(ArrayList<Summoner> summonersList) {
         List<String> ids = new ArrayList<>();
-        RoundedImageView tb;
+        ImageViewCustom tb;
         int IDRessource;
 
         //For each players in the enemy team, we had the reference to the champion icon (ex: b11,b21,b31...)
@@ -290,7 +292,7 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         //For each references we had before, we load the images in the referenced element in the view
         for (String s : ids) {
             IDRessource = getResources().getIdentifier(s, "id", getActivity().getBaseContext().getPackageName());
-            tb = (RoundedImageView) getActivity().findViewById(IDRessource);
+            tb = (ImageViewCustom) getActivity().findViewById(IDRessource);
             Bitmap bm = summonersList.get(i).getChampion().getIcon();
             tb.setImageBitmap(bm);
             i++;
@@ -709,16 +711,23 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         int IDRessource;
 
         //for each ids in the layouts, we need to set the good ID to bind all events on the timers !
+
+        //BINDING champion image
         RelativeLayout champion_container = (RelativeLayout) rootview.findViewById(R.id.b11c);
         IDRessource = getResources().getIdentifier("b"+idForLine+"1c", "id", getActivity().getBaseContext().getPackageName());
         champion_container.setId(IDRessource);
-        RoundedImageView champion_image =  (RoundedImageView) rootview.findViewById(R.id.b11);
+
+        ImageViewCustom champion_image =  (ImageViewCustom) rootview.findViewById(R.id.b11);
         IDRessource = getResources().getIdentifier("b"+idForLine+"1", "id", getActivity().getBaseContext().getPackageName());
         champion_image.setId(IDRessource);
+        champion_image.loadIcon(Constant.getIconUriByImageType("Champion") + summoner.getChampion().getIconName());
+
         TextView champion_lvl = (TextView) rootview.findViewById(R.id.b11t);
         IDRessource = getResources().getIdentifier("b"+idForLine+"1t", "id", getActivity().getBaseContext().getPackageName());
         champion_lvl.setId(IDRessource);
 
+
+        //BINDING CDR button
         TimerButton cdr_button = (TimerButton) rootview.findViewById(R.id.b10);
         IDRessource = getResources().getIdentifier("b"+idForLine+"0", "id", getActivity().getBaseContext().getPackageName());
         cdr_button.setId(IDRessource);
@@ -726,35 +735,50 @@ public class TimersFragment extends SummonersListFragment implements SecureDialo
         IDRessource = getResources().getIdentifier("b"+idForLine+"0t", "id", getActivity().getBaseContext().getPackageName());
         cdr_value.setId(IDRessource);
 
+
+        //BINDING of champion ulti
         RelativeLayout champion_ult_container = (RelativeLayout) rootview.findViewById(R.id.b12c);
         IDRessource = getResources().getIdentifier("b"+idForLine+"2c", "id", getActivity().getBaseContext().getPackageName());
         champion_ult_container.setId(IDRessource);
+
         TimerButton champion_ult_btn =  (TimerButton) rootview.findViewById(R.id.b12);
         IDRessource = getResources().getIdentifier("b"+idForLine+"2", "id", getActivity().getBaseContext().getPackageName());
         champion_ult_btn.setId(IDRessource);
+        champion_ult_btn.loadIcon(Constant.getIconUriByImageType("Spell") + summoner.getChampion().getSpell().getIconName());
+
         TextView champion_ult_txt = (TextView) rootview.findViewById(R.id.b12t);
         IDRessource = getResources().getIdentifier("b"+idForLine+"2t", "id", getActivity().getBaseContext().getPackageName());
         champion_ult_txt.setId(IDRessource);
 
+       //BINDING of spell 1
         RelativeLayout champion_sk1_container = (RelativeLayout) rootview.findViewById(R.id.b13c);
         IDRessource = getResources().getIdentifier("b"+idForLine+"3c", "id", getActivity().getBaseContext().getPackageName());
         champion_sk1_container.setId(IDRessource);
+
         TimerButton champion_sk1_btn =  (TimerButton) rootview.findViewById(R.id.b13);
         IDRessource = getResources().getIdentifier("b"+idForLine+"3", "id", getActivity().getBaseContext().getPackageName());
         champion_sk1_btn.setId(IDRessource);
+        champion_sk1_btn.loadIcon(Constant.getIconUriByImageType("Spell") + summoner.getSpells()[0].getIconName());
+
         TextView champion_sk1_txt = (TextView) rootview.findViewById(R.id.b13t);
         IDRessource = getResources().getIdentifier("b"+idForLine+"3t", "id", getActivity().getBaseContext().getPackageName());
         champion_sk1_txt.setId(IDRessource);
 
+
+        //BINDING of spell 2
         RelativeLayout champion_sk2_container = (RelativeLayout) rootview.findViewById(R.id.b14c);
         IDRessource = getResources().getIdentifier("b"+idForLine+"4c", "id", getActivity().getBaseContext().getPackageName());
         champion_sk2_container.setId(IDRessource);
+
         TimerButton champion_sk2_btn =  (TimerButton) rootview.findViewById(R.id.b14);
         IDRessource = getResources().getIdentifier("b"+idForLine+"4", "id", getActivity().getBaseContext().getPackageName());
         champion_sk2_btn.setId(IDRessource);
+        champion_sk2_btn.loadIcon(Constant.getIconUriByImageType("Spell") + summoner.getSpells()[1].getIconName());
+
         TextView champion_sk2_txt = (TextView) rootview.findViewById(R.id.b14t);
         IDRessource = getResources().getIdentifier("b"+idForLine+"4t", "id", getActivity().getBaseContext().getPackageName());
         champion_sk2_txt.setId(IDRessource);
+
 
         //add the line to the rootview
         containerView.addView(rootview);

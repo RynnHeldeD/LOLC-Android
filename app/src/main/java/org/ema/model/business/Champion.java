@@ -246,7 +246,9 @@ public class Champion implements ISettableIcon, Parcelable {
     public boolean areImagesLoaded(){
         boolean areImagesLoaded = false;
 
-        if(this.getIcon() != null && this.getIcon() instanceof  Bitmap && this.getSpell().isImageLoaded()){
+        //MODIF
+       // if(this.getIcon() != null && this.getIcon() instanceof  Bitmap && this.getSpell().isImageLoaded()){
+        if(this.getSpell().isImageLoaded()){
             areImagesLoaded = true;
         }
 

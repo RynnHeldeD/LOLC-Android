@@ -191,7 +191,7 @@ public class CurrentGameDAO {
                 float spellCouldown[] = new float[1];
                 spellCouldown[0] = Float.valueOf(jsonSpell1.get("cooldown").toString().replaceAll("\\[", "").replaceAll("\\]",""));
                 current.getSpells()[0].setCooldown(spellCouldown);
-                new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current.getSpells()[0]);
+                //new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current.getSpells()[0]);
 
                 //Set spell2
                 JSONObject jsonSpell2 = (JSONObject)((JSONObject)jsonSummonerSpells.get("data")).get(((Integer)current.getSpells()[1].getId()).toString());
@@ -199,7 +199,7 @@ public class CurrentGameDAO {
                 float spellCouldown2[] = new float[1];
                 spellCouldown2[0] = Float.valueOf(jsonSpell2.get("cooldown").toString().replaceAll("\\[", "").replaceAll("\\]",""));
                 current.getSpells()[1].setCooldown(spellCouldown2);
-                new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current.getSpells()[1]);
+               // new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current.getSpells()[1]);
 
                 //set champion
                 JSONObject championJson = (JSONObject)((JSONObject)jsonChampions.get("data")).get(((Integer)current.getChampion().getId()).toString());
@@ -207,7 +207,7 @@ public class CurrentGameDAO {
                 current.getChampion().setAllyTips(championJson.get("allytips").toString().replaceAll("\\[", "").replaceAll("\\]", ""));
                 current.getChampion().setEnemyTips(championJson.get("enemytips").toString().replaceAll("\\[", "").replaceAll("\\]", ""));
                 current.getChampion().setIconName(((JSONObject) championJson.get("image")).get("full").toString());
-                new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current.getChampion());
+                //new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, current.getChampion());
 
                 JSONObject jsonUltimateSpell = (JSONObject)((JSONArray) championJson.get("spells")).get(3);
                 Spell ultimate = new Spell();
@@ -219,7 +219,7 @@ public class CurrentGameDAO {
                 }
                 ultimate.setCooldown(cooldowns);
                 current.getChampion().setSpell(ultimate);
-                new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ultimate);
+                //new Utils.SetObjectIcon().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ultimate);
 	        }
 
             getSummonersRank(summonersList);
@@ -337,6 +337,9 @@ public class CurrentGameDAO {
                 getDamageDealtAndDamageTaken(user, matchHistory);
                 getLanesProbabilities(user, matchHistory);
             }
+
+            //MODIF
+            matchHistory = null;
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -110,4 +110,32 @@ public class Constant {
 
         localRegion = region;
     }
+
+    //itemClass should be Summoner, Spell, Champion, Item or League
+    //The function return the URI path for the specific class
+    public static String getIconUriByImageType(String itemClass){
+
+        String path = "";
+
+        switch (itemClass) {
+            case "Summoner":
+                path = Constant.DDRAGON_SUMMONER_ICON_URI;
+                break;
+            case "Spell":
+                path = Constant.DDRAGON_SUMMONER_SPELL_ICON_URI;
+                break;
+            case "Champion":
+                path = Constant.DDRAGON_CHAMPION_ICON_URI;
+                break;
+            case "Item":
+                path = Constant.DDRAGON_ITEMS_ICON_URI;
+                break;
+            case "League":
+                path = Constant.DDRAGON_SCOREBOARD_ICON_URI;
+                break;
+            default:
+                break;
+        }
+        return path;
+    }
 }

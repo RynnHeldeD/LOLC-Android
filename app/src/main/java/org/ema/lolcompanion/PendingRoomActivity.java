@@ -39,9 +39,11 @@ import android.widget.Toast;
 import org.ema.model.DAO.CurrentGameDAO;
 import org.ema.model.DAO.SummonerDAO;
 import org.ema.model.business.Summoner;
+import org.ema.utils.Constant;
 import org.ema.utils.LogUtils;
 import org.ema.utils.GlobalDataManager;
 import org.ema.utils.Utils;
+import org.ema.view.ImageViewCustom;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -112,7 +114,6 @@ public class PendingRoomActivity extends Activity {
                             LogUtils.LOGV("Erreur stats", e.getMessage());
                         }
                     } else {
-                        //Waiting 10 seconds before make a new request to the server
                         LogUtils.LOGV("DAO", "Loading data");
 
                         if (!loadData()) {
@@ -214,6 +215,12 @@ public class PendingRoomActivity extends Activity {
                 while (!this.areAllImagesLoaded(summonersList)) {
                     SystemClock.sleep(500);
                 }
+
+                //Set les images
+                //Champions
+               // ImageViewCustom champImage = (ImageViewCustom) findViewById(R.id.b11);
+              //  champImage.loadIcon(Constant.DDRAGON_CHAMPION_ICON_URI + summonersList.get(0).getChampion().getIconName());
+
                 launchTimerActivity();
             } else {
                 //LogUtils.LOGV("DAO", "FATAL : summonersList is NULL. Summoner :" + summonerNameFromPreviousView);

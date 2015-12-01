@@ -2,6 +2,9 @@ package org.ema.utils;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -11,14 +14,20 @@ import org.ema.fragments.TimersFragment;
 import org.ema.lolcompanion.CompanionActivity;
 import org.ema.lolcompanion.R;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class TimerButton extends RoundedImageView {
     public static final int DELAY = 200;
     protected Timer timer;
     //protected long clickedTimestamp;
     protected boolean triggered;
+    private String url;
 
     public TimerButton(Context context) {
         super(context);
@@ -214,5 +223,55 @@ public class TimerButton extends RoundedImageView {
 
     public void setTriggered(boolean triggered) {
         this.triggered = triggered;
+    }
+
+    public void loadIcon(String url) {
+        if (this.url == null || !this.url.equals(url)) {
+            new SetObjectIcon().execute(url);
+            this.url = url;
+        }
+    }
+
+
+    public class SetObjectIcon extends AsyncTask<String, Integer, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            Bitmap bitmap = null;
+
+            try {
+                URL url = new URL(params[0]);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                //connection.setDoInput(true);
+                //connection.connect();
+                InputStream input = connection.getInputStream();
+                bitmap = BitmapFactory.decodeStream(input);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                return null;
+            } catch (IOException e) {
+                // In case of 404, return a cute Poro
+                URL url = null;
+                try {
+                    url = new URL(Constant.DDRAGON_SUMMONER_ICON_URI + "588.png");
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setDoInput(true);
+                    connection.connect();
+                    InputStream input = connection.getInputStream();
+                    bitmap = BitmapFactory.decodeStream(input);
+                } catch (MalformedURLException e1) {
+                    e1.printStackTrace();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            setImageBitmap(bitmap);
+        }
     }
 }

@@ -272,9 +272,11 @@ public class Summoner implements Parcelable {
     public boolean areImagesLoaded() {
         boolean areImagesLoaded = false;
 
-        if (this.getChampion().areImagesLoaded() && this.getSpells()[0].isImageLoaded() && this.getSpells()[1].isImageLoaded()) {
+        //MODIF
+        //if (this.getChampion().areImagesLoaded() && this.getSpells()[0].isImageLoaded() && this.getSpells()[1].isImageLoaded()) {
+       // if (this.getSpells()[0].isImageLoaded() && this.getSpells()[1].isImageLoaded()) {
             areImagesLoaded = true;
-        }
+       // }
 
         return areImagesLoaded;
     }

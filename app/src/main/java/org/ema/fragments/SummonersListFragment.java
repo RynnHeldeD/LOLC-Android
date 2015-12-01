@@ -44,9 +44,11 @@ import org.ema.lolcompanion.MainActivity;
 import org.ema.lolcompanion.R;
 import org.ema.model.DAO.CurrentGameDAO;
 import org.ema.model.business.Summoner;
+import org.ema.utils.Constant;
 import org.ema.utils.GlobalDataManager;
 import org.ema.utils.LogUtils;
 import org.ema.utils.VerticalProgressBar;
+import org.ema.view.ImageViewCustom;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -160,9 +162,11 @@ public class SummonersListFragment extends Fragment implements ChampionTipDialog
         LinearLayout clickableLayout = (LinearLayout) rootview.findViewById(R.id.s1Container);
         clickableLayout.setId(idForLine);
 
-        ImageView img = (ImageView) rootview.findViewById(R.id.s1Img);
-        Bitmap bitmap = summoner.getChampion().getIcon();
-        img.setImageBitmap(bitmap);
+        ImageViewCustom img = (ImageViewCustom) rootview.findViewById(R.id.s1Img);
+        //MODIF
+        //Bitmap bitmap = summoner.getChampion().getIcon();
+        //img.setImageBitmap(bitmap)
+        img.loadIcon(Constant.getIconUriByImageType("Champion") + summoner.getChampion().getIconName());
         img.setId(idForLine);
         if (summoner.getChampion().getStatistic() == null || (summoner.getChampion().getStatistic().getDamageDealtPercentage() == 0 && summoner.getChampion().getStatistic().getDamageTakenPercentage() == 0)) {
             /*img.setOnClickListener(new View.OnClickListener() {

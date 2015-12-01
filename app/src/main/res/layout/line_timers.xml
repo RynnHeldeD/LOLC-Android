@@ -52,7 +52,7 @@
                 android:layout_width="@dimen/timers_summoner_ulti_size"
                 android:layout_height="@dimen/timers_summoner_ulti_size">
 
-                <com.makeramen.roundedimageview.RoundedImageView
+                <org.ema.view.ImageViewCustom
                     android:id="@+id/b11"
                     android:layout_width="@dimen/timers_summoner_ulti_size"
                     android:layout_height="@dimen/timers_summoner_ulti_size"

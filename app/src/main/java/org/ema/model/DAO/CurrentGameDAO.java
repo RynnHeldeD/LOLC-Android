@@ -268,7 +268,13 @@ public class CurrentGameDAO {
 
         try {
             String request = Constant.API_LEAGUE_URI + concatIds + "/entry";
-            JSONObject jsonResult = new JSONObject(Utils.getDocumentAndCheck(Constant.API_LEAGUE_URI + concatIds + "/entry",2));
+            JSONObject jsonResult = new JSONObject();
+
+            try {
+                jsonResult = new JSONObject(Utils.getDocumentAndCheck(Constant.API_LEAGUE_URI + concatIds + "/entry", 2));
+            }  catch (Exception e){
+                e.printStackTrace();
+            }
 
             for(Summoner user : summoners) {
                 if(!jsonResult.isNull(String.valueOf(user.getId())) && (jsonResult.getJSONArray(String.valueOf(user.getId())).getJSONObject(0).getString("queue").equals("RANKED_SOLO_5x5"))) {
@@ -777,7 +783,7 @@ public class CurrentGameDAO {
         int numberOfGames = 0;
         try {
             for (int i = jsonMatches.length()-1; i > Math.max(jsonMatches.length() - 3, jsonMatches.length() - 2) ; i--) {
-                if (!jsonMatches.getJSONObject(i).isNull("season") && (jsonMatches.getJSONObject(i).getString("season").equals("SEASON2015") )) {
+                if (!jsonMatches.getJSONObject(i).isNull("season") && (jsonMatches.getJSONObject(i).getString("season").equals("PRESEASON2016") )) {
 
                     numberOfGames++;
                     idGame = jsonMatches.getJSONObject(i).getLong("matchId");
@@ -859,7 +865,7 @@ public class CurrentGameDAO {
                 String jsonResult = Utils.getDocument(Constant.API_MATCHS + String.valueOf(idGame));
                 JSONObject gameDetails = new JSONObject(jsonResult);
 
-                if (!gameDetails.isNull("participants") && gameDetails.getString("season").equals("SEASON2015")) {
+                if (!gameDetails.isNull("participants") && gameDetails.getString("season").equals("PRESEASON2016")) {
                     jsonParticipants = gameDetails.getJSONArray("participants");
                     matchItemHistory = getUserBuild(jsonParticipants, numberOfItemToAnalyze, summoner.getChampion().getId());
                     if (i == 0) {
